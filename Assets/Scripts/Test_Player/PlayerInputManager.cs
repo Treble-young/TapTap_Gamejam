@@ -1,11 +1,8 @@
 using UnityEngine;
-using Unity.Cinemachine;
 
 public class PlayerInputManager : MonoBehaviour
 {
     public static PlayerInputManager Instance;
-
-    [HideInInspector] public CinemachineCamera followCamera;
 
     InputSystem_Actions playerInput;
 
@@ -26,10 +23,6 @@ public class PlayerInputManager : MonoBehaviour
 
     void Start()
     {
-        if (followCamera == null)
-        {
-            followCamera = FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None)[0];
-        }
 
         DontDestroyOnLoad(this);
     }

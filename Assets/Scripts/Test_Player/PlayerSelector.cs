@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using Unity.Cinemachine;
 using UnityEngine;
 
 public class PlayerSelector : MonoBehaviour
@@ -51,11 +50,6 @@ public class PlayerSelector : MonoBehaviour
             player.playerState = isCurrent ? PlayerState.InputControlling : PlayerState.AutoMoving;
             if (isCurrent)
                 currentPlayer = player;
-        }
-
-        if (PlayerInputManager.Instance.followCamera != null && currentPlayer != null)
-        {
-            PlayerInputManager.Instance.followCamera.Follow = currentPlayer.transform;
         }
     }
 }
