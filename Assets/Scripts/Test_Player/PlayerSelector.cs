@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class PlayerSelector : MonoBehaviour
 {
+    public static PlayerSelector Instance;
+
     public int currentPlayerID = 0;
     private int _lastCurrentPlayerID = -1;
 
@@ -10,6 +12,15 @@ public class PlayerSelector : MonoBehaviour
 
     void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else
+        {
+            Destroy(this);
+        }
+
         PlayerManager[] players = FindObjectsByType<PlayerManager>(FindObjectsSortMode.None);
         foreach (PlayerManager player in players)
         {

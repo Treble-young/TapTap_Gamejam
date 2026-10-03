@@ -12,7 +12,7 @@ TagManager:
   - Water
   - UI
   - Environment
-  - 
+  - Interaction
   - 
   - 
   - 
@@ -43,6 +43,12 @@ TagManager:
     locked: 0
   - name: Environment
     uniqueID: 1226872497
+    locked: 0
+  - name: Player
+    uniqueID: 2814811773
+    locked: 0
+  - name: Light Glow
+    uniqueID: 2207571403
     locked: 0
   m_RenderingLayers:
   - Default
