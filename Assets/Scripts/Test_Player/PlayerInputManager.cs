@@ -5,7 +5,7 @@ public class PlayerInputManager : MonoBehaviour
 {
     public static PlayerInputManager Instance;
 
-    InputSystem_Actions playerInput;
+    PlayerControls playerInput;
     public CinemachineCamera followCamera;
 
     [Header("Switch")]
@@ -49,18 +49,23 @@ public class PlayerInputManager : MonoBehaviour
     {
         if (playerInput == null)
         {
-            playerInput = new InputSystem_Actions();
+            playerInput = new PlayerControls();
 
-            playerInput.Player.Move.performed += ctx => MovementInput = ctx.ReadValue<Vector2>();
-            playerInput.Player.Move.canceled += ctx => MovementInput = Vector2.zero;
+            playerInput.Movement.Move.performed += ctx => MovementInput = ctx.ReadValue<Vector2>();
+            playerInput.Movement.Move.canceled += ctx => MovementInput = Vector2.zero;
 
-            playerInput.Player.Interact.performed += ctx => interact = true;
+            playerInput.Actions.Interact.performed += ctx => interact = true;
 
-            playerInput.Player.Previous.performed += ctx => switch_prev_player = true;
-            playerInput.Player.Next.performed += ctx => switch_next_player = true;
+            playerInput.Actions.Previous.performed += ctx => switch_prev_player = true;
+            playerInput.Actions.Next.performed += ctx => switch_next_player = true;
         }
 
         playerInput.Enable();
+    }
+
+    void OnDisable()
+    {
+        playerInput.Disable();
     }
 
     public void HandleInteractInput()
