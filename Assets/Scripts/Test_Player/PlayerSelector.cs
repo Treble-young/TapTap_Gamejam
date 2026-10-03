@@ -6,6 +6,8 @@ public class PlayerSelector : MonoBehaviour
     public static PlayerSelector Instance;
 
     public int currentPlayerID = 0;
+    public PlayerManager currentPlayer => playerManagers.Find(player => player.playerID == currentPlayerID);
+
     private int _lastCurrentPlayerID = -1;
 
     public List<PlayerManager> playerManagers = new List<PlayerManager>();
@@ -61,6 +63,11 @@ public class PlayerSelector : MonoBehaviour
             player.playerState = isCurrent ? PlayerState.InputControlling : PlayerState.AutoMoving;
             if (isCurrent)
                 currentPlayer = player;
+        }
+
+        if (currentPlayer != null && PlayerInputManager.Instance != null && PlayerInputManager.Instance.followCamera != null)
+        {
+            PlayerInputManager.Instance.followCamera.Follow = currentPlayer.transform;
         }
     }
 }

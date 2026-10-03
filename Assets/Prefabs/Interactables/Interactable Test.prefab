@@ -209,6 +209,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::InteractableManager
   interactionArea: {fileID: 1343889448993445893}
   canInteractWithTypes: 00000000
+  interactOnce: 1
+  animator: {fileID: 0}
+  interactAnimationTriggerName: Interact
 --- !u!1 &7595743439776171200
 GameObject:
   m_ObjectHideFlags: 0
