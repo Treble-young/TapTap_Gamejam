@@ -70672,11 +70672,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1812735950884837778, guid: f2d8ea4cf855f4b498b8209b3beaf0b6, type: 3}
       propertyPath: m_SortingLayer
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1812735950884837778, guid: f2d8ea4cf855f4b498b8209b3beaf0b6, type: 3}
       propertyPath: m_SortingLayerID
-      value: -2087395893
+      value: 1226872497
       objectReference: {fileID: 0}
     - target: {fileID: 7912471129382086697, guid: f2d8ea4cf855f4b498b8209b3beaf0b6, type: 3}
       propertyPath: m_Name
