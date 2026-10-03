@@ -205,7 +205,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
   playerInput: {fileID: 0}
-  playerSelector: {fileID: 0}
   playerMovement: {fileID: 0}
   playerInteraction: {fileID: 0}
   playerType: 0

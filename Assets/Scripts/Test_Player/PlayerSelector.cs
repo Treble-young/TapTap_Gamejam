@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class PlayerSelector : MonoBehaviour
@@ -9,6 +10,8 @@ public class PlayerSelector : MonoBehaviour
     public PlayerManager currentPlayer => playerManagers.Find(player => player.playerID == currentPlayerID);
 
     private int _lastCurrentPlayerID = -1;
+
+    [SerializeField] private LightFollow _followLight;
 
     public List<PlayerManager> playerManagers = new List<PlayerManager>();
 
@@ -68,6 +71,11 @@ public class PlayerSelector : MonoBehaviour
         if (currentPlayer != null && PlayerInputManager.Instance != null && PlayerInputManager.Instance.followCamera != null)
         {
             PlayerInputManager.Instance.followCamera.Follow = currentPlayer.transform;
+        }
+
+        if (_followLight != null && currentPlayer != null)
+        {
+            _followLight.target = currentPlayer.transform;
         }
     }
 }
