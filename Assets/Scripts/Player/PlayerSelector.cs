@@ -9,6 +9,13 @@ public class PlayerSelector : MonoBehaviour
     public int currentPlayerID = 0;
     public PlayerManager currentPlayer => playerManagers.Find(player => player.playerID == currentPlayerID);
 
+    public PlayerInventoryManager currentInventory => currentPlayer != null ? currentPlayer.playerInventory : null;
+
+    public PlayerManager GetMainPlayer()
+    {
+        return playerManagers.Find(player => player.playerType == PlayerType.Main);
+    }
+
     private int _lastCurrentPlayerID = -1;
 
     [SerializeField] private LightFollow _followLight;
@@ -35,9 +42,26 @@ public class PlayerSelector : MonoBehaviour
             }
         }
 
-        foreach (PlayerManager player in playerManagers)
+        ReassignPlayerIDs();
+
+        currentPlayerID = playerManagers.FindIndex(player => player.playerState == PlayerState.InputControlling);
+
+        if (currentPlayerID < 0)
+            currentPlayerID = playerManagers.FindIndex(player => player.playerState != PlayerState.Stranger);
+    }
+
+    public void ReassignPlayerIDs()
+    {
+
+        for (int i = 0; i < playerManagers.Count; i++)
         {
-            player.playerID = playerManagers.IndexOf(player);
+            if (playerManagers[i] != null)
+                playerManagers[i].playerID = i;
+        }
+
+        if (currentPlayerID >= playerManagers.Count || currentPlayerID < 0)
+        {
+            currentPlayerID = playerManagers.FindIndex(player => player.playerType == PlayerType.Main);
         }
     }
 
@@ -62,6 +86,9 @@ public class PlayerSelector : MonoBehaviour
 
         foreach (PlayerManager player in playerManagers)
         {
+            if (player.playerState == PlayerState.Stranger)
+                continue;
+
             bool isCurrent = player.playerID == currentPlayerID;
             player.playerState = isCurrent ? PlayerState.InputControlling : PlayerState.AutoMoving;
             if (isCurrent)
@@ -76,6 +103,56 @@ public class PlayerSelector : MonoBehaviour
         if (_followLight != null && currentPlayer != null)
         {
             _followLight.target = currentPlayer.transform;
+        }
+    }
+
+    public void UseCurrentSelectedItem()
+    {
+        if (currentInventory == null)
+        {
+            return;
+        }
+
+        InventoryItemData item = currentInventory.currentSelectedItem;
+        if (item == null)
+        {
+            return;
+        }
+
+        item.Use(currentPlayer);
+
+        currentInventory.NotifyChanged();
+    }
+
+    public void SelectNext()
+    {
+        if (playerManagers.Count == 0)
+            return;
+
+        for (int i = 1; i <= playerManagers.Count; i++)
+        {
+            int index = (currentPlayerID + i) % playerManagers.Count;
+            if (playerManagers[index] != null && playerManagers[index].playerState != PlayerState.Stranger)
+            {
+                currentPlayerID = index;
+                return;
+            }
+        }
+    }
+
+    public void SelectPrevious()
+    {
+        if (playerManagers.Count == 0)
+            return;
+
+        for (int i = 1; i <= playerManagers.Count; i++)
+        {
+            int index = ((currentPlayerID - i) % playerManagers.Count + playerManagers.Count) % playerManagers.Count;
+            if (playerManagers[index] != null && playerManagers[index].playerState != PlayerState.Stranger)
+            {
+                currentPlayerID = index;
+                return;
+            }
         }
     }
 }

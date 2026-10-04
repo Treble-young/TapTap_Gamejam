@@ -1,13 +1,10 @@
 fileFormatVersion: 2
-guid: eeee23548c5e97245b1502189f0d3fa7
+guid: 3a4aa0123fc80e04a8d361165dbf8c09
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: 2756004924462781099
-    second: "ChatGPT Image 2026\u5E7410\u67083\u65E5 09_49_12_0"
-  - first:
-      213: 1028142103987985470
-    second: "ChatGPT Image 2026\u5E7410\u67083\u65E5 09_49_12_1"
+      213: 7144765117910732573
+    second: lighter_icon_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -54,7 +51,7 @@ TextureImporter:
   spriteMeshType: 1
   alignment: 0
   spritePivot: {x: 0.5, y: 0.5}
-  spritePixelsToUnits: 100
+  spritePixelsToUnits: 512
   spriteBorder: {x: 0, y: 0, z: 0, w: 0}
   spriteGenerateFallbackPhysicsShape: 1
   alphaUsage: 1
@@ -103,13 +100,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: "ChatGPT Image 2026\u5E7410\u67083\u65E5 09_49_12_0"
+      name: lighter_icon_0
       rect:
         serializedVersion: 2
-        x: 0
-        y: 0
-        width: 1254
-        height: 1254
+        x: 336
+        y: 160
+        width: 352
+        height: 772
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -118,30 +115,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: ba2d4d970eb4f3620800000000000000
-      internalID: 2756004924462781099
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: "ChatGPT Image 2026\u5E7410\u67083\u65E5 09_49_12_1"
-      rect:
-        serializedVersion: 2
-        x: 595
-        y: 7
-        width: 15
-        height: 12
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      customData: 
-      outline: []
-      physicsShape: []
-      tessellationDetail: -1
-      bones: []
-      spriteID: e3c93d6dbc1b44e00800000000000000
-      internalID: 1028142103987985470
+      spriteID: d1fcba8250e472360800000000000000
+      internalID: 7144765117910732573
       vertices: []
       indices: 
       edges: []
@@ -160,8 +135,7 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      "ChatGPT Image 2026\u5E7410\u67083\u65E5 09_49_12_0": 2756004924462781099
-      "ChatGPT Image 2026\u5E7410\u67083\u65E5 09_49_12_1": 1028142103987985470
+      lighter_icon_0: 7144765117910732573
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

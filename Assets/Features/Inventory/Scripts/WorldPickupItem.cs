@@ -4,5 +4,10 @@ public class WorldPickupItem : MonoBehaviour
 {
     [SerializeField] private InventoryItemData itemData;
 
-    public InventoryItemData ItemData => itemData;
+    [HideInInspector] public InventoryItemData ItemData;
+
+    void Awake()
+    {
+        ItemData = Instantiate(itemData);
+    }
 }

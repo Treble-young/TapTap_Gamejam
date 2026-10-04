@@ -12,6 +12,10 @@ public class PlayerMovementManager : MonoBehaviour
     [Header("Settings")]
     [SerializeField] PlayerSettings PlayerSettings;
 
+    [Header("Stranger Avoid")]
+    [Tooltip("是否让路避开操控的玩家（可运行时动态更改，false 则原地不动）")]
+    public bool avoidPlayer = true;
+
     private Vector2 moveDirection;
 
     // Auto-follow 状态
@@ -19,6 +23,12 @@ public class PlayerMovementManager : MonoBehaviour
     private int pathIndex;
     private float nextRepathTime;
     private Vector2 lastTargetPos;
+
+    // Stranger 让路状态
+    private enum StrangerState { Idle, Avoiding, Returning }
+    private Vector2 homePosition;
+    private Vector2 avoidPosition;
+    private StrangerState strangerState = StrangerState.Idle;
 
     void Awake()
     {
@@ -37,6 +47,11 @@ public class PlayerMovementManager : MonoBehaviour
                 bounciness = 0f
             };
         }
+    }
+
+    void Start()
+    {
+        homePosition = rb.position;
     }
 
     void Update()
@@ -70,10 +85,19 @@ public class PlayerMovementManager : MonoBehaviour
 
     private void Movement()
     {
-        if (playerManager.playerState == PlayerState.InputControlling)
+        if (playerManager.playerState == PlayerState.Stranger)
+            StrangerMovement();
+        else if (playerManager.playerState == PlayerState.InputControlling)
             InputMovement();
+        else if (playerManager.playerType == PlayerType.Class01)
+        {
+            if (PlayerSelector.Instance.GetMainPlayer().isUsingLighter)
+                AutoFollowMovement();
+            else
+                rb.linearVelocity = Vector2.zero;
+        }
         else
-            AutoFollowMovement();
+            rb.linearVelocity = Vector2.zero;
     }
 
     private void InputMovement()
@@ -83,6 +107,90 @@ public class PlayerMovementManager : MonoBehaviour
         float rate = moveDirection.sqrMagnitude > 0.001f ? PlayerSettings.Acceleration : PlayerSettings.Deceleration;
         rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, rate * Time.fixedDeltaTime);
     }
+
+
+    // ---- Stranger：玩家靠近时让开一小步，玩家离开后回到原处 ----
+
+    private void StrangerMovement()
+    {
+        if (!avoidPlayer)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
+        Transform target = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentPlayer?.transform : null;
+        if (target == null)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
+        Vector2 myPos = rb.position;
+        Vector2 targetPos = target.position;
+        float distance = Vector2.Distance(myPos, targetPos);
+
+        // 玩家点燃打火机时，陌生人立刻返回原位置
+        if (PlayerSelector.Instance.currentPlayer.isUsingLighter)
+        {
+            strangerState = StrangerState.Returning;
+        }
+        // 状态切换（让路半径 < 回家半径，形成迟滞，避免在阈值附近来回抖）
+        else
+        {
+            switch (strangerState)
+            {
+                case StrangerState.Idle:
+                    if (distance <= PlayerSettings.StrangerAvoidRadius)
+                        StartAvoiding(myPos, targetPos);
+                    break;
+
+                case StrangerState.Avoiding:
+                    if (distance > PlayerSettings.StrangerReturnRadius)
+                        strangerState = StrangerState.Returning;
+                    break;
+
+                case StrangerState.Returning:
+                    if (distance <= PlayerSettings.StrangerAvoidRadius)
+                        StartAvoiding(myPos, targetPos);
+                    break;
+            }
+        }
+
+        if (strangerState == StrangerState.Idle)
+        {
+            rb.linearVelocity = Vector2.zero;
+            return;
+        }
+
+        Vector2 targetPoint = strangerState == StrangerState.Returning ? homePosition : avoidPosition;
+        float speed = strangerState == StrangerState.Returning ? PlayerSettings.StrangerReturnSpeed : PlayerSettings.StrangerAvoidSpeed;
+
+        Vector2 dir = targetPoint - myPos;
+        if (dir.magnitude <= PlayerSettings.StrangerReturnStopDistance)
+        {
+            rb.linearVelocity = Vector2.zero;
+            if (strangerState == StrangerState.Returning)
+                strangerState = StrangerState.Idle;
+            return;
+        }
+
+        // 平滑逼近目标速度，避免速度瞬间跳变导致的抖动
+        Vector2 targetVelocity = dir.normalized * speed;
+        rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, PlayerSettings.StrangerAcceleration * Time.fixedDeltaTime);
+    }
+
+    private void StartAvoiding(Vector2 myPos, Vector2 targetPos)
+    {
+        Vector2 away = myPos - targetPos;
+        if (away.sqrMagnitude < 0.0001f)
+            away = Vector2.right; // 和玩家重叠时随便挑个方向
+        away.Normalize();
+
+        avoidPosition = homePosition + away * PlayerSettings.StrangerAvoidDistance;
+        strangerState = StrangerState.Avoiding;
+    }
+
 
     // ---- Auto follow：使用寻路跟随当前操控的玩家 ----
 

@@ -1,50 +1,33 @@
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 public class FKeyPickupController : MonoBehaviour
 {
-    [SerializeField] private HotbarInventory inventory;
-    [SerializeField] private float pickupRadius = 1.5f;
+    public static FKeyPickupController Instance;
 
-    private InputAction pickupAction;
+    [SerializeField] private float pickupRadius = 1.5f;
 
     private void Awake()
     {
-        pickupAction = new InputAction(
-            "Pickup",
-            InputActionType.Button,
-            "<Keyboard>/f"
-        );
-    }
-
-    private void OnEnable()
-    {
-        pickupAction.Enable();
-    }
-
-    private void OnDisable()
-    {
-        pickupAction.Disable();
+        Instance = this;
     }
 
     private void OnDestroy()
     {
-        pickupAction.Dispose();
+        if (Instance == this)
+            Instance = null;
     }
 
-    private void Update()
+    /// <summary>由 PlayerInputManager 的 Pickup 按键触发</summary>
+    public void TryPickUp()
     {
-        if (pickupAction.WasPressedThisFrame())
-            TryPickUp();
-    }
-
-    private void TryPickUp()
-    {
-        if (inventory == null || PlayerSelector.Instance == null)
+        if (PlayerSelector.Instance == null)
             return;
 
         PlayerManager player = PlayerSelector.Instance.currentPlayer;
         if (player == null) return;
+
+        PlayerInventoryManager inventory = player.playerInventory;
+        if (inventory == null) return;
 
         Vector2 playerPosition = player.transform.position;
         Collider2D[] hits = Physics2D.OverlapCircleAll(

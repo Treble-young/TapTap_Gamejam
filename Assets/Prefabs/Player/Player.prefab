@@ -105,6 +105,7 @@ GameObject:
   - component: {fileID: 753115190861184349}
   - component: {fileID: 2155734683662811754}
   - component: {fileID: 1809497233094280630}
+  - component: {fileID: 5166047278847714029}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -207,10 +208,12 @@ MonoBehaviour:
   playerInput: {fileID: 0}
   playerMovement: {fileID: 0}
   playerInteraction: {fileID: 0}
+  playerInventory: {fileID: 0}
   playerType: 0
   playerState: 0
   playerID: 0
   isMoving: 0
+  willBeAvoided: 1
 --- !u!114 &2155734683662811754
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -227,6 +230,7 @@ MonoBehaviour:
   bodyCollider: {fileID: 0}
   playerManager: {fileID: 0}
   PlayerSettings: {fileID: 11400000, guid: 63ce18cb93846684a977299bb011a3b3, type: 2}
+  avoidPlayer: 1
 --- !u!114 &1809497233094280630
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -240,3 +244,18 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteractionManager
   currentInteractableActions: []
+--- !u!114 &5166047278847714029
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8955197428277842961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e3687f681b76ec6468875c5652514c53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerInventoryManager
+  playerOwnedTheInventory: {fileID: 0}
+  inventory: []
+  selectedIndex: 0

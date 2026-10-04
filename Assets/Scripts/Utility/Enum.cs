@@ -9,6 +9,7 @@ public enum PlayerState
 {
     InputControlling,
     AutoMoving,
+    Stranger,
 }
 
 public enum PlayerType

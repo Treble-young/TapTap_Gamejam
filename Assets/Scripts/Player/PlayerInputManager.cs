@@ -18,6 +18,11 @@ public class PlayerInputManager : MonoBehaviour
     [Header("Interaction")]
     public bool interact;
 
+    [Header("Pickup")]
+    public bool pickup;
+
+    [Header("Use Item")]
+    public bool use_item;
 
 
     void Awake()
@@ -43,6 +48,8 @@ public class PlayerInputManager : MonoBehaviour
     {
         HandleInteractInput();
         HandleSwitchInput();
+        HandlePickupInput();
+        HandleUseItemInput();
     }
 
     void OnEnable()
@@ -56,8 +63,12 @@ public class PlayerInputManager : MonoBehaviour
 
             playerInput.Actions.Interact.performed += ctx => interact = true;
 
+            playerInput.Actions.Pickup.performed += ctx => pickup = true;
+
             playerInput.Actions.Previous.performed += ctx => switch_prev_player = true;
             playerInput.Actions.Next.performed += ctx => switch_next_player = true;
+
+            playerInput.Actions.UseItem.performed += ctx => use_item = true;
         }
 
         playerInput.Enable();
@@ -74,6 +85,17 @@ public class PlayerInputManager : MonoBehaviour
         {
             interact = false;
 
+            // 弹窗显示时，按 E 优先关闭弹窗，不触发交互
+            if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
+            {
+                PlayerUIPopUpManager popUp = PlayerUIManager.Instance.popUpManager;
+                if (popUp.IsShowing)
+                {
+                    popUp.HidePopUpWindow();
+                    return;
+                }
+            }
+
             PlayerSelector.Instance.currentPlayer.playerInteraction.Interact();
         }
     }
@@ -84,18 +106,36 @@ public class PlayerInputManager : MonoBehaviour
         {
             switch_prev_player = false;
 
-            PlayerSelector.Instance.currentPlayerID--;
-            if (PlayerSelector.Instance.currentPlayerID < 0)
-                PlayerSelector.Instance.currentPlayerID = PlayerSelector.Instance.playerManagers.Count - 1;
+            PlayerSelector.Instance.SelectPrevious();
         }
 
         if (switch_next_player)
         {
             switch_next_player = false;
 
-            PlayerSelector.Instance.currentPlayerID++;
-            if (PlayerSelector.Instance.currentPlayerID >= PlayerSelector.Instance.playerManagers.Count)
-                PlayerSelector.Instance.currentPlayerID = 0;
+            PlayerSelector.Instance.SelectNext();
+        }
+    }
+
+    public void HandlePickupInput()
+    {
+        if (pickup)
+        {
+            pickup = false;
+
+            if (FKeyPickupController.Instance != null)
+                FKeyPickupController.Instance.TryPickUp();
+        }
+    }
+
+    public void HandleUseItemInput()
+    {
+        if (use_item)
+        {
+            use_item = false;
+
+            if (PlayerSelector.Instance != null)
+                PlayerSelector.Instance.UseCurrentSelectedItem();
         }
     }
 }
