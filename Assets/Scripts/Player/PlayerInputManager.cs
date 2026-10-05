@@ -1,9 +1,11 @@
 using UnityEngine;
 using Unity.Cinemachine;
 
+
 public class PlayerInputManager : MonoBehaviour
 {
     public static PlayerInputManager Instance;
+    public PlayerUIManuManager manuManager;
 
     PlayerControls playerInput;
     public CinemachineCamera followCamera;
@@ -26,6 +28,7 @@ public class PlayerInputManager : MonoBehaviour
 
     [Header("UI")]
     public bool openMenu;
+
 
 
     void Awake()
@@ -151,6 +154,17 @@ public class PlayerInputManager : MonoBehaviour
         {
             openMenu = false;
 
+            if (manuManager != null)
+            {
+                if (manuManager.menuWindow.activeSelf == true)
+                {
+                    manuManager.Hide(); 
+                }
+                else
+                {
+                    manuManager.Show(); 
+                }
+            }
         }
     }
 }

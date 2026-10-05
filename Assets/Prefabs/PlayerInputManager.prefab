@@ -44,3 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7ae7bb75aede6848b7babc93e596826, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInputManager
+  followCamera: {fileID: 0}
+  switch_prev_player: 0
+  switch_next_player: 0
+  interact: 0
+  pickup: 0
+  use_item: 0
+  openMenu: 0
