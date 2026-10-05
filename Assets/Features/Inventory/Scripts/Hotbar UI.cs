@@ -36,11 +36,19 @@ public class HotbarUI : MonoBehaviour, IPointerClickHandler
             Bind(current);
     }
 
+    private void OnEnable()
+    {
+        if (marker != null)
+            Bind(CurrentInventory());
+    }
+
     private void OnDisable()
     {
         if (boundInventory != null)
             boundInventory.Changed -= Refresh;
     }
+    public void ShowInventoryWindow() => gameObject.SetActive(true);
+    public void HideInventoryWindow() => gameObject.SetActive(false);
 
     public void OnPointerClick(PointerEventData eventData)
     {
@@ -131,7 +139,6 @@ public class HotbarUI : MonoBehaviour, IPointerClickHandler
         go.SetActive(false);
     }
 
-    /// <summary>代码生成一个向下指的三角 Sprite（没有美术资源时先用这个）</summary>
     private static Sprite CreateTriangleSprite()
     {
         const int size = 32;
@@ -157,7 +164,6 @@ public class HotbarUI : MonoBehaviour, IPointerClickHandler
         return Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f), 32f);
     }
 
-    /// <summary>场景里没有 EventSystem 时补一个，否则 UI 点击不生效</summary>
     private static void EnsureEventSystem()
     {
         if (EventSystem.current != null)

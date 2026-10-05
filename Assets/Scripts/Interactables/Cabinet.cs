@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class Cabinet : InteractableManager
 {
-    public WorldPickupItem[] worldPickupItemSpawnedPrefab;
+    public GameObject[] worldPickupItemSpawnedPrefab;
     public Transform spawnPoint;
 
     public override void Interact(PlayerManager player)
@@ -13,7 +13,7 @@ public class Cabinet : InteractableManager
         {
             for (int i = 0; i < worldPickupItemSpawnedPrefab.Length; i++)
             {
-                WorldPickupItem item = Instantiate(worldPickupItemSpawnedPrefab[i], spawnPoint.position, Quaternion.identity);
+                GameObject item = Instantiate(worldPickupItemSpawnedPrefab[i], spawnPoint.position, Quaternion.identity);
             }
         }
     }

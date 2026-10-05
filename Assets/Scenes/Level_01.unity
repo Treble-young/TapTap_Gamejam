@@ -64934,7 +64934,7 @@ Tilemap:
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.35220122, g: 0.35220122, b: 0.35220122, a: 1}
   m_Origin: {x: -37, y: -37, z: 0}
   m_Size: {x: 98, y: 66, z: 1}
   m_TileAnchor: {x: 0.5, y: 0.5, z: 0}
@@ -65024,10 +65024,6 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 896304842910755391, guid: e69561370ce45834e9611add60007a5a, type: 3}
-      propertyPath: markerSprite
-      value: 
-      objectReference: {fileID: -4043771284614793474, guid: a02d24d2bf859ee40aa35d15aa96f9d3, type: 3}
     - target: {fileID: 1539842449593624458, guid: e69561370ce45834e9611add60007a5a, type: 3}
       propertyPath: m_AnchorMax.y
       value: 0
@@ -65078,7 +65074,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6135941610987407816, guid: e69561370ce45834e9611add60007a5a, type: 3}
       propertyPath: m_Name
-      value: InventoryCanvas
+      value: PlayerUI
       objectReference: {fileID: 0}
     - target: {fileID: 6645562620426281578, guid: e69561370ce45834e9611add60007a5a, type: 3}
       propertyPath: m_AnchorMax.y
@@ -65766,6 +65762,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 6a831856d18f82f478644b989f859886, type: 3}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Color.b
       value: 1
@@ -69592,12 +69592,12 @@ GameObject:
   - component: {fileID: 1726585223}
   - component: {fileID: 1726585222}
   m_Layer: 0
-  m_Name: Global Light 2D
+  m_Name: "\u8C03\u6211\u7684Intensity\u7684\u53C2\u6570\u6539\u53D8\u4E16\u754C\u4EAE\u5EA6"
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1726585222
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -69615,7 +69615,7 @@ MonoBehaviour:
   m_BlendStyleIndex: 0
   m_FalloffIntensity: 0.5
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0
+  m_Intensity: 1
   m_LightVolumeIntensity: 1
   m_LightVolumeEnabled: 0
   m_ApplyToSortingLayers: 00000000b19620497d9ec6a7cbdd9483
@@ -69923,6 +69923,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cabinet
       objectReference: {fileID: 0}
+    - target: {fileID: 5170574205834408463, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: 'worldPickupItemSpawnedPrefab.Array.data[0]'
+      value: 
+      objectReference: {fileID: 3222432364485515477, guid: ce335d49ff01d6b47a7a419efbb76d19, type: 3}
+    - target: {fileID: 5170574205834408463, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: 'worldPickupItemSpawnedPrefab.Array.data[1]'
+      value: 
+      objectReference: {fileID: 5187895089345143203, guid: c967f5e358b3be741b8185240b2b8b9b, type: 3}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -70350,12 +70358,16 @@ PrefabInstance:
       objectReference: {fileID: 11400000, guid: cf5a71336c3cc26448807569aa4a2ec3, type: 2}
     - target: {fileID: 7227783211798809945, guid: 88b0370d75686df45b6e791ccbedb56c, type: 3}
       propertyPath: whitelistLights.Array.size
-      value: 1
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7227783211798809945, guid: 88b0370d75686df45b6e791ccbedb56c, type: 3}
       propertyPath: 'whitelistLights.Array.data[0]'
       value: 
       objectReference: {fileID: 881637871}
+    - target: {fileID: 7227783211798809945, guid: 88b0370d75686df45b6e791ccbedb56c, type: 3}
+      propertyPath: 'whitelistLights.Array.data[1]'
+      value: 
+      objectReference: {fileID: 1726585222}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

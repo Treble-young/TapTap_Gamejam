@@ -24,6 +24,9 @@ public class PlayerInputManager : MonoBehaviour
     [Header("Use Item")]
     public bool use_item;
 
+    [Header("UI")]
+    public bool openMenu;
+
 
     void Awake()
     {
@@ -50,6 +53,7 @@ public class PlayerInputManager : MonoBehaviour
         HandleSwitchInput();
         HandlePickupInput();
         HandleUseItemInput();
+        HandleOpenMenuInput();
     }
 
     void OnEnable()
@@ -69,6 +73,8 @@ public class PlayerInputManager : MonoBehaviour
             playerInput.Actions.Next.performed += ctx => switch_next_player = true;
 
             playerInput.Actions.UseItem.performed += ctx => use_item = true;
+
+            playerInput.UI.Menu.performed += ctx => openMenu = true;
         }
 
         playerInput.Enable();
@@ -85,7 +91,6 @@ public class PlayerInputManager : MonoBehaviour
         {
             interact = false;
 
-            // 弹窗显示时，按 E 优先关闭弹窗，不触发交互
             if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
             {
                 PlayerUIPopUpManager popUp = PlayerUIManager.Instance.popUpManager;
@@ -136,6 +141,16 @@ public class PlayerInputManager : MonoBehaviour
 
             if (PlayerSelector.Instance != null)
                 PlayerSelector.Instance.UseCurrentSelectedItem();
+        }
+    }
+
+    // 用于处理打开菜单的输入
+    public void HandleOpenMenuInput()
+    {
+        if (openMenu)
+        {
+            openMenu = false;
+
         }
     }
 }

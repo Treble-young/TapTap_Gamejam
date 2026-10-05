@@ -179,9 +179,9 @@ GameObject:
   m_Component:
   - component: {fileID: 1663845294578076923}
   - component: {fileID: 8873540681707758205}
-  - component: {fileID: 5170574205834408463}
   - component: {fileID: 3839437449004615706}
   - component: {fileID: 5675809019911494438}
+  - component: {fileID: 5170574205834408463}
   m_Layer: 0
   m_Name: Cabinet
   m_TagString: Untagged
@@ -266,29 +266,6 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
---- !u!114 &5170574205834408463
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4194030301567096738}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7702499a4a129af4b8d1edf4f646ae4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::Cabinet
-  interactionArea: {fileID: 6772705143433963574}
-  canInteractWithTypes: 00000000
-  interactOnce: 1
-  animator: {fileID: 0}
-  interactAnimationNames:
-    keys: 
-    values: []
-  worldPickupItemSpawnedPrefab:
-  - {fileID: 8295563518022270994, guid: ce335d49ff01d6b47a7a419efbb76d19, type: 3}
-  - {fileID: 1214174482158118335, guid: c967f5e358b3be741b8185240b2b8b9b, type: 3}
-  spawnPoint: {fileID: 8496370235279981349}
 --- !u!50 &3839437449004615706
 Rigidbody2D:
   serializedVersion: 5
@@ -371,6 +348,29 @@ PolygonCollider2D:
       - {x: 0.35391447, y: 0.64072317}
       - {x: 0.059664696, y: 0.764889}
   m_UseDelaunayMesh: 1
+--- !u!114 &5170574205834408463
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4194030301567096738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7702499a4a129af4b8d1edf4f646ae4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Cabinet
+  interactionArea: {fileID: 6772705143433963574}
+  canInteractWithTypes: 00000000
+  interactOnce: 1
+  animator: {fileID: 0}
+  interactAnimationNames:
+    keys: 
+    values: []
+  worldPickupItemSpawnedPrefab:
+  - {fileID: 0}
+  - {fileID: 0}
+  spawnPoint: {fileID: 8496370235279981349}
 --- !u!1 &5570305486478763595
 GameObject:
   m_ObjectHideFlags: 0
