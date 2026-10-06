@@ -65444,11 +65444,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1663845294578076923, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -3.55
+      value: -3.478
       objectReference: {fileID: 0}
     - target: {fileID: 1663845294578076923, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.96
+      value: -2.883
       objectReference: {fileID: 0}
     - target: {fileID: 1663845294578076923, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: m_LocalPosition.z
@@ -65486,6 +65486,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cabinet (4)
       objectReference: {fileID: 0}
+    - target: {fileID: 4686232770945983884, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.078
+      objectReference: {fileID: 0}
+    - target: {fileID: 4686232770945983884, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.556
+      objectReference: {fileID: 0}
     - target: {fileID: 5170574205834408463, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: 'worldPickupItemSpawnedPrefab.Array.data[0]'
       value: 
@@ -65499,31 +65507,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
---- !u!1 &655130929 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 8462298889945642509, guid: c6ac29de8c183ea458d8690d87d50df0, type: 3}
-  m_PrefabInstance: {fileID: 5133486297469508588}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &655130935
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 655130929}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f453f694addf4275988fac205bc91968, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Cinemachine::Unity.Cinemachine.CinemachineConfiner2D
-  BoundingShape2D: {fileID: 0}
-  Damping: 0.5
-  SlowingDistance: 5
-  OversizeWindow:
-    Enabled: 0
-    MaxWindowSize: 0
-    Padding: 0
-  m_LegacyMaxWindowSize: -2
 --- !u!1 &800618892
 GameObject:
   m_ObjectHideFlags: 0
@@ -65717,6 +65700,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cabinet (3)
       objectReference: {fileID: 0}
+    - target: {fileID: 4686232770945983884, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.097
+      objectReference: {fileID: 0}
+    - target: {fileID: 4686232770945983884, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.517
+      objectReference: {fileID: 0}
+    - target: {fileID: 4948773296106963636, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_PointLightOuterRadius
+      value: 1.04
+      objectReference: {fileID: 0}
     - target: {fileID: 5170574205834408463, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: worldPickupItemSpawnedPrefab.Array.size
       value: 0
@@ -65785,6 +65780,22 @@ PrefabInstance:
     - target: {fileID: 4194030301567096738, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: m_Name
       value: Cabinet (2)
+      objectReference: {fileID: 0}
+    - target: {fileID: 4686232770945983884, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.049
+      objectReference: {fileID: 0}
+    - target: {fileID: 4686232770945983884, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.628
+      objectReference: {fileID: 0}
+    - target: {fileID: 4948773296106963636, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_Intensity
+      value: 1.84
+      objectReference: {fileID: 0}
+    - target: {fileID: 4948773296106963636, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_PointLightOuterRadius
+      value: 0.42
       objectReference: {fileID: 0}
     - target: {fileID: 5170574205834408463, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: worldPickupItemSpawnedPrefab.Array.size
@@ -69634,6 +69645,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cabinet (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 4686232770945983884, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.295
+      objectReference: {fileID: 0}
+    - target: {fileID: 4686232770945983884, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.402
+      objectReference: {fileID: 0}
+    - target: {fileID: 4948773296106963636, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_Intensity
+      value: 0.64
+      objectReference: {fileID: 0}
+    - target: {fileID: 4948773296106963636, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_PointLightOuterRadius
+      value: 0.52
+      objectReference: {fileID: 0}
     - target: {fileID: 5170574205834408463, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: worldPickupItemSpawnedPrefab.Array.size
       value: 0
@@ -69929,14 +69956,6 @@ PrefabInstance:
     - target: {fileID: 5358559101960531707, guid: 3fc1fbfb97d9daf42b69109a836bd501, type: 3}
       propertyPath: m_Name
       value: PlayerInputManager
-      objectReference: {fileID: 0}
-    - target: {fileID: 7728723372596537232, guid: 3fc1fbfb97d9daf42b69109a836bd501, type: 3}
-      propertyPath: openMenu
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7728723372596537232, guid: 3fc1fbfb97d9daf42b69109a836bd501, type: 3}
-      propertyPath: use_item
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7728723372596537232, guid: 3fc1fbfb97d9daf42b69109a836bd501, type: 3}
       propertyPath: manuManager
@@ -70431,6 +70450,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Cabinet (5)
       objectReference: {fileID: 0}
+    - target: {fileID: 4686232770945983884, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.111
+      objectReference: {fileID: 0}
+    - target: {fileID: 4686232770945983884, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.546
+      objectReference: {fileID: 0}
+    - target: {fileID: 4948773296106963636, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_Intensity
+      value: 0.43
+      objectReference: {fileID: 0}
+    - target: {fileID: 4948773296106963636, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_PointLightOuterRadius
+      value: 0.91
+      objectReference: {fileID: 0}
     - target: {fileID: 5170574205834408463, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: worldPickupItemSpawnedPrefab.Array.size
       value: 0
@@ -70499,6 +70534,14 @@ PrefabInstance:
     - target: {fileID: 4194030301567096738, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: m_Name
       value: Cabinet
+      objectReference: {fileID: 0}
+    - target: {fileID: 4948773296106963636, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_Intensity
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4948773296106963636, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_PointLightOuterRadius
+      value: 1.13
       objectReference: {fileID: 0}
     - target: {fileID: 5170574205834408463, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: 'worldPickupItemSpawnedPrefab.Array.data[0]'
@@ -70708,21 +70751,9 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
-    - target: {fileID: 6161184973821914548, guid: c6ac29de8c183ea458d8690d87d50df0, type: 3}
-      propertyPath: Priority.Enabled
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 8462298889945642509, guid: c6ac29de8c183ea458d8690d87d50df0, type: 3}
       propertyPath: m_Name
       value: CinemachineCamera
-      objectReference: {fileID: 0}
-    - target: {fileID: 9016619436469724529, guid: c6ac29de8c183ea458d8690d87d50df0, type: 3}
-      propertyPath: FollowOffset.x
-      value: 2.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 9016619436469724529, guid: c6ac29de8c183ea458d8690d87d50df0, type: 3}
-      propertyPath: FollowOffset.y
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 9152522984890867998, guid: c6ac29de8c183ea458d8690d87d50df0, type: 3}
       propertyPath: m_LocalPosition.x
@@ -70767,10 +70798,7 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 8462298889945642509, guid: c6ac29de8c183ea458d8690d87d50df0, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 655130935}
+    m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: c6ac29de8c183ea458d8690d87d50df0, type: 3}
 --- !u!1001 &8337249525235156437
 PrefabInstance:
@@ -70823,30 +70851,6 @@ PrefabInstance:
     - target: {fileID: 6639661133629650746, guid: c66b9b6259c75f240aa04cdfaec1f72e, type: 3}
       propertyPath: m_Name
       value: Main Camera
-      objectReference: {fileID: 0}
-    - target: {fileID: 7731063223209383932, guid: c66b9b6259c75f240aa04cdfaec1f72e, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7731063223209383932, guid: c66b9b6259c75f240aa04cdfaec1f72e, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7731063223209383932, guid: c66b9b6259c75f240aa04cdfaec1f72e, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7731063223209383932, guid: c66b9b6259c75f240aa04cdfaec1f72e, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7731063223209383932, guid: c66b9b6259c75f240aa04cdfaec1f72e, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7731063223209383932, guid: c66b9b6259c75f240aa04cdfaec1f72e, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

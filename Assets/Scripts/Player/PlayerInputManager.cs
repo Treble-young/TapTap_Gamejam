@@ -46,8 +46,6 @@ public class PlayerInputManager : MonoBehaviour
     void Start()
     {
         followCamera = FindObjectsByType<CinemachineCamera>(FindObjectsSortMode.None)[0];
-
-        DontDestroyOnLoad(this);
     }
 
     void Update()
@@ -158,11 +156,11 @@ public class PlayerInputManager : MonoBehaviour
             {
                 if (manuManager.menuWindow.activeSelf == true)
                 {
-                    manuManager.Hide(); 
+                    manuManager.Hide();
                 }
                 else
                 {
-                    manuManager.Show(); 
+                    manuManager.Show();
                 }
             }
         }

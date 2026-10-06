@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 3813268446523091439}
   - component: {fileID: 7613590155760911586}
-  - component: {fileID: 1483329157395854062}
   m_Layer: 0
   m_Name: PlayerSelector
   m_TagString: Untagged
@@ -46,16 +45,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerSelector
   currentPlayerID: 0
+  _followLight: {fileID: 0}
   playerManagers: []
---- !u!114 &1483329157395854062
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5268797830872798881}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8f6811a807cc994ab958c22f54ecbd2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DontDestoryOnLoad

@@ -25,8 +25,7 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-
-        DontDestroyOnLoad(this);
+        
     }
 
 }

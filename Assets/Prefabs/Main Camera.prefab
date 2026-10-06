@@ -13,7 +13,6 @@ GameObject:
   - component: {fileID: 4761718197578282109}
   - component: {fileID: 7823947141811552827}
   - component: {fileID: 1966005564882510317}
-  - component: {fileID: 6118697837295793791}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -171,15 +170,3 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
   CustomBlends: {fileID: 0}
---- !u!114 &6118697837295793791
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6639661133629650746}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a8f6811a807cc994ab958c22f54ecbd2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DontDestoryOnLoad

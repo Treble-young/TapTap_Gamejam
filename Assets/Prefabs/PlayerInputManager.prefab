@@ -44,6 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c7ae7bb75aede6848b7babc93e596826, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInputManager
+  manuManager: {fileID: 0}
   followCamera: {fileID: 0}
   switch_prev_player: 0
   switch_next_player: 0
