@@ -6,10 +6,17 @@ public class RecruitableStranger : InteractableManager
     private const float InteractionRadius = 1.5f;
 
     private PlayerManager recruit;
+    private HeadIndicator indicator;
 
     public void Initialize(PlayerManager player)
     {
         recruit = player;
+
+        // 开始等待玩家，头顶显示感叹号提示。
+        indicator = GetComponent<HeadIndicator>();
+        if (indicator == null)
+            indicator = gameObject.AddComponent<HeadIndicator>();
+        indicator.Show();
 
         if (interactionArea == null)
         {
@@ -46,6 +53,10 @@ public class RecruitableStranger : InteractableManager
 
         recruit.playerState = PlayerState.AutoMoving;
         interactionArea.enabled = false;
+
+        // 入队后不再等待，隐藏头顶感叹号。
+        if (indicator != null)
+            indicator.Hide();
 
         // 其他角色的交互列表里也可能保存了这个幸存者。
         foreach (PlayerManager teammate in PlayerSelector.Instance.playerManagers)

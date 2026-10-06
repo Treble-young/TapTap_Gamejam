@@ -11,6 +11,7 @@ public class PlayerManager : MonoBehaviour
     public PlayerType playerType = PlayerType.Main;
     public PlayerState playerState = PlayerState.InputControlling;
     public int playerID = 0;
+    public bool canBeInlcudedInPlayerList = true;
     public bool isMoving;
     public bool isUsingLighter = false;
 
@@ -25,7 +26,7 @@ public class PlayerManager : MonoBehaviour
 
     void Start()
     {
-        
+
     }
 
 }

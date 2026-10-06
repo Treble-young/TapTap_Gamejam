@@ -17,17 +17,21 @@ public class FKeyPickupController : MonoBehaviour
             Instance = null;
     }
 
-    /// <summary>由 PlayerInputManager 的 Pickup 按键触发</summary>
-    public void TryPickUp()
+    /// <summary>
+    /// 尝试拾取当前玩家附近最近的掉落物。
+    /// 由 PlayerInputManager 的 E 键触发（拾取优先级最高）。
+    /// </summary>
+    /// <returns>是否成功拾取了物品。</returns>
+    public bool TryPickUp()
     {
         if (PlayerSelector.Instance == null)
-            return;
+            return false;
 
         PlayerManager player = PlayerSelector.Instance.currentPlayer;
-        if (player == null) return;
+        if (player == null) return false;
 
         PlayerInventoryManager inventory = player.playerInventory;
-        if (inventory == null) return;
+        if (inventory == null) return false;
 
         Vector2 playerPosition = player.transform.position;
         Collider2D[] hits = Physics2D.OverlapCircleAll(
@@ -56,9 +60,14 @@ public class FKeyPickupController : MonoBehaviour
             nearest = candidate;
         }
 
-        if (nearest == null) return;
+        if (nearest == null) return false;
 
         if (inventory.TryAdd(nearest.ItemData))
+        {
             Destroy(nearest.gameObject);
+            return true;
+        }
+
+        return false;
     }
 }

@@ -38,31 +38,14 @@ public class PlayerSelector : MonoBehaviour
         {
             if (!playerManagers.Contains(player))
             {
-                playerManagers.Add(player);
+                if (player.canBeInlcudedInPlayerList)
+                {
+                    playerManagers.Add(player);
+                }
             }
         }
 
-        ReassignPlayerIDs();
-
-        currentPlayerID = playerManagers.FindIndex(player => player.playerState == PlayerState.InputControlling);
-
-        if (currentPlayerID < 0)
-            currentPlayerID = playerManagers.FindIndex(player => player.playerState != PlayerState.Stranger);
-    }
-
-    public void ReassignPlayerIDs()
-    {
-
-        for (int i = 0; i < playerManagers.Count; i++)
-        {
-            if (playerManagers[i] != null)
-                playerManagers[i].playerID = i;
-        }
-
-        if (currentPlayerID >= playerManagers.Count || currentPlayerID < 0)
-        {
-            currentPlayerID = playerManagers.FindIndex(player => player.playerType == PlayerType.Main);
-        }
+        currentPlayerID = 0;
     }
 
     void Start()

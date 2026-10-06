@@ -15,11 +15,11 @@ public class Campfire : InteractableManager
         if (isExtinguished || player == null || PlayerSelector.Instance == null)
             return;
 
-        Carpet lantern = PlayerSelector.Instance.currentInventory.currentSelectedItem as Carpet;
+        Carpet carpet = PlayerSelector.Instance.currentInventory.currentSelectedItem as Carpet;
 
-        if (lantern != null)
+        if (carpet != null)
         {
-            if (lantern.isWet)
+            if (carpet.isWet)
             {
                 isExtinguished = true;
                 if (light2D != null)
@@ -33,8 +33,6 @@ public class Campfire : InteractableManager
                     playerDistory[i].SetActive(false);
                     PlayerSelector.Instance.playerManagers.Remove(playerDistory[i].GetComponent<PlayerManager>());
                 }
-
-                PlayerSelector.Instance.ReassignPlayerIDs();
 
                 // 幸存者仍是陌生人；只有主角举着打火机与他交互后才入队。
                 if (newPlayer != null)

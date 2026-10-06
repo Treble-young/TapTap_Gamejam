@@ -90,12 +90,7 @@ public class PlayerMovementManager : MonoBehaviour
         else if (playerManager.playerState == PlayerState.InputControlling)
             InputMovement();
         else if (playerManager.playerType == PlayerType.Class01)
-        {
-            if (PlayerSelector.Instance.GetMainPlayer().isUsingLighter)
-                AutoFollowMovement();
-            else
-                rb.linearVelocity = Vector2.zero;
-        }
+            AutoFollowMovement();
         else
             rb.linearVelocity = Vector2.zero;
     }

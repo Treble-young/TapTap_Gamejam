@@ -43,15 +43,19 @@ public class PlayerInteractionManager : MonoBehaviour
         }
     }
 
-    public void Interact()
+    /// <summary>与当前最近的交互物交互。</summary>
+    /// <returns>是否存在可交互的物体（存在即消费这次按键，无论交互是否成功）。</returns>
+    public bool Interact()
     {
+        RefreshInteractableList();
+
         if (currentInteractableActions.Count == 0)
-            return;
+            return false;
 
         if (currentInteractableActions[0] != null)
             currentInteractableActions[0].Interact(player);
 
-        RefreshInteractableList();
+        return true;
     }
 
     public void AddInteractable(InteractableManager interactable)

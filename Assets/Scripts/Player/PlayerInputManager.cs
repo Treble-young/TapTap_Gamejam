@@ -20,16 +20,11 @@ public class PlayerInputManager : MonoBehaviour
     [Header("Interaction")]
     public bool interact;
 
-    [Header("Pickup")]
-    public bool pickup;
-
     [Header("Use Item")]
     public bool use_item;
 
     [Header("UI")]
     public bool openMenu;
-
-
 
     void Awake()
     {
@@ -52,7 +47,6 @@ public class PlayerInputManager : MonoBehaviour
     {
         HandleInteractInput();
         HandleSwitchInput();
-        HandlePickupInput();
         HandleUseItemInput();
         HandleOpenMenuInput();
     }
@@ -68,12 +62,10 @@ public class PlayerInputManager : MonoBehaviour
 
             playerInput.Actions.Interact.performed += ctx => interact = true;
 
-            playerInput.Actions.Pickup.performed += ctx => pickup = true;
+            playerInput.Actions.UseItem.performed += ctx => use_item = true;
 
             playerInput.Actions.Previous.performed += ctx => switch_prev_player = true;
             playerInput.Actions.Next.performed += ctx => switch_next_player = true;
-
-            playerInput.Actions.UseItem.performed += ctx => use_item = true;
 
             playerInput.UI.Menu.performed += ctx => openMenu = true;
         }
@@ -88,22 +80,30 @@ public class PlayerInputManager : MonoBehaviour
 
     public void HandleInteractInput()
     {
-        if (interact)
+        if (!interact)
+            return;
+
+        interact = false;
+
+        // 1. 有弹窗时先关闭弹窗
+        if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
         {
-            interact = false;
-
-            if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
+            PlayerUIPopUpManager popUp = PlayerUIManager.Instance.popUpManager;
+            if (popUp.IsShowing)
             {
-                PlayerUIPopUpManager popUp = PlayerUIManager.Instance.popUpManager;
-                if (popUp.IsShowing)
-                {
-                    popUp.HidePopUpWindow();
-                    return;
-                }
+                popUp.HidePopUpWindow();
+                return;
             }
-
-            PlayerSelector.Instance.currentPlayer.playerInteraction.Interact();
         }
+
+        // 2. 优先拾取
+        if (FKeyPickupController.Instance != null && FKeyPickupController.Instance.TryPickUp())
+            return;
+
+        // 3. 其次与物体交互
+        PlayerManager current = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentPlayer : null;
+        if (current != null && current.playerInteraction != null && current.playerInteraction.Interact())
+            return;
     }
 
     public void HandleSwitchInput()
@@ -123,29 +123,17 @@ public class PlayerInputManager : MonoBehaviour
         }
     }
 
-    public void HandlePickupInput()
-    {
-        if (pickup)
-        {
-            pickup = false;
-
-            if (FKeyPickupController.Instance != null)
-                FKeyPickupController.Instance.TryPickUp();
-        }
-    }
-
     public void HandleUseItemInput()
     {
-        if (use_item)
-        {
-            use_item = false;
+        if (!use_item)
+            return;
 
-            if (PlayerSelector.Instance != null)
-                PlayerSelector.Instance.UseCurrentSelectedItem();
-        }
+        use_item = false;
+
+        if (PlayerSelector.Instance != null)
+            PlayerSelector.Instance.UseCurrentSelectedItem();
     }
 
-    // 用于处理打开菜单的输入
     public void HandleOpenMenuInput()
     {
         if (openMenu)

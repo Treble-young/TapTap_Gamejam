@@ -232,17 +232,6 @@
                 },
                 {
                     "name": "",
-                    "id": "b8d4e3f2-1a2b-4c5d-9e8f-7a6b5c4d3e2f",
-                    "path": "<Keyboard>/f",
-                    "interactions": "",
-                    "processors": "",
-                    "groups": "Keyboard&Mouse",
-                    "action": "Pickup",
-                    "isComposite": false,
-                    "isPartOfComposite": false
-                },
-                {
-                    "name": "",
                     "id": "d4a8b2c6-5f3e-4d7a-8c9b-1e5f7a9b3d6c",
                     "path": "<Keyboard>/q",
                     "interactions": "",
