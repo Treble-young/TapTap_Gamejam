@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class Level01_Door : InteractableManager
 {
@@ -14,14 +15,19 @@ public class Level01_Door : InteractableManager
             }
             else
             {
-                // Unlock the door and allow the player to proceed
-                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("The door is unlocked. You can proceed.");
-                // Add logic to transition to the next level or scene here
-
                 Animator animator = GetComponentInChildren<Animator>();
-                if (animator != null)
+                if (animator != null && interactAnimationNames.TryGetValue(PlayerType.Main, out string animationName))
                 {
-                    animator.Play(interactAnimationNames[PlayerType.Main]);
+                    animator.Play(animationName);
+                }
+
+                if (SceneManager.GetActiveScene().name == "Level_01")
+                {
+                    SceneManager.LoadScene("Level_02");
+                }
+                else
+                {
+                    PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("The door is unlocked. You can proceed.");
                 }
             }
         }
