@@ -63,4 +63,26 @@ public class PlayerInventoryManager : MonoBehaviour
     {
         Changed?.Invoke();
     }
+
+    public bool RemoveItem(InventoryItemData item)
+    {
+        if (item == null || inventory == null || !inventory.Contains(item))
+            return false;
+
+        int index = inventory.IndexOf(item);
+        inventory.Remove(item);
+
+        if (index == selectedIndex)
+        {
+            currentSelectedItem = null;
+            selectedIndex = -1;
+        }
+        else if (index < selectedIndex)
+        {
+            selectedIndex--;
+        }
+
+        Changed?.Invoke();
+        return true;
+    }
 }

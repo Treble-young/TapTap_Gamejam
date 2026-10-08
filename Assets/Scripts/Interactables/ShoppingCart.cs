@@ -33,7 +33,7 @@ public class ShoppingCart : InteractableManager
     public static ShoppingCart ActiveDrivingCart;
 
     private Transform currentTarget;
-    private bool inputHeld;
+    private Vector2 currentDirection;
 
     public override void Awake()
     {
@@ -103,18 +103,30 @@ public class ShoppingCart : InteractableManager
         }
 
         Vector2 input = PlayerInputManager.Instance != null ? PlayerInputManager.Instance.MovementInput : Vector2.zero;
-        bool hasInput = input.sqrMagnitude > 0.001f;
+        Vector2 dir = input.sqrMagnitude > 0.001f ? GetCardinalDirection(input) : Vector2.zero;
 
-        // 只在按下方向键的瞬间选目标，按住不放不会连续跳点
-        if (hasInput && !inputHeld)
-            currentTarget = GetNearestPointInDirection(GetCardinalDirection(input));
-
-        inputHeld = hasInput;
+        // 按住才动：松开即停，按住持续更新方向；换方向时重新选目标
+        if (dir == Vector2.zero)
+        {
+            currentDirection = Vector2.zero;
+            currentTarget = null;
+        }
+        else if (dir != currentDirection)
+        {
+            currentDirection = dir;
+            currentTarget = null;
+        }
     }
 
     private void FixedUpdate()
     {
-        if (!isDriving || currentTarget == null || cartRb == null)
+        if (!isDriving || cartRb == null || currentDirection == Vector2.zero)
+            return;
+
+        // 按住方向键时持续选目标并移动；没有可去的点就停下
+        if (currentTarget == null)
+            currentTarget = GetDriveTarget(currentDirection);
+        if (currentTarget == null)
             return;
 
         Vector2 target = currentTarget.position;
@@ -125,7 +137,7 @@ public class ShoppingCart : InteractableManager
         if (delta.magnitude <= driveStopDistance)
         {
             newPos = target;
-            currentTarget = null; // 到达后停下
+            currentTarget = null; // 到达后立刻选下一个点，按住可连续移动
         }
         else
         {
@@ -149,7 +161,7 @@ public class ShoppingCart : InteractableManager
         drivingPlayer = player;
         isDriving = true;
         ActiveDrivingCart = this;
-        inputHeld = false;
+        currentDirection = Vector2.zero;
         currentTarget = null;
 
         if (menu != null)
@@ -180,7 +192,7 @@ public class ShoppingCart : InteractableManager
         if (ActiveDrivingCart == this)
             ActiveDrivingCart = null;
         currentTarget = null;
-        inputHeld = false;
+        currentDirection = Vector2.zero;
 
         if (drivingPlayer != null)
         {
@@ -204,12 +216,12 @@ public class ShoppingCart : InteractableManager
         return new Vector2(0f, Mathf.Sign(input.y));
     }
 
-    // 在按键方向上，找方向最接近（dot 最大）的路径点
-    private Transform GetNearestPointInDirection(Vector2 direction)
+    // 取 dot 前二的路径点，选其中更近的那个作为目标（比只取最对齐的一个点更宽松）
+    private Transform GetDriveTarget(Vector2 direction)
     {
         Vector2 myPos = cartRb.position;
-        Transform best = null;
-        float bestDot = 0.3f;
+        Transform b1 = null, b2 = null;
+        float dot1 = float.NegativeInfinity, dot2 = float.NegativeInfinity;
 
         foreach (Transform p in drivePathPoints)
         {
@@ -222,14 +234,29 @@ public class ShoppingCart : InteractableManager
                 continue; // 已经在点上
 
             float dot = Vector2.Dot(to / dist, direction);
-            if (dot > bestDot)
+            if (dot > dot1)
             {
-                bestDot = dot;
-                best = p;
+                dot2 = dot1; b2 = b1;
+                dot1 = dot; b1 = p;
+            }
+            else if (dot > dot2)
+            {
+                dot2 = dot; b2 = p;
             }
         }
 
-        return best;
+        if (b1 == null || dot1 <= 0f)
+            return null;
+
+        // 前二都在该方向一侧时，选更近的
+        if (b2 != null && dot2 > 0f)
+        {
+            float d1 = ((Vector2)b1.position - myPos).sqrMagnitude;
+            float d2 = ((Vector2)b2.position - myPos).sqrMagnitude;
+            return d1 <= d2 ? b1 : b2;
+        }
+
+        return b1;
     }
 
     public void SpawnCan()

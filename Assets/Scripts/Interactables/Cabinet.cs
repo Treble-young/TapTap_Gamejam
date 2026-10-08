@@ -7,7 +7,6 @@ public class Cabinet : InteractableManager
     public Transform spawnPoint;
 
     [Header("Item Spawn Settings")]
-    [Tooltip("多个物品生成时的间距偏移量")]
     public float itemSpawnOffset = 0.5f;
 
     [Header("Shake Settings")]
@@ -17,10 +16,8 @@ public class Cabinet : InteractableManager
 
     public override void Interact(PlayerManager player)
     {
-        
         base.Interact(player);
 
-        // 1. 如果柜子里面有东西
         if (worldPickupItemSpawnedPrefab != null && worldPickupItemSpawnedPrefab.Length > 0)
         {
             for (int i = 0; i < worldPickupItemSpawnedPrefab.Length; i++)
@@ -32,10 +29,9 @@ public class Cabinet : InteractableManager
 
             worldPickupItemSpawnedPrefab = new GameObject[0];
         }
-        // 2. 如果柜子是空的
         else if (!isShaking)
         {
-            
+
             StartCoroutine(ShakeCoroutine());
         }
     }

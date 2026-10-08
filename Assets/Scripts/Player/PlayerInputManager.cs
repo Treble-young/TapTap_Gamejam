@@ -85,6 +85,12 @@ public class PlayerInputManager : MonoBehaviour
 
         interact = false;
 
+        if (ShoppingCart.ActiveDrivingCart != null)
+        {
+            ShoppingCart.ActiveDrivingCart.StopDriving();
+            return;
+        }
+
         // 1. 有弹窗时先关闭弹窗
         if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
         {
