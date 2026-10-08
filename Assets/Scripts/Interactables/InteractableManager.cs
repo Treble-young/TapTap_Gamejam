@@ -60,7 +60,7 @@ public class InteractableManager : MonoBehaviour
         if (!canInteract)
             return;
 
-        Debug.Log("Interacting with " + player.name);
+        //Debug.Log("Interacting with " + player.name);
 
         if (interactOnce)
         {

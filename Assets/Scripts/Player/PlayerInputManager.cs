@@ -140,6 +140,13 @@ public class PlayerInputManager : MonoBehaviour
         {
             openMenu = false;
 
+            // 驾驶购物车时，Esc 用于下车，不打开暂停菜单
+            if (ShoppingCart.ActiveDrivingCart != null)
+            {
+                ShoppingCart.ActiveDrivingCart.StopDriving();
+                return;
+            }
+
             if (manuManager != null)
             {
                 if (manuManager.menuWindow.activeSelf == true)

@@ -5,6 +5,8 @@ public class InventoryItemData : ScriptableObject
 {
     [SerializeField] protected string itemName;
     [SerializeField] protected Sprite icon;
+    public int itemCount = 1;
+    public int maxItemCount = 99;
 
     // 运行时的使用状态，不会覆盖序列化的默认图标
     private Sprite usedIcon;
@@ -19,14 +21,27 @@ public class InventoryItemData : ScriptableObject
 
     }
 
-    public void SetIcon(Sprite newIcon)
+    public virtual void SetIcon(Sprite newIcon)
     {
         icon = newIcon;
     }
 
-    public void ToggleIcon(Sprite newUsedIcon)
+    public virtual void ToggleIcon(Sprite newUsedIcon)
     {
         usedIcon = newUsedIcon;
         isUsed = !isUsed;
     }
+
+    public virtual void Add()
+    {
+        if (itemCount < maxItemCount)
+            itemCount++;
+    }
+
+    public virtual void Remove()
+    {
+        if (itemCount > 0)
+            itemCount--;
+    }
+
 }
