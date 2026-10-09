@@ -1,12 +1,13 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.UI;
 using UnityEngine.UI;
 
 /// <summary>
 /// 快捷栏 UI：
 /// 跟随 PlayerSelector 的当前玩家，显示他的背包内容；
-/// 点击格子选中当前使用的物品；选中格子上方显示一个三角标记。
+/// 点击格子或按数字键选中当前使用的物品；选中格子上方显示一个三角标记。
 /// </summary>
 public class HotbarUI : MonoBehaviour, IPointerClickHandler
 {
@@ -34,6 +35,30 @@ public class HotbarUI : MonoBehaviour, IPointerClickHandler
         PlayerInventoryManager current = CurrentInventory();
         if (current != boundInventory)
             Bind(current);
+
+        HandleNumberKeys();
+    }
+
+    private void HandleNumberKeys()
+    {
+        Keyboard keyboard = Keyboard.current;
+        if (boundInventory == null || keyboard == null)
+            return;
+
+        if (keyboard.digit1Key.wasPressedThisFrame || keyboard.numpad1Key.wasPressedThisFrame)
+            boundInventory.Select(0);
+        else if (keyboard.digit2Key.wasPressedThisFrame || keyboard.numpad2Key.wasPressedThisFrame)
+            boundInventory.Select(1);
+        else if (keyboard.digit3Key.wasPressedThisFrame || keyboard.numpad3Key.wasPressedThisFrame)
+            boundInventory.Select(2);
+        else if (keyboard.digit4Key.wasPressedThisFrame || keyboard.numpad4Key.wasPressedThisFrame)
+            boundInventory.Select(3);
+        else if (keyboard.digit5Key.wasPressedThisFrame || keyboard.numpad5Key.wasPressedThisFrame)
+            boundInventory.Select(4);
+        else if (keyboard.digit6Key.wasPressedThisFrame || keyboard.numpad6Key.wasPressedThisFrame)
+            boundInventory.Select(5);
+        else if (keyboard.digit7Key.wasPressedThisFrame || keyboard.numpad7Key.wasPressedThisFrame)
+            boundInventory.Select(6);
     }
 
     private void OnEnable()
