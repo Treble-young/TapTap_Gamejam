@@ -22,6 +22,7 @@ public class Campfire : InteractableManager
             if (carpet.isWet)
             {
                 isExtinguished = true;
+                PlayerSelector.Instance.currentInventory.RemoveItem(carpet);
                 if (light2D != null)
                     Destroy(light2D);
 
