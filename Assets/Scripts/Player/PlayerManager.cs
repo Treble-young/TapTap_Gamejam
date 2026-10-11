@@ -14,6 +14,7 @@ public class PlayerManager : MonoBehaviour
     public bool canBeInlcudedInPlayerList = true;
     public bool isMoving;
     public bool isUsingLighter = false;
+    public SpriteRenderer playerSpriteRenderer;
 
     void Awake()
     {
@@ -22,11 +23,19 @@ public class PlayerManager : MonoBehaviour
         playerInventory = GetComponent<PlayerInventoryManager>();
         if (playerInventory == null)
             playerInventory = gameObject.AddComponent<PlayerInventoryManager>();
+
+        playerSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
     }
 
     void Start()
     {
 
+    }
+
+    public void SetOrderInLayer(int order)
+    {
+        if (playerSpriteRenderer != null)
+            playerSpriteRenderer.sortingOrder = order;
     }
 
 }

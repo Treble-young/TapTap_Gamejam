@@ -9,6 +9,13 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class CantArriveArea : MonoBehaviour
 {
+    [Header("LEVEL 03 NPC SHOP 需求")]
+    public bool level03FunctionNeedsNPC = false;
+    public List<Level03_NPC_Controller> requiredNPCs = new List<Level03_NPC_Controller>();
+
+    [Header("LEVEL 03 FLAG PLATFORM 需求")]
+    public bool level03FunctionNeedsFlagPlatform = false;
+
     [Header("挤回设置")]
     [Tooltip("角色进入多久后开始挤回（秒）")]
     [SerializeField] private float pushBackDelay = 0.5f;
@@ -21,11 +28,13 @@ public class CantArriveArea : MonoBehaviour
     private readonly Dictionary<PlayerManager, Vector2> entryPositions = new Dictionary<PlayerManager, Vector2>();
     private readonly Dictionary<PlayerManager, Coroutine> pushCoroutines = new Dictionary<PlayerManager, Coroutine>();
 
+    private Collider2D areaCollider;
+
     private void Awake()
     {
         // 防御：确保作为触发区域使用
-        var col = GetComponent<Collider2D>();
-        col.isTrigger = true;
+        areaCollider = GetComponent<Collider2D>();
+        areaCollider.isTrigger = true;
     }
 
     private void OnTriggerEnter2D(Collider2D other)
@@ -33,6 +42,13 @@ public class CantArriveArea : MonoBehaviour
         PlayerManager player = other.GetComponentInParent<PlayerManager>();
         if (player == null || player.playerMovement == null)
             return;
+
+        // LEVEL 03：需要旗帜平台且尚未获得旗帜时，进入就弹出提示
+        if (level03FunctionNeedsFlagPlatform && !PlayerInventoryManager.HasLevel03Flag
+            && PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
+        {
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("You need the flag for people to make way for you.");
+        }
 
         entryPositions[player] = other.attachedRigidbody != null
             ? other.attachedRigidbody.position
@@ -64,11 +80,44 @@ public class CantArriveArea : MonoBehaviour
         if (!entryPositions.TryGetValue(player, out Vector2 entry))
             yield break;
 
+        // LEVEL 03：需要指定 NPC 在场时，区域内没有 NPC 就不挤回
+        if (level03FunctionNeedsNPC && !HasRequiredNPCInArea())
+        {
+            pushCoroutines.Remove(player);
+            entryPositions.Remove(player);
+            yield break;
+        }
+
+        // LEVEL 03：需要旗帜平台时，一旦拥有过旗帜就不再挤回（即使之后消耗掉也保持）
+        if (level03FunctionNeedsFlagPlatform && PlayerInventoryManager.HasLevel03Flag)
+        {
+            pushCoroutines.Remove(player);
+            entryPositions.Remove(player);
+            yield break;
+        }
+
         player.playerMovement.PushTo(ComputePushTarget(entry), pushBackSpeed);
 
         // 推回动作交给 PlayerMovementManager 平滑完成，这里清空记录，允许后续再次进入
         pushCoroutines.Remove(player);
         entryPositions.Remove(player);
+    }
+
+    /// <summary>
+    /// 区域内是否至少有一个 requiredNPCs 里的 NPC（处于激活状态且位置在区域内）。
+    /// </summary>
+    private bool HasRequiredNPCInArea()
+    {
+        foreach (Level03_NPC_Controller npc in requiredNPCs)
+        {
+            if (npc == null || !npc.gameObject.activeInHierarchy)
+                continue;
+
+            if (areaCollider.OverlapPoint(npc.transform.position))
+                return true;
+        }
+
+        return false;
     }
 
     private Vector2 ComputePushTarget(Vector2 entry)

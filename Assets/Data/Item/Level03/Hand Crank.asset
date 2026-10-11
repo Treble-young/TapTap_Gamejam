@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a892dbbb873ebc54788e3bc431026ece, type: 3}
+  m_Name: Hand Crank
+  m_EditorClassIdentifier: Assembly-CSharp::HandCrank
+  itemName: Hand Crank
+  icon: {fileID: 21300000, guid: e4a05284ff97e60419331430a50cb219, type: 3}
+  itemCount: 1
+  maxItemCount: 99

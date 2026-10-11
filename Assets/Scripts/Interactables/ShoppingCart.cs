@@ -9,6 +9,9 @@ public class ShoppingCart : InteractableManager
     public Transform spawnPoint;
     public List<GameObject> spawnedCans = new List<GameObject>();
 
+    // 与 spawnedCans 一一对应，记录每个罐头放入时消耗的 Can 物品，取出时归还
+    private readonly List<Can> spawnedCanItems = new List<Can>();
+
     [Header("UI Settings")]
     public GameObject menu;
     public Button spawnCanButton;
@@ -17,6 +20,7 @@ public class ShoppingCart : InteractableManager
 
     [Header("Drive Settings")]
     public bool isDriving = false;
+    public bool canMove = true;
     public List<Transform> drivePathPoints = new List<Transform>();
     [Tooltip("驾驶移动速度")]
     public float driveSpeed = 3f;
@@ -58,34 +62,15 @@ public class ShoppingCart : InteractableManager
 
     private void UpdateMenu()
     {
-        if (menu != null && menu.activeSelf)
-        {
-            if (PlayerSelector.Instance.currentInventory.currentSelectedItem)
-            {
-                if (PlayerSelector.Instance.currentInventory.currentSelectedItem is Can selectedItem)
-                {
-                    if (selectedItem.itemCount > 0)
-                        spawnCanButton.interactable = true;
-                    else
-                        spawnCanButton.interactable = false;
+        if (menu == null || !menu.activeSelf)
+            return;
 
-                    if (spawnedCans.Count > 0)
-                        clearCanButton.interactable = true;
-                    else
-                        clearCanButton.interactable = false;
-                }
-                else
-                {
-                    spawnCanButton.interactable = false;
-                    clearCanButton.interactable = false;
-                }
-            }
-            else
-            {
-                spawnCanButton.interactable = false;
-                clearCanButton.interactable = false;
-            }
-        }
+        PlayerInventoryManager inventory = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentInventory : null;
+        bool canSpawn = inventory != null && inventory.currentSelectedItem is Can selectedCan && selectedCan.itemCount > 0;
+        spawnCanButton.interactable = canSpawn;
+
+        bool canClear = spawnedCans.Count > 0;
+        clearCanButton.interactable = canClear;
     }
 
     // ---- Drive：玩家操控购物车，沿 drivePathPoints 移动 ----
@@ -120,7 +105,7 @@ public class ShoppingCart : InteractableManager
 
     private void FixedUpdate()
     {
-        if (!isDriving || cartRb == null || currentDirection == Vector2.zero)
+        if (!isDriving || !canMove || cartRb == null || currentDirection == Vector2.zero)
             return;
 
         // 按住方向键时持续选目标并移动；没有可去的点就停下
@@ -261,40 +246,63 @@ public class ShoppingCart : InteractableManager
 
     public void SpawnCan()
     {
-        if (PlayerSelector.Instance.currentInventory.currentSelectedItem != null)
+        PlayerInventoryManager inventory = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentInventory : null;
+        if (inventory == null)
         {
-            if (PlayerSelector.Instance.currentInventory.currentSelectedItem is Can selectedItem && selectedItem.itemCount > 0)
-            {
-                if (canPrefab != null && spawnPoint != null)
-                {
-                    Vector3 randomOffset = new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), 0);
-                    GameObject newCan = Instantiate(canPrefab, spawnPoint.position + randomOffset, Quaternion.identity);
-                    spawnedCans.Add(newCan);
-
-                    newCan.transform.SetParent(this.transform);
-
-                    PlayerSelector.Instance.currentInventory.currentSelectedItem.Remove();
-                }
-            }
+            UpdateMenu();
+            return;
         }
+
+        // 只有物品栏选中罐头 Can 时才能放入
+        if (!(inventory.currentSelectedItem is Can selectedCan) || selectedCan.itemCount <= 0)
+        {
+            UpdateMenu();
+            return;
+        }
+
+        if (canPrefab == null || spawnPoint == null)
+        {
+            UpdateMenu();
+            return;
+        }
+
+        Vector3 randomOffset = new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), 0);
+        GameObject newCan = Instantiate(canPrefab, spawnPoint.position + randomOffset, Quaternion.identity);
+        newCan.transform.SetParent(transform);
+        spawnedCans.Add(newCan);
+
+        // 消耗物品栏中的该罐头，并记录其物品数据，取出时归还
+        inventory.RemoveItem(selectedCan);
+        spawnedCanItems.Add(selectedCan);
 
         UpdateMenu();
     }
 
     public void ClearOneOfTheCans()
     {
-        if (PlayerSelector.Instance.currentInventory.currentSelectedItem != null)
+        // 只有购物车中有 Can 时才能取出，取出不需要物品栏选中
+        if (spawnedCans.Count <= 0)
         {
-            if (PlayerSelector.Instance.currentInventory.currentSelectedItem is Can selectedItem)
-            {
-                if (spawnedCans.Count > 0)
-                {
-                    GameObject canToRemove = spawnedCans[0];
-                    spawnedCans.RemoveAt(0);
-                    Destroy(canToRemove);
+            UpdateMenu();
+            return;
+        }
 
-                    PlayerSelector.Instance.currentInventory.currentSelectedItem.Add();
-                }
+        GameObject canToRemove = spawnedCans[0];
+        spawnedCans.RemoveAt(0);
+        Destroy(canToRemove);
+
+        if (spawnedCanItems.Count > 0)
+        {
+            Can canItem = spawnedCanItems[0];
+            spawnedCanItems.RemoveAt(0);
+
+            PlayerInventoryManager inventory = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentInventory : null;
+            if (inventory != null && canItem != null)
+            {
+                // 放入时消耗可能已把 itemCount 归零，取出时至少恢复为 1
+                if (canItem.itemCount <= 0)
+                    canItem.itemCount = 1;
+                inventory.TryAdd(canItem);
             }
         }
 

@@ -15,3 +15,17 @@ MonoBehaviour:
   MoveSpeed: 2
   Acceleration: 20
   Deceleration: 50
+  FollowSpeed: 2.5
+  FollowStopDistance: 0.6
+  FollowSlowDistance: 2
+  SeparationRadius: 0.9
+  SeparationWeight: 1.5
+  FollowRepathInterval: 0.4
+  FollowRepathThreshold: 0.4
+  StrangerAvoidRadius: 1.5
+  StrangerReturnRadius: 2
+  StrangerAvoidDistance: 0.8
+  StrangerAvoidSpeed: 3
+  StrangerReturnSpeed: 2
+  StrangerAcceleration: 12
+  StrangerReturnStopDistance: 0.05

@@ -7,6 +7,9 @@ public class PlayerInventoryManager : MonoBehaviour
     // 与 UI 格子数量保持一致
     public const int Capacity = 7;
 
+    // 玩家一旦获得过旗帜就永久记住（即使之后被升旗台消耗掉也保持），供关卡通行判定使用
+    public static bool HasLevel03Flag = false;
+
     public PlayerManager playerOwnedTheInventory;
     public List<InventoryItemData> inventory;
 
@@ -44,7 +47,22 @@ public class PlayerInventoryManager : MonoBehaviour
 
     public bool TryAdd(InventoryItemData item)
     {
-        if (item == null || inventory == null || inventory.Count >= Capacity)
+        if (item == null || inventory == null)
+            return false;
+
+        // 获得旗帜后永久标记，供关卡通行区域判定使用（一旦拥有，之后消耗掉也保持）
+        if (item is Level03Flag)
+            HasLevel03Flag = true;
+
+        // 已有同种物品时只叠加数量，不占用新格子
+        if (inventory.Contains(item))
+        {
+            item.Add();
+            Changed?.Invoke();
+            return true;
+        }
+
+        if (inventory.Count >= Capacity)
             return false;
 
         inventory.Add(item);
@@ -69,17 +87,23 @@ public class PlayerInventoryManager : MonoBehaviour
         if (item == null || inventory == null || !inventory.Contains(item))
             return false;
 
-        int index = inventory.IndexOf(item);
-        inventory.Remove(item);
+        item.Remove(); // 数量 -1
 
-        if (index == selectedIndex)
+        // 数量归零才真正从背包移除，否则只减少数量
+        if (item.itemCount <= 0)
         {
-            currentSelectedItem = null;
-            selectedIndex = -1;
-        }
-        else if (index < selectedIndex)
-        {
-            selectedIndex--;
+            int index = inventory.IndexOf(item);
+            inventory.Remove(item);
+
+            if (index == selectedIndex)
+            {
+                currentSelectedItem = null;
+                selectedIndex = -1;
+            }
+            else if (index < selectedIndex)
+            {
+                selectedIndex--;
+            }
         }
 
         Changed?.Invoke();

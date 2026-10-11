@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6ec1700b5bec2b245adda3ffd1f2e391, type: 3}
   m_Name: Level03Flag
   m_EditorClassIdentifier: Assembly-CSharp::Level03Flag
-  itemName: Flag
+  itemName: Level03Flag
   icon: {fileID: 3136616067966653776, guid: b570ee984dc040048be39f9dd693a7c3, type: 3}
   itemCount: 1
   maxItemCount: 99
