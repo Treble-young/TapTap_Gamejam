@@ -16,4 +16,5 @@ public enum PlayerType
 {
     Main,
     Class01,
+    Class03,
 }

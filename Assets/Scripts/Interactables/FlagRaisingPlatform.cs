@@ -21,21 +21,22 @@ public class FlagRaisingPlatform : InteractableManager
             }
 
         }
-        else
+
+        if (isRopeBroken)
         {
-            if (isRopeBroken)
+            if (PlayerSelector.Instance.currentInventory.currentSelectedItem && PlayerSelector.Instance.currentInventory.currentSelectedItem.ItemName == "FlagRope")
             {
+                isRopeBroken = false;
+                PlayerSelector.Instance.currentInventory.RemoveItem(PlayerSelector.Instance.currentInventory.currentSelectedItem);
 
-            }
-            if (!isPowered)
-            {
-
+                // 修复绳索的逻辑
             }
         }
 
         if (hasFlag && !isRopeBroken && isPowered)
         {
             isRaisingFlag = true;
+            // 开始升旗的逻辑
         }
     }
 }

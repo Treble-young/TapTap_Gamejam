@@ -44,6 +44,13 @@ public class PathfindingManager : MonoBehaviour
     private int height;
     private Vector2 origin;
 
+    // 寻路复用缓冲区（避免每次 FindPath 分配大数组触发 GC）
+    private float[] g;
+    private int[] cameFrom;
+    private bool[] closed;
+    private bool[] inOpen;
+    private readonly List<int> open = new List<int>();
+
     private void Awake()
     {
         if (_instance != null && _instance != this)
@@ -83,6 +90,12 @@ public class PathfindingManager : MonoBehaviour
                 walkable[y * width + x] = IsCellWalkable(CellCenterToWorld(new Vector2Int(x, y)));
             }
         }
+
+        // 分配寻路复用缓冲区
+        g = new float[width * height];
+        cameFrom = new int[width * height];
+        closed = new bool[width * height];
+        inOpen = new bool[width * height];
     }
 
     /// <summary>计算从 start 到 target 的路径（世界坐标），不可达时返回空列表。</summary>
@@ -200,36 +213,41 @@ public class PathfindingManager : MonoBehaviour
     private List<Vector2Int> ComputePath(Vector2Int start, Vector2Int target)
     {
         int size = width * height;
-        float[] g = new float[size];
-        int[] cameFrom = new int[size];
-        bool[] closed = new bool[size];
-        List<int> open = new List<int>();
 
+        // 重置复用缓冲区
         for (int i = 0; i < size; i++)
         {
             g[i] = Mathf.Infinity;
             cameFrom[i] = -1;
+            closed[i] = false;
+            inOpen[i] = false;
         }
+        open.Clear();
 
         int sIdx = CellIndex(start);
         int tIdx = CellIndex(target);
         g[sIdx] = 0f;
         open.Add(sIdx);
+        inOpen[sIdx] = true;
 
         while (open.Count > 0)
         {
-            // 线性查找 f 最小的节点（地图较小，足够快）
+            // 线性查找 f = g + h 最小的节点（A*）
             int current = open[0];
             int currentPos = 0;
+            float currentF = g[current] + Heuristic(current, tIdx);
             for (int i = 1; i < open.Count; i++)
             {
-                if (g[open[i]] < g[current])
+                float f = g[open[i]] + Heuristic(open[i], tIdx);
+                if (f < currentF)
                 {
                     current = open[i];
                     currentPos = i;
+                    currentF = f;
                 }
             }
             open.RemoveAt(currentPos);
+            inOpen[current] = false;
 
             if (current == tIdx)
                 break;
@@ -268,8 +286,11 @@ public class PathfindingManager : MonoBehaviour
                     {
                         g[nIdx] = newG;
                         cameFrom[nIdx] = current;
-                        if (!open.Contains(nIdx))
+                        if (!inOpen[nIdx])
+                        {
                             open.Add(nIdx);
+                            inOpen[nIdx] = true;
+                        }
                     }
                 }
             }
@@ -287,6 +308,14 @@ public class PathfindingManager : MonoBehaviour
         }
         cells.Reverse();
         return cells;
+    }
+
+    /// <summary>Chebyshev 距离，8 方向移动的可容许启发式。</summary>
+    private float Heuristic(int idx, int tIdx)
+    {
+        int dx = Mathf.Abs(idx % width - tIdx % width);
+        int dy = Mathf.Abs(idx / width - tIdx / width);
+        return Mathf.Max(dx, dy);
     }
 
     /// <summary>弦式拉直：尽量用可见的直线连接路径点，减少折线。</summary>

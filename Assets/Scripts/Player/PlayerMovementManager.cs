@@ -11,6 +11,8 @@ public class PlayerMovementManager : MonoBehaviour
 
     [Header("Settings")]
     [SerializeField] PlayerSettings PlayerSettings;
+    [Tooltip("移动速度倍率（开车等场景临时提升速度）")]
+    public float moveSpeedMultiplier = 1f;
 
     [Header("Stranger Avoid")]
     [Tooltip("是否让路避开操控的玩家（可运行时动态更改，false 则原地不动）")]
@@ -101,7 +103,7 @@ public class PlayerMovementManager : MonoBehaviour
             StrangerMovement();
         else if (playerManager.playerState == PlayerState.InputControlling)
             InputMovement();
-        else if (playerManager.playerType == PlayerType.Class01)
+        else if (playerManager.playerType == PlayerType.Class01 || playerManager.playerType == PlayerType.Class03)
             AutoFollowMovement();
         else
             rb.linearVelocity = Vector2.zero;
@@ -133,7 +135,7 @@ public class PlayerMovementManager : MonoBehaviour
 
     private void InputMovement()
     {
-        Vector2 targetVelocity = moveDirection * PlayerSettings.MoveSpeed;
+        Vector2 targetVelocity = moveDirection * PlayerSettings.MoveSpeed * moveSpeedMultiplier;
 
         float rate = moveDirection.sqrMagnitude > 0.001f ? PlayerSettings.Acceleration : PlayerSettings.Deceleration;
         rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, rate * Time.fixedDeltaTime);

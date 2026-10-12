@@ -9,7 +9,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider2D))]
 public class CantArriveArea : MonoBehaviour
 {
-    [Header("LEVEL 03 NPC SHOP 需求")]
+    [Header("LEVEL 03 NPC 需求")]
     public bool level03FunctionNeedsNPC = false;
     public List<Level03_NPC_Controller> requiredNPCs = new List<Level03_NPC_Controller>();
 

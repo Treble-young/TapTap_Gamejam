@@ -7,6 +7,7 @@ public enum NPCType
     Shop1,
     Shop2,
     Shop3,
+    Road,
     Follow,
 }
 
@@ -24,6 +25,16 @@ public class Level03_NPC_Controller : MonoBehaviour
     public Vector3 guardPoint;
     public Transform followTarget;
 
+    [Header("Road")]
+    [Tooltip("场景中唯一的升旗台（留空则自动查找）")]
+    public FlagRaisingPlatform flagRaisingPlatform;
+    [Tooltip("在升旗台附近随机游走的半径")]
+    public float roadWanderRadius = 3f;
+    [Tooltip("全部到达后，跟随玩家多久后消失（秒）")]
+    public float roadFollowDisappearDelay = 3f;
+    [Tooltip("Road NPC 开始移动的最大延迟（分批错峰，减缓寻路压力）")]
+    public float roadBatchDelay = 2f;
+
     [SerializeField] private float followSpeed = 2.5f;
     [SerializeField] private float followStopDistance = 0.6f;
     [SerializeField] private float followSlowDistance = 2f;
@@ -39,6 +50,17 @@ public class Level03_NPC_Controller : MonoBehaviour
     private float nextRepathTime;
     private Vector2 lastTargetPos;
 
+    // Road 状态：当前随机目的地（null = 需要重新选）
+    private Vector2? currentRoadTarget;
+    private bool roadArrived = false;
+    private float roadFollowStartTime = -1f;
+    private float roadDelay = 0f;
+    private float roadStartTime = -1f;
+    private bool lastRaisingFlag = false;
+
+    // Road NPC 全局统计（用于判断是否全部到达）
+    private static readonly List<Level03_NPC_Controller> roadNPCs = new List<Level03_NPC_Controller>();
+
     private void Awake()
     {
         guardPoint = transform.position;
@@ -46,6 +68,21 @@ public class Level03_NPC_Controller : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0f;
         rb.constraints = RigidbodyConstraints2D.FreezeRotation;
+
+        if (flagRaisingPlatform == null)
+            flagRaisingPlatform = FindFirstObjectByType<FlagRaisingPlatform>();
+    }
+
+    private void OnEnable()
+    {
+        if (npcType == NPCType.Road && !roadNPCs.Contains(this))
+            roadNPCs.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        if (npcType == NPCType.Road)
+            roadNPCs.Remove(this);
     }
 
     private void FixedUpdate()
@@ -63,6 +100,10 @@ public class Level03_NPC_Controller : MonoBehaviour
                     FollowMovement(targetShoppingCart.transform);
                 else
                     MoveToPoint(guardPoint);
+                break;
+
+            case NPCType.Road:
+                RoadMovement();
                 break;
 
             default:
@@ -86,11 +127,11 @@ public class Level03_NPC_Controller : MonoBehaviour
             return;
         }
 
+        // 静态目标：只在目标变化或没有路径时寻路一次，不做周期性重寻路（省性能）
         bool targetMoved = Vector2.Distance(targetPos, lastTargetPos) > followRepathThreshold;
-        if (path == null || targetMoved || Time.time >= nextRepathTime)
+        if (path == null || targetMoved)
         {
             Repath(targetPos);
-            nextRepathTime = Time.time + followRepathInterval;
             lastTargetPos = targetPos;
         }
 
@@ -157,6 +198,115 @@ public class Level03_NPC_Controller : MonoBehaviour
 
         Vector2 targetVelocity = dir * speed;
         rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, followAcceleration * Time.fixedDeltaTime);
+    }
+
+    // ---- Road：升旗时随机聚集到升旗台附近 ----
+
+    private void RoadMovement()
+    {
+        if (flagRaisingPlatform == null)
+        {
+            MoveToPoint(guardPoint);
+            return;
+        }
+
+        // 检测升旗开始，安排分批延迟（错峰寻路，减缓压力）
+        if (flagRaisingPlatform.isRaisingFlag && !lastRaisingFlag)
+        {
+            roadDelay = Random.Range(0f, roadBatchDelay);
+            roadStartTime = Time.time;
+        }
+        lastRaisingFlag = flagRaisingPlatform.isRaisingFlag;
+
+        // 全部到达后：跟随玩家，然后消失
+        if (AllRoadNPCsArrived())
+        {
+            RoadFollowAndDisappear();
+            return;
+        }
+
+        if (!flagRaisingPlatform.isRaisingFlag)
+        {
+            // 没在升旗就回守卫点，并重置到达标记
+            currentRoadTarget = null;
+            roadArrived = false;
+            roadFollowStartTime = -1f;
+            MoveToPoint(guardPoint);
+            return;
+        }
+
+        // 升旗中但还没轮到自己（分批错峰）：原地待命
+        if (Time.time < roadStartTime + roadDelay)
+        {
+            MoveToPoint(guardPoint);
+            return;
+        }
+
+        // 轮到：去升旗台附近随机点
+        if (currentRoadTarget == null)
+            currentRoadTarget = PickRandomRoadTarget();
+
+        // 到达判定：到目标点，或（目标落在障碍物内不可达时）足够靠近升旗台
+        if (!roadArrived)
+        {
+            bool reachedTarget = Vector2.Distance(rb.position, currentRoadTarget.Value) <= followStopDistance;
+            bool nearPlatform = Vector2.Distance(rb.position, flagRaisingPlatform.transform.position) <= roadWanderRadius;
+            roadArrived = reachedTarget || nearPlatform;
+        }
+
+        MoveToPoint(currentRoadTarget.Value);
+    }
+
+    private Vector2 PickRandomRoadTarget()
+    {
+        Vector2 center = flagRaisingPlatform.transform.position;
+        return center + Random.insideUnitCircle * roadWanderRadius;
+    }
+
+    private bool AllRoadNPCsArrived()
+    {
+        if (roadNPCs.Count == 0)
+            return false;
+
+        foreach (Level03_NPC_Controller npc in roadNPCs)
+        {
+            if (npc == null || !npc.roadArrived)
+                return false;
+        }
+        return true;
+    }
+
+    private void RoadFollowAndDisappear()
+    {
+        PlayerManager player = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentPlayer : null;
+        if (player == null)
+            return;
+
+        if (roadFollowStartTime < 0f)
+        {
+            roadFollowStartTime = Time.time;
+            SignalClass03Players();
+        }
+
+        // 跟随玩家
+        FollowMovement(player.transform);
+
+        // 跟随一段时间后消失
+        if (Time.time - roadFollowStartTime >= roadFollowDisappearDelay)
+            gameObject.SetActive(false);
+    }
+
+    /// <summary>NPC 开始跟随玩家时，让 Class03 玩家从 Stranger 改为 AutoMoving。</summary>
+    private static void SignalClass03Players()
+    {
+        if (PlayerSelector.Instance == null)
+            return;
+
+        foreach (PlayerManager p in PlayerSelector.Instance.playerManagers)
+        {
+            if (p != null && p.playerType == PlayerType.Class03)
+                p.StartAutoMoving();
+        }
     }
 
     private void Repath(Vector2 targetPos)

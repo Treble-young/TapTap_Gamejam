@@ -91,6 +91,13 @@ public class PlayerInputManager : MonoBehaviour
             return;
         }
 
+        // 开车时按 E 下车
+        if (Car.ActiveDrivingCar != null)
+        {
+            Car.ActiveDrivingCar.StopDriving();
+            return;
+        }
+
         // 1. 有弹窗时先关闭弹窗
         if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
         {
@@ -150,6 +157,13 @@ public class PlayerInputManager : MonoBehaviour
             if (ShoppingCart.ActiveDrivingCart != null)
             {
                 ShoppingCart.ActiveDrivingCart.StopDriving();
+                return;
+            }
+
+            // 开车时 Esc 同样用于下车
+            if (Car.ActiveDrivingCar != null)
+            {
+                Car.ActiveDrivingCar.StopDriving();
                 return;
             }
 

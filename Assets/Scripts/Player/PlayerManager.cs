@@ -38,4 +38,11 @@ public class PlayerManager : MonoBehaviour
             playerSpriteRenderer.sortingOrder = order;
     }
 
+    /// <summary>从 Stranger 切换为 AutoMoving（跟随玩家）。</summary>
+    public void StartAutoMoving()
+    {
+        if (playerState == PlayerState.Stranger)
+            playerState = PlayerState.AutoMoving;
+    }
+
 }
