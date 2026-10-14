@@ -13,4 +13,6 @@ MonoBehaviour:
   m_Name: Can
   m_EditorClassIdentifier: Assembly-CSharp::Can
   itemName: Can
-  icon: {fileID: -3461981422857342514, guid: d3aed47ed33b38a40867b9a7b42ade67, type: 3}
+  icon: {fileID: 21300000, guid: f434767e4119cb44fade89b12cf39925, type: 3}
+  itemCount: 1
+  maxItemCount: 99
