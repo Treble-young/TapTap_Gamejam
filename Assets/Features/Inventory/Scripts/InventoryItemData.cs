@@ -9,7 +9,7 @@ public class InventoryItemData : ScriptableObject
     public int maxItemCount = 99;
 
     // 运行时的使用状态，不会覆盖序列化的默认图标
-    private Sprite usedIcon;
+    public Sprite usedIcon;
     private bool isUsed;
 
     public string ItemName => itemName;

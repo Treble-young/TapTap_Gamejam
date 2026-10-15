@@ -4,7 +4,6 @@ using UnityEngine;
 public class Lighter : InventoryItemData
 {
     public GameObject lighterPrefab;
-    public Sprite usedIcon;
 
     private GameObject gameObject;
 

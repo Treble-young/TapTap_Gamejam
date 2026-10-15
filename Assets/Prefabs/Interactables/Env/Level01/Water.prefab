@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &2435799323895709676
+--- !u!1 &301363328034514694
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,42 +8,38 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 6822415602957943836}
-  - component: {fileID: 5796497855755556395}
-  - component: {fileID: 2281440545384561947}
-  - component: {fileID: 8726292223911127885}
+  - component: {fileID: 2491376890029342644}
+  - component: {fileID: 1776752183173976308}
   m_Layer: 0
-  m_Name: Water
+  m_Name: Visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &6822415602957943836
+--- !u!4 &2491376890029342644
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2435799323895709676}
+  m_GameObject: {fileID: 301363328034514694}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.57, y: 1.55, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 7275478618441981201}
-  - {fileID: 5767244526642204891}
-  m_Father: {fileID: 0}
+  m_Children: []
+  m_Father: {fileID: 6822415602957943836}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!212 &5796497855755556395
+--- !u!212 &1776752183173976308
 SpriteRenderer:
   serializedVersion: 2
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2435799323895709676}
+  m_GameObject: {fileID: 301363328034514694}
   m_Enabled: 1
   m_CastShadows: 0
   m_ReceiveShadows: 0
@@ -95,6 +91,42 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 0
+--- !u!1 &2435799323895709676
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6822415602957943836}
+  - component: {fileID: 2281440545384561947}
+  - component: {fileID: 8726292223911127885}
+  m_Layer: 0
+  m_Name: Water
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6822415602957943836
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2435799323895709676}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 7.57, y: 1.55, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 2491376890029342644}
+  - {fileID: 7275478618441981201}
+  - {fileID: 5767244526642204891}
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &2281440545384561947
 Rigidbody2D:
   serializedVersion: 5
@@ -254,12 +286,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OnomatopoeiaText
   characters: "\u6EF4\u7B54"
-  font: {fileID: 11400000, guid: 13b900bd51b5ecc4bbd65de46450f12e, type: 2}
+  font: {fileID: 11400000, guid: a3ff7963a957f0047a1dc94438d7bf56, type: 2}
   fontSize: 10
   color: {r: 1, g: 1, b: 1, a: 1}
   interval: 1.2
   sortingLayerName: Light Glow
   sortingOrder: 100
+  scale: 0.5
   randomOffset: 0
   riseSpeed: 0.5
   lifetime: 1.2
