@@ -2394,7 +2394,6 @@ GameObject:
   - component: {fileID: 8253625939475186028}
   - component: {fileID: 6420486656426219010}
   - component: {fileID: 7885117528328759677}
-  - component: {fileID: 6925177251819781507}
   - component: {fileID: 7452606028061906478}
   - component: {fileID: 1463482648682467641}
   - component: {fileID: 2456618444128133100}
@@ -2502,19 +2501,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4ba0f7ed73bb89c49abba265961d6f0e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HotbarInventory
---- !u!114 &6925177251819781507
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6135941610987407816}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4326a7ce476aede469499815dc0c88b7, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::FKeyPickupController
-  pickupRadius: 1.5
 --- !u!114 &7452606028061906478
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -5852,6 +5852,10 @@ PrefabInstance:
       value: 0.556
       objectReference: {fileID: 0}
     - target: {fileID: 5170574205834408463, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: interactOnce
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5170574205834408463, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: 'worldPickupItemSpawnedPrefab.Array.data[0]'
       value: 
       objectReference: {fileID: 3222432364485515477, guid: ce335d49ff01d6b47a7a419efbb76d19, type: 3}
@@ -5859,6 +5863,14 @@ PrefabInstance:
       propertyPath: 'worldPickupItemSpawnedPrefab.Array.data[1]'
       value: 
       objectReference: {fileID: 5187895089345143203, guid: c967f5e358b3be741b8185240b2b8b9b, type: 3}
+    - target: {fileID: 8496370235279981349, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.358
+      objectReference: {fileID: 0}
+    - target: {fileID: 8496370235279981349, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.042
+      objectReference: {fileID: 0}
     - target: {fileID: 8873540681707758205, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: m_SortingOrder
       value: 5
@@ -7105,6 +7117,10 @@ PrefabInstance:
       value: 0.52
       objectReference: {fileID: 0}
     - target: {fileID: 5170574205834408463, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: interactOnce
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5170574205834408463, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: worldPickupItemSpawnedPrefab.Array.size
       value: 0
       objectReference: {fileID: 0}
@@ -7972,6 +7988,10 @@ PrefabInstance:
       value: 1.13
       objectReference: {fileID: 0}
     - target: {fileID: 5170574205834408463, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
+      propertyPath: interactOnce
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5170574205834408463, guid: f77c708688b3ba847b7dc6744091943d, type: 3}
       propertyPath: 'worldPickupItemSpawnedPrefab.Array.data[0]'
       value: 
       objectReference: {fileID: 5187895089345143203, guid: c967f5e358b3be741b8185240b2b8b9b, type: 3}
@@ -8137,10 +8157,6 @@ PrefabInstance:
     - target: {fileID: 4306945330062847418, guid: cfd69fed868502849afd67b3de29de38, type: 3}
       propertyPath: m_Name
       value: Window
-      objectReference: {fileID: 0}
-    - target: {fileID: 8358862213618281845, guid: cfd69fed868502849afd67b3de29de38, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -0.599226
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

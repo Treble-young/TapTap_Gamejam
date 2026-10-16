@@ -310,6 +310,7 @@ MonoBehaviour:
     keys: 
     values: []
   outlineSpriteRenderer: {fileID: 467026737889431652}
+  needEmergingOutline: 1
   worldPickupItemSpawnedPrefab:
   - {fileID: 3222432364485515477, guid: ce335d49ff01d6b47a7a419efbb76d19, type: 3}
   spawnPoint: {fileID: 8496370235279981349}
@@ -432,7 +433,7 @@ Transform:
   m_GameObject: {fileID: 5570305486478763595}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.311, y: 0.142, z: 0}
+  m_LocalPosition: {x: 0.385, y: -0.087, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

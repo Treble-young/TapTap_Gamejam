@@ -36,11 +36,23 @@ public class PlayerInteractionManager : MonoBehaviour
 
     private void RefreshInteractableList()
     {
-        for (int i = currentInteractableActions.Count - 1; i >= 0; i--)
+        // 清理已销毁（为 null）的交互物
+        currentInteractableActions.RemoveAll(interactable => interactable == null);
+
+        // 将拾取物品类交互物移到列表最前面，保证其优先被交互
+        List<InteractableManager> pickups = new List<InteractableManager>();
+        List<InteractableManager> others = new List<InteractableManager>();
+
+        foreach (InteractableManager interactable in currentInteractableActions)
         {
-            if (currentInteractableActions[i] == null)
-                currentInteractableActions.RemoveAt(i);
+            if (interactable is WorldPickUpItemInteractableManager)
+                pickups.Add(interactable);
+            else
+                others.Add(interactable);
         }
+
+        pickups.AddRange(others);
+        currentInteractableActions = pickups;
     }
 
     /// <summary>与当前最近的交互物交互。</summary>

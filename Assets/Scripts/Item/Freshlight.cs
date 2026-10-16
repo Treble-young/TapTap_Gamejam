@@ -3,8 +3,6 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "Freshlight", menuName = "Scriptable Objects/Item/Freshlight")]
 public class Freshlight : InventoryItemData
 {
-    [SerializeField] private Sprite usedIcon;
-
     public override void Use(PlayerManager player)
     {
         LightFollow light = FindAnyObjectByType<LightFollow>();

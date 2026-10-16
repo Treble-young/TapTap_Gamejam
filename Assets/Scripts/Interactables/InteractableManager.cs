@@ -50,6 +50,9 @@ public class InteractableManager : MonoBehaviour
         PlayerManager player = collision.GetComponent<PlayerManager>();
         if (player != null)
         {
+            if (player.playerState != PlayerState.InputControlling)
+                return;
+
             PlayerInteractionManager interactionManager = player.GetComponent<PlayerInteractionManager>();
             if (interactionManager != null)
             {
