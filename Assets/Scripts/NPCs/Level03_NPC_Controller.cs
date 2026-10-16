@@ -96,7 +96,7 @@ public class Level03_NPC_Controller : MonoBehaviour
             case NPCType.Shop1:
             case NPCType.Shop2:
             case NPCType.Shop3:
-                if (targetShoppingCart != null && targetShoppingCart.spawnedCans.Count >= minCansToFollow)
+                if (targetShoppingCart != null && targetShoppingCart.LoadedCanCount >= minCansToFollow)
                     FollowMovement(targetShoppingCart.transform);
                 else
                     MoveToPoint(guardPoint);
