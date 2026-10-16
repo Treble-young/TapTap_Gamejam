@@ -2,6 +2,18 @@ using UnityEngine;
 using UnityEngine.U2D;
 using UnityEngine.UI;
 
+public enum CarDirection
+{
+    Right,
+    UpRight,
+    Up,
+    UpLeft,
+    Left,
+    DownLeft,
+    Down,
+    DownRight
+}
+
 public class Car : InteractableManager
 {
     [Header("Fuel Line")]
@@ -24,6 +36,14 @@ public class Car : InteractableManager
     [Header("Jack")]
     public bool isJackedUp = false;
 
+    [Header("Car Visuals")]
+    public SpriteRenderer carSpriteRenderer;
+    public Sprite carUpSprite;
+    public Sprite carDownSprite;
+    public Sprite carRightSprite;
+    public Sprite carUpRightSprite;
+    public Sprite carDownRightSprite;
+
     [Header("UI Settings")]
     public GameObject menu;
     public Button driveButton;
@@ -35,9 +55,15 @@ public class Car : InteractableManager
     [Header("Drive Settings")]
     public bool isDriving = false;
     [Tooltip("开车时 Car 相对玩家的偏移")]
-    public Vector2 driveOffset = Vector2.zero;
-    [Tooltip("开车时玩家移动速度倍率")]
-    public float driveSpeedMultiplier = 2.5f;
+    public Vector2 driveOffset = new Vector2(0f, -0.75f);
+    [Tooltip("开车时的移动速度")]
+    public float driveSpeed = 4f;
+    [Tooltip("A/D 转向速度（度/秒）")]
+    public float turnSpeed = 180f;
+    [Tooltip("右上/右下/左上/左下方向的前进向量，代码会自动归一化")]
+    public Vector2 diagonalDriveVector = new Vector2(1.5625f, 0.875f);
+    [Tooltip("开局时的车头朝向")]
+    public CarDirection startFacing = CarDirection.Right;
     [Tooltip("开局时玩家默认已经坐在车上")]
     public bool startDriving = true;
 
@@ -45,7 +71,11 @@ public class Car : InteractableManager
 
     private Rigidbody2D carRb;
     private Collider2D carCollider;
+    private RigidbodyType2D originalCarBodyType;
+    private float facingAngle;
     private PlayerManager drivingPlayer;
+    private Rigidbody2D drivingPlayerRb;
+    private Collider2D drivingPlayerCollider;
     private InventoryItemData usedJackItem;
 
     public override void Awake()
@@ -54,6 +84,17 @@ public class Car : InteractableManager
 
         carRb = GetComponent<Rigidbody2D>();
         carCollider = GetComponent<Collider2D>();
+        if (carRb != null)
+            originalCarBodyType = carRb.bodyType;
+
+        if (carSpriteRenderer == null)
+        {
+            Transform visual = transform.Find("Visual");
+            carSpriteRenderer = visual != null ? visual.GetComponent<SpriteRenderer>() : GetComponentInChildren<SpriteRenderer>();
+        }
+
+        facingAngle = DirectionToAngle(startFacing);
+        UpdateCarSprite();
     }
 
     private void Start()
@@ -114,6 +155,8 @@ public class Car : InteractableManager
             StopDriving();
             return;
         }
+
+        HandleDrivingInput();
     }
 
     private void FixedUpdate()
@@ -121,9 +164,13 @@ public class Car : InteractableManager
         if (!isDriving || drivingPlayer == null || carRb == null)
             return;
 
-        // 玩家自由移动（已隐藏），Car 跟着玩家走
-        Vector2 target = (Vector2)drivingPlayer.transform.position + driveOffset;
-        carRb.MovePosition(target);
+        UpdateDrivingVelocity();
+    }
+
+    private void OnDisable()
+    {
+        if (isDriving)
+            StopDriving();
     }
 
     public void Drive()
@@ -143,17 +190,34 @@ public class Car : InteractableManager
         if (menu != null)
             menu.SetActive(false);
 
-        // 隐藏玩家
+        // 隐藏玩家，暂停玩家移动和碰撞，让 Car 的碰撞体负责驾驶碰撞
         if (player.playerSpriteRenderer != null)
             player.playerSpriteRenderer.enabled = false;
 
-        // 开车提速
-        if (player.playerMovement != null)
-            player.playerMovement.moveSpeedMultiplier = driveSpeedMultiplier;
+        drivingPlayerRb = player.GetComponent<Rigidbody2D>();
+        if (drivingPlayerRb != null)
+            drivingPlayerRb.linearVelocity = Vector2.zero;
 
-        // 关掉 Car 的实体碰撞体，避免和玩家（动态刚体）互相挤开；碰撞仍由玩家自己的碰撞体负责
+        drivingPlayerCollider = player.GetComponent<Collider2D>();
+        if (drivingPlayerCollider != null)
+            drivingPlayerCollider.enabled = false;
+
+        if (player.playerMovement != null)
+            player.playerMovement.enabled = false;
+
+        // 开车时启用 Car 的实体碰撞体，并切到动态刚体参与物理碰撞
         if (carCollider != null)
-            carCollider.enabled = false;
+            carCollider.enabled = true;
+
+        if (carRb != null)
+        {
+            carRb.bodyType = RigidbodyType2D.Dynamic;
+            carRb.gravityScale = 0f;
+            carRb.constraints = RigidbodyConstraints2D.FreezeRotation;
+            carRb.linearVelocity = Vector2.zero;
+        }
+
+        UpdateCarSprite();
     }
 
     public void StopDriving()
@@ -169,13 +233,158 @@ public class Car : InteractableManager
         {
             if (drivingPlayer.playerSpriteRenderer != null)
                 drivingPlayer.playerSpriteRenderer.enabled = true;
+            if (drivingPlayerCollider != null)
+                drivingPlayerCollider.enabled = true;
+            if (drivingPlayerRb != null)
+                drivingPlayerRb.linearVelocity = Vector2.zero;
             if (drivingPlayer.playerMovement != null)
-                drivingPlayer.playerMovement.moveSpeedMultiplier = 1f;
-            drivingPlayer = null;
+                drivingPlayer.playerMovement.enabled = true;
+        }
+
+        drivingPlayer = null;
+        drivingPlayerRb = null;
+        drivingPlayerCollider = null;
+
+        if (carRb != null)
+        {
+            carRb.linearVelocity = Vector2.zero;
+            carRb.bodyType = originalCarBodyType;
         }
 
         if (carCollider != null)
             carCollider.enabled = true;
+    }
+
+    private void HandleDrivingInput()
+    {
+        Vector2 input = PlayerInputManager.Instance != null ? PlayerInputManager.Instance.MovementInput : Vector2.zero;
+
+        // 屏幕坐标系中，车头角度逆时针增加；A 为左转，D 为右转。
+        facingAngle -= input.x * turnSpeed * Time.deltaTime;
+
+        UpdateCarSprite();
+    }
+
+    private void UpdateDrivingVelocity()
+    {
+        Vector2 input = PlayerInputManager.Instance != null ? PlayerInputManager.Instance.MovementInput : Vector2.zero;
+        float throttle = Mathf.Clamp(input.y, -1f, 1f);
+        carRb.linearVelocity = FacingVector() * (throttle * driveSpeed);
+
+        if (drivingPlayerRb != null)
+            drivingPlayerRb.MovePosition(carRb.position - driveOffset);
+        else if (drivingPlayer != null)
+            drivingPlayer.transform.position = (Vector3)(carRb.position - driveOffset);
+    }
+
+    private void UpdateCarSprite()
+    {
+        if (carSpriteRenderer == null)
+            return;
+
+        CarDirection direction = AngleToDirection(facingAngle);
+        Sprite sprite;
+        bool flipX;
+
+        switch (direction)
+        {
+            case CarDirection.UpRight:
+                sprite = carUpRightSprite;
+                flipX = false;
+                break;
+            case CarDirection.Up:
+                sprite = carUpSprite;
+                flipX = false;
+                break;
+            case CarDirection.UpLeft:
+                sprite = carUpRightSprite;
+                flipX = true;
+                break;
+            case CarDirection.Left:
+                sprite = carRightSprite;
+                flipX = true;
+                break;
+            case CarDirection.DownLeft:
+                sprite = carDownRightSprite;
+                flipX = true;
+                break;
+            case CarDirection.Down:
+                sprite = carDownSprite;
+                flipX = false;
+                break;
+            case CarDirection.DownRight:
+                sprite = carDownRightSprite;
+                flipX = false;
+                break;
+            case CarDirection.Right:
+            default:
+                sprite = carRightSprite;
+                flipX = false;
+                break;
+        }
+
+        if (sprite != null)
+        {
+            carSpriteRenderer.sprite = sprite;
+            carSpriteRenderer.flipX = flipX;
+
+            if (outlineSpriteRenderer != null)
+            {
+                outlineSpriteRenderer.sprite = sprite;
+                outlineSpriteRenderer.flipX = flipX;
+            }
+        }
+    }
+
+    private Vector2 FacingVector()
+    {
+        return DirectionVector(AngleToDirection(facingAngle));
+    }
+
+    private Vector2 DirectionVector(CarDirection direction)
+    {
+        Vector2 diagonal = DiagonalVector(diagonalDriveVector);
+
+        switch (direction)
+        {
+            case CarDirection.UpRight:
+                return diagonal;
+            case CarDirection.Up:
+                return Vector2.up;
+            case CarDirection.UpLeft:
+                return new Vector2(-diagonal.x, diagonal.y);
+            case CarDirection.Left:
+                return Vector2.left;
+            case CarDirection.DownLeft:
+                return -diagonal;
+            case CarDirection.Down:
+                return Vector2.down;
+            case CarDirection.DownRight:
+                return new Vector2(diagonal.x, -diagonal.y);
+            case CarDirection.Right:
+            default:
+                return Vector2.right;
+        }
+    }
+
+    private static Vector2 DiagonalVector(Vector2 direction)
+    {
+        if (direction.sqrMagnitude < 0.0001f)
+            return new Vector2(2f, 1f).normalized;
+
+        return new Vector2(Mathf.Abs(direction.x), Mathf.Abs(direction.y)).normalized;
+    }
+
+    private static float DirectionToAngle(CarDirection direction)
+    {
+        return (int)direction * 45f;
+    }
+
+    private static CarDirection AngleToDirection(float angle)
+    {
+        float normalized = ((angle % 360f) + 360f) % 360f;
+        int octant = Mathf.RoundToInt(normalized / 45f) % 8;
+        return (CarDirection)octant;
     }
 
     public void Connect()

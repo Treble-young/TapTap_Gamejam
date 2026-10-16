@@ -3,18 +3,28 @@ using Unity.Cinemachine;
 
 public class CameraRange : MonoBehaviour
 {
+    private Collider2D bounds;
+    private CinemachineConfiner2D confiner;
+
     void Start()
     {
-        Collider2D bounds = GetComponent<Collider2D>();
+        bounds = GetComponent<Collider2D>();
         CinemachineCamera cam = ResolveCamera();
         if (bounds == null || cam == null)
             return;
 
-        CinemachineConfiner2D confiner = cam.GetComponent<CinemachineConfiner2D>();
+        confiner = cam.GetComponent<CinemachineConfiner2D>();
         if (confiner == null)
             confiner = cam.gameObject.AddComponent<CinemachineConfiner2D>();
+    }
 
-        confiner.BoundingShape2D = bounds;
+    void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!collision.CompareTag("Player"))
+            return;
+
+        if (bounds != null && confiner != null)
+            confiner.BoundingShape2D = bounds;
     }
 
     private static CinemachineCamera ResolveCamera()

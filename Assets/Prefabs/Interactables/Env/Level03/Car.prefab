@@ -310,8 +310,8 @@ Transform:
   m_GameObject: {fileID: 1056784412643638445}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.636, z: 0}
-  m_LocalScale: {x: 1.1, y: 1.1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.63, z: 0}
+  m_LocalScale: {x: 1.05, y: 1.05, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2735546578673318113}
@@ -365,7 +365,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -2837083765553875293, guid: ca8cd7228f117d64584c2f2d2c377573, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d774645c0e7112c409fcbc851a990f6e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
   m_FlipX: 0
   m_FlipY: 0
@@ -804,7 +804,7 @@ Transform:
   m_GameObject: {fileID: 3878912331713221492}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.087, y: 0.504, z: 0}
+  m_LocalPosition: {x: 0.036, y: 0.676, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -845,7 +845,7 @@ CircleCollider2D:
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: -0.066206574, y: 0.04591739}
-  m_Radius: 0.8
+  m_Radius: 0.77
 --- !u!1 &3919206715492480731
 GameObject:
   m_ObjectHideFlags: 0
@@ -927,7 +927,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 1
   m_MaskInteraction: 0
-  m_Sprite: {fileID: -2837083765553875293, guid: ca8cd7228f117d64584c2f2d2c377573, type: 3}
+  m_Sprite: {fileID: 21300000, guid: d774645c0e7112c409fcbc851a990f6e, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
@@ -1084,9 +1084,9 @@ GameObject:
   m_Component:
   - component: {fileID: 2735546578673318113}
   - component: {fileID: 6284543464189396705}
-  - component: {fileID: 5155618005683887074}
   - component: {fileID: 6650685952546134725}
-  m_Layer: 0
+  - component: {fileID: 5921052510164907871}
+  m_Layer: 12
   m_Name: Car
   m_TagString: Untagged
   m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
@@ -1141,63 +1141,6 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!60 &5155618005683887074
-PolygonCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4888543602286681979}
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 0
-  m_UsedByEffector: 0
-  m_CompositeOperation: 0
-  m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0.6}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0.5, y: 0.5}
-    oldSize: {x: 0.57, y: 0.77}
-    newSize: {x: 1, y: 1}
-    adaptiveTilingThreshold: 0.5
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  m_Points:
-    m_Paths:
-    - - {x: 0.13119227, y: 0.15351129}
-      - {x: -0.07106212, y: 0.24744844}
-      - {x: -0.35545364, y: 0.13396394}
-      - {x: -0.37558284, y: 0.0046114326}
-      - {x: -0.36906707, y: -0.17073864}
-      - {x: -0.085, y: -0.3212564}
-      - {x: 0.1348708, y: -0.33803153}
-      - {x: 0.30861342, y: -0.22796646}
-      - {x: 0.3386785, y: -0.051968932}
-      - {x: 0.29171005, y: 0.04318756}
-  m_UseDelaunayMesh: 1
 --- !u!114 &6650685952546134725
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1230,6 +1173,12 @@ MonoBehaviour:
   generatorAnchor: {fileID: 0}
   pipelineWaveAmplitude: 0.08
   isJackedUp: 0
+  carSpriteRenderer: {fileID: 2120367993584944620}
+  carUpSprite: {fileID: 21300000, guid: 1151f1b9d51b6b043b3c89e98a31c9ea, type: 3}
+  carDownSprite: {fileID: 21300000, guid: cedf2d880c8dff44f87f77c872a43522, type: 3}
+  carRightSprite: {fileID: 21300000, guid: eba2c5ca7773b954bb64d77db8b9cc15, type: 3}
+  carUpRightSprite: {fileID: 21300000, guid: 46b266dc45f67b84bb9b1c2bc7c5685f, type: 3}
+  carDownRightSprite: {fileID: 21300000, guid: 6e59a7b4d22656e47b310bc8c0f230cf, type: 3}
   menu: {fileID: 5437917064025637807}
   driveButton: {fileID: 2109806200377574335}
   connectButton: {fileID: 6176061164109294620}
@@ -1237,9 +1186,48 @@ MonoBehaviour:
   fillFuelButton: {fileID: 6209794266226092376}
   exitButton: {fileID: 5324356964839639023}
   isDriving: 0
-  driveOffset: {x: 0, y: 0}
-  driveSpeedMultiplier: 2.5
+  driveOffset: {x: 0, y: -0.75}
+  driveSpeed: 4
+  turnSpeed: 180
+  diagonalDriveVector: {x: 1.5625, y: 0.875}
+  startFacing: 3
   startDriving: 1
+--- !u!58 &5921052510164907871
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4888543602286681979}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.027945518, y: 0.71494246}
+  m_Radius: 0.36725712
 --- !u!1 &5437917064025637807
 GameObject:
   m_ObjectHideFlags: 0
