@@ -20,6 +20,7 @@ public class PlayerInteractionManager : MonoBehaviour
     void FixedUpdate()
     {
         CheckForInteractable();
+        UpdateInteractableHighlights();
     }
 
     public void CheckForInteractable()
@@ -55,6 +56,30 @@ public class PlayerInteractionManager : MonoBehaviour
         currentInteractableActions = pickups;
     }
 
+    private InteractableManager GetPrimaryInteractable()
+    {
+        foreach (InteractableManager interactable in currentInteractableActions)
+        {
+            if (interactable != null && interactable.CanInteractWith(player))
+                return interactable;
+        }
+
+        return null;
+    }
+
+    private void UpdateInteractableHighlights()
+    {
+        InteractableManager primary = GetPrimaryInteractable();
+
+        foreach (InteractableManager interactable in currentInteractableActions)
+        {
+            if (interactable == null)
+                continue;
+
+            interactable.SetOutlineVisible(interactable == primary);
+        }
+    }
+
     /// <summary>与当前最近的交互物交互。</summary>
     /// <returns>是否存在可交互的物体（存在即消费这次按键，无论交互是否成功）。</returns>
     public bool Interact()
@@ -64,9 +89,11 @@ public class PlayerInteractionManager : MonoBehaviour
         if (currentInteractableActions.Count == 0)
             return false;
 
-        if (currentInteractableActions[0] != null)
-            currentInteractableActions[0].Interact(player);
+        InteractableManager primary = GetPrimaryInteractable();
+        if (primary == null)
+            return false;
 
+        primary.Interact(player);
         return true;
     }
 
@@ -76,6 +103,8 @@ public class PlayerInteractionManager : MonoBehaviour
 
         if (!currentInteractableActions.Contains(interactable))
             currentInteractableActions.Add(interactable);
+
+        UpdateInteractableHighlights();
     }
 
     public void RemoveInteractable(InteractableManager interactable)
@@ -83,6 +112,10 @@ public class PlayerInteractionManager : MonoBehaviour
         if (currentInteractableActions.Contains(interactable))
             currentInteractableActions.Remove(interactable);
 
+        if (interactable != null)
+            interactable.SetOutlineVisible(false);
+
         RefreshInteractableList();
+        UpdateInteractableHighlights();
     }
 }

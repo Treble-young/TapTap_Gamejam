@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Oil Pipeline
   m_EditorClassIdentifier: Assembly-CSharp::OilPipeline
   itemName: Oil Piepeline
-  icon: {fileID: 21300000, guid: 1b37b1ded4564de46a57b00e12033a4e, type: 3}
+  icon: {fileID: 21300000, guid: a3754adada8641c45a2aff4414bb49be, type: 3}
   itemCount: 1
   maxItemCount: 99
+  usedIcon: {fileID: 0}

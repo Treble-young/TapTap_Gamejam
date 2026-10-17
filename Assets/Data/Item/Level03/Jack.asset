@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Jack
   m_EditorClassIdentifier: Assembly-CSharp::Jack
   itemName: Jack
-  icon: {fileID: 21300000, guid: ef43e652542247e49bfa5ee0c458492a, type: 3}
+  icon: {fileID: 21300000, guid: 8673798a7fbd3c34888939763d3c44f5, type: 3}
   itemCount: 1
   maxItemCount: 99
+  usedIcon: {fileID: 0}

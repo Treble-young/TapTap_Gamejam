@@ -7,6 +7,13 @@ public class FlagRaisingPlatform : InteractableManager
     public bool isPowered = false;
     public bool isRaisingFlag = false;
 
+    [Header("Flag Raising Settings")]
+    public SpriteRenderer flagSpriteRenderer;
+
+    public Sprite withFlagWithoutRopeSprite;
+    public Sprite withRopeNotRaisingFlagSprite;
+    public Sprite withRopeRaisingFlagSprite;
+
     public override void Interact(PlayerManager player)
     {
         if (!hasFlag)
@@ -17,7 +24,7 @@ public class FlagRaisingPlatform : InteractableManager
                 PlayerSelector.Instance.currentInventory.RemoveItem(PlayerSelector.Instance.currentInventory.currentSelectedItem);
 
                 // 将旗帜放置在平台上
-
+                flagSpriteRenderer.sprite = withFlagWithoutRopeSprite; // 显示没有绳索的旗帜
             }
             else
             {
@@ -35,6 +42,7 @@ public class FlagRaisingPlatform : InteractableManager
                 PlayerSelector.Instance.currentInventory.RemoveItem(PlayerSelector.Instance.currentInventory.currentSelectedItem);
 
                 // 修复绳索的逻辑
+                flagSpriteRenderer.sprite = withRopeNotRaisingFlagSprite; // 显示没有升起的旗帜
             }
             else
             {
@@ -52,6 +60,7 @@ public class FlagRaisingPlatform : InteractableManager
         {
             isRaisingFlag = true;
             // 开始升旗的逻辑
+            flagSpriteRenderer.sprite = withRopeRaisingFlagSprite; // 显示升起的旗帜
         }
     }
 }

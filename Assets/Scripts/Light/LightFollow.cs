@@ -1,10 +1,19 @@
 using System;
 using System.Collections.Generic;
+using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
+public enum LightFilterMode
+{
+    Whitelist,
+    Blacklist
+}
+
 public class LightFollow : MonoBehaviour
 {
+    public static LightFollow Instance { get; private set; }
+
     private Light2D light2D;
 
     public int LightStage = 0;
@@ -24,18 +33,29 @@ public class LightFollow : MonoBehaviour
     [Tooltip("开局时关闭场景里除跟随灯外的所有 Light2D，等手电筒打开时再开启")]
     [SerializeField] private bool worldLightsStartOff = true;
 
-    [Tooltip("白名单里的 Light2D 不受全局开关控制，始终保持发光")]
-    [SerializeField] private List<Light2D> whitelistLights = new List<Light2D>();
+    [SerializeField] private LightFilterMode lightFilterMode = LightFilterMode.Whitelist;
+
+    [SerializeField] private List<Light2D> filterLights = new List<Light2D>();
+
+    [Header("Level03")]
+    public bool isLevel03 = false;
+
 
     void Awake()
     {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(this.gameObject);
+            return;
+        }
+        Instance = this;
         light2D = GetComponentInChildren<Light2D>();
     }
 
     void Start()
     {
-        if (worldLightsStartOff)
-            SetWorldLights(false);
+        if (worldLightsStartOff && lightFilterMode != LightFilterMode.Blacklist)
+            SetBlackListLights(false);
     }
 
     void Update()
@@ -81,19 +101,21 @@ public class LightFollow : MonoBehaviour
     }
 
     /// <summary>开启/关闭场景里除跟随灯外的所有 Light2D。</summary>
-    public void SetWorldLights(bool enabled)
+    public void SetBlackListLights(bool enabled)
     {
-        Light2D[] all = FindObjectsByType<Light2D>(FindObjectsSortMode.None);
-        foreach (Light2D light in all)
+        if (!isLevel03)
+            return;
+
+        if (lightFilterMode != LightFilterMode.Blacklist)
+            return;
+
+        foreach (Light2D light in filterLights)
         {
             // 跟随灯由 LightStage 控制，不要在这里开关
-            if (light == light2D)
+            if (light == null || light == light2D)
                 continue;
 
             // 白名单里的灯不受全局开关控制
-            if (whitelistLights.Contains(light))
-                continue;
-
             light.enabled = enabled;
         }
     }

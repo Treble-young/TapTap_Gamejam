@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ShoppingCart : InteractableManager
 {
@@ -16,6 +17,7 @@ public class ShoppingCart : InteractableManager
     public Button spawnCanButton;
     public Button clearCanButton;
     public Button exitButton;
+    public TextMeshProUGUI canCountText;
 
     [Header("Track Settings")]
     public bool isDriving = false;
@@ -86,6 +88,8 @@ public class ShoppingCart : InteractableManager
             spawnCanButton.interactable = canSpawn;
         if (clearCanButton != null)
             clearCanButton.interactable = IsLoaded;
+        if (canCountText != null)
+            canCountText.text = "当前购物车内罐头数量： " + LoadedCanCount.ToString();
     }
 
     private void FixedUpdate()

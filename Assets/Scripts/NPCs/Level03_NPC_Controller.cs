@@ -30,8 +30,6 @@ public class Level03_NPC_Controller : MonoBehaviour
     public FlagRaisingPlatform flagRaisingPlatform;
     [Tooltip("在升旗台附近随机游走的半径")]
     public float roadWanderRadius = 3f;
-    [Tooltip("全部到达后，跟随玩家多久后消失（秒）")]
-    public float roadFollowDisappearDelay = 3f;
     [Tooltip("Road NPC 开始移动的最大延迟（分批错峰，减缓寻路压力）")]
     public float roadBatchDelay = 2f;
 
@@ -53,7 +51,6 @@ public class Level03_NPC_Controller : MonoBehaviour
     // Road 状态：当前随机目的地（null = 需要重新选）
     private Vector2? currentRoadTarget;
     private bool roadArrived = false;
-    private float roadFollowStartTime = -1f;
     private float roadDelay = 0f;
     private float roadStartTime = -1f;
     private bool lastRaisingFlag = false;
@@ -219,9 +216,9 @@ public class Level03_NPC_Controller : MonoBehaviour
         lastRaisingFlag = flagRaisingPlatform.isRaisingFlag;
 
         // 全部到达后：跟随玩家，然后消失
-        if (AllRoadNPCsArrived())
+        if (EnoughRoadNPCsArrived())
         {
-            RoadFollowAndDisappear();
+            DisappearRoadNPCs();
             return;
         }
 
@@ -230,7 +227,6 @@ public class Level03_NPC_Controller : MonoBehaviour
             // 没在升旗就回守卫点，并重置到达标记
             currentRoadTarget = null;
             roadArrived = false;
-            roadFollowStartTime = -1f;
             MoveToPoint(guardPoint);
             return;
         }
@@ -251,7 +247,11 @@ public class Level03_NPC_Controller : MonoBehaviour
         {
             bool reachedTarget = Vector2.Distance(rb.position, currentRoadTarget.Value) <= followStopDistance;
             bool nearPlatform = Vector2.Distance(rb.position, flagRaisingPlatform.transform.position) <= roadWanderRadius;
-            roadArrived = reachedTarget || nearPlatform;
+            if (reachedTarget || nearPlatform)
+            {
+                roadArrived = true;
+                //Debug.Log($"[{name}] Road NPC arrived. reachedTarget={reachedTarget}, nearPlatform={nearPlatform}, position={rb.position}, target={currentRoadTarget}");
+            }
         }
 
         MoveToPoint(currentRoadTarget.Value);
@@ -260,52 +260,63 @@ public class Level03_NPC_Controller : MonoBehaviour
     private Vector2 PickRandomRoadTarget()
     {
         Vector2 center = flagRaisingPlatform.transform.position;
-        return center + Random.insideUnitCircle * roadWanderRadius;
+
+        const int maxAttempts = 20;
+        for (int i = 0; i < maxAttempts; i++)
+        {
+            Vector2 candidate = center + Random.insideUnitCircle * roadWanderRadius;
+            if (PathfindingManager.Instance.IsWalkablePoint(candidate))
+            {
+                //Debug.Log($"[{name}] Picked road target: {candidate}");
+                return candidate;
+            }
+        }
+
+        return center;
     }
 
-    private bool AllRoadNPCsArrived()
+    private bool EnoughRoadNPCsArrived()
     {
-        if (roadNPCs.Count == 0)
-            return false;
+        const int requiredArrivedCount = 3;
+        int arrivedCount = 0;
 
         foreach (Level03_NPC_Controller npc in roadNPCs)
         {
-            if (npc == null || !npc.roadArrived)
-                return false;
+            if (npc != null && npc.roadArrived)
+                arrivedCount++;
         }
-        return true;
+
+        return arrivedCount >= requiredArrivedCount;
     }
 
-    private void RoadFollowAndDisappear()
+    private void DisappearRoadNPCs()
     {
-        PlayerManager player = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentPlayer : null;
-        if (player == null)
-            return;
-
-        if (roadFollowStartTime < 0f)
+        Level03_NPC_Controller[] npcs = roadNPCs.ToArray();
+        foreach (Level03_NPC_Controller npc in npcs)
         {
-            roadFollowStartTime = Time.time;
-            SignalClass03Players();
+            if (npc != null && npc.gameObject.activeSelf)
+                npc.gameObject.SetActive(false);
         }
 
-        // 跟随玩家
-        FollowMovement(player.transform);
-
-        // 跟随一段时间后消失
-        if (Time.time - roadFollowStartTime >= roadFollowDisappearDelay)
-            gameObject.SetActive(false);
+        roadNPCs.Clear();
+        SignalOneClass03Player();
     }
 
-    /// <summary>NPC 开始跟随玩家时，让 Class03 玩家从 Stranger 改为 AutoMoving。</summary>
-    private static void SignalClass03Players()
+    private static void SignalOneClass03Player()
     {
         if (PlayerSelector.Instance == null)
             return;
 
-        foreach (PlayerManager p in PlayerSelector.Instance.playerManagers)
+        foreach (PlayerManager player in PlayerSelector.Instance.playerManagers)
         {
-            if (p != null && p.playerType == PlayerType.Class03)
-                p.StartAutoMoving();
+            if (player == null || player.playerType != PlayerType.Class03)
+                continue;
+
+            if (player.playerState == PlayerState.Stranger)
+            {
+                player.StartAutoMoving();
+                return;
+            }
         }
     }
 
