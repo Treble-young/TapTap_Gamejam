@@ -56,6 +56,10 @@ public class Car : InteractableManager
     public Button fillFuelButton;
     public Button exitButton;
 
+    [Header("Breakdown Settings")]
+    public GameObject[] interactThenSpawnAfterBreakdown;
+    public Transform spawnPointAfterBreakdown;
+
     [Header("Drive Settings")]
     public bool isDriving = false;
     [Tooltip("开车时 Car 相对玩家的偏移")]
@@ -81,6 +85,8 @@ public class Car : InteractableManager
     private Rigidbody2D drivingPlayerRb;
     private Collider2D drivingPlayerCollider;
     private InventoryItemData usedJackItem;
+    private bool isBrokenDown = false;
+    private bool hasSpawnedAfterBreakdown = false;
 
     public override void Awake()
     {
@@ -109,6 +115,12 @@ public class Car : InteractableManager
 
     public override void Interact(PlayerManager player)
     {
+        if (isBrokenDown)
+        {
+            TrySpawnAfterBreakdown();
+            return;
+        }
+
         // 打开 UI 让玩家选择：开车 / 连接油管 / 关闭
         if (menu != null)
         {
@@ -122,10 +134,9 @@ public class Car : InteractableManager
         if (menu == null || !menu.activeSelf)
             return;
 
-        // 被千斤顶顶起、连着油管（发电机/油泵）、或没油时，隐藏开车按钮（不能开车）
-        bool canDrive = !isJackedUp && !isConeectedToCar && !isConnectedToPump && !isOutOfFuel;
+        // 开车按钮始终显示，不能开时点击只弹提示
         if (driveButton != null)
-            driveButton.gameObject.SetActive(canDrive);
+            driveButton.gameObject.SetActive(true);
 
         // 千斤顶按钮：手持 Jack 物品时显现；已顶起后始终显现（再次按下即可取下千斤顶）
         if (jackButton != null)
@@ -191,7 +202,13 @@ public class Car : InteractableManager
 
         // 被千斤顶顶起、连着油管（发电机/油泵）、或没油时不能开车
         if (isJackedUp || isConeectedToCar || isConnectedToPump || isOutOfFuel)
+        {
+            CloseMenu();
+
+            if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
+                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("没油了，需要油泵，好像有人会使用加油机");
             return;
+        }
 
         drivingPlayer = player;
         isDriving = true;
@@ -267,13 +284,55 @@ public class Car : InteractableManager
 
     public void BreakDown()
     {
+        if (isBrokenDown)
+            return;
+
+        isBrokenDown = true;
         StopDriving();
+        CloseMenu();
 
         if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
-            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("坏了");
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("这辆车貌似坏了，不能开了。看下能不能拆下什么零件。");
 
         if (breakParticleSystem != null)
             breakParticleSystem.Play();
+    }
+
+    private void TrySpawnAfterBreakdown()
+    {
+        if (hasSpawnedAfterBreakdown)
+            return;
+
+        hasSpawnedAfterBreakdown = true;
+
+        if (interactThenSpawnAfterBreakdown != null)
+        {
+            Vector3 spawnPosition = spawnPointAfterBreakdown != null ? spawnPointAfterBreakdown.position : transform.position;
+            Quaternion spawnRotation = spawnPointAfterBreakdown != null ? spawnPointAfterBreakdown.rotation : transform.rotation;
+
+            foreach (GameObject prefab in interactThenSpawnAfterBreakdown)
+            {
+                if (prefab != null)
+                    Instantiate(prefab, spawnPosition, spawnRotation);
+            }
+        }
+
+        DisableInteraction();
+    }
+
+    private void DisableInteraction()
+    {
+        if (interactionArea != null)
+            interactionArea.enabled = false;
+
+        if (PlayerSelector.Instance == null)
+            return;
+
+        foreach (PlayerManager teammate in PlayerSelector.Instance.playerManagers)
+        {
+            if (teammate != null && teammate.playerInteraction != null)
+                teammate.playerInteraction.RemoveInteractable(this);
+        }
     }
 
     private void HandleDrivingInput()

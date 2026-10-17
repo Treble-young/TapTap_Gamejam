@@ -16939,6 +16939,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 11400000, guid: cf5a71336c3cc26448807569aa4a2ec3, type: 2}
     - target: {fileID: 7227783211798809945, guid: 88b0370d75686df45b6e791ccbedb56c, type: 3}
+      propertyPath: blacklistLights.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7227783211798809945, guid: 88b0370d75686df45b6e791ccbedb56c, type: 3}
       propertyPath: 'filterLights.Array.data[0]'
       value: 
       objectReference: {fileID: 1768313792}
@@ -16946,6 +16950,10 @@ PrefabInstance:
       propertyPath: whitelistLights.Array.size
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 7227783211798809945, guid: 88b0370d75686df45b6e791ccbedb56c, type: 3}
+      propertyPath: 'blacklistLights.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1768313792}
     - target: {fileID: 7227783211798809945, guid: 88b0370d75686df45b6e791ccbedb56c, type: 3}
       propertyPath: 'whitelistLights.Array.data[0]'
       value: 
@@ -86994,6 +87002,26 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1181661272}
     m_Modifications:
+    - target: {fileID: 6694828791133177010, guid: c4b668164499dc9488b60a3c43906275, type: 3}
+      propertyPath: objsToSetFalse.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6694828791133177010, guid: c4b668164499dc9488b60a3c43906275, type: 3}
+      propertyPath: 'objsToSetFalse.Array.data[0]'
+      value: 
+      objectReference: {fileID: 1179119329}
+    - target: {fileID: 6694828791133177010, guid: c4b668164499dc9488b60a3c43906275, type: 3}
+      propertyPath: 'objsToSetFalse.Array.data[1]'
+      value: 
+      objectReference: {fileID: 408889140}
+    - target: {fileID: 6694828791133177010, guid: c4b668164499dc9488b60a3c43906275, type: 3}
+      propertyPath: 'objsToSetFalse.Array.data[2]'
+      value: 
+      objectReference: {fileID: 625374120}
+    - target: {fileID: 6694828791133177010, guid: c4b668164499dc9488b60a3c43906275, type: 3}
+      propertyPath: 'objsToSetFalse.Array.data[3]'
+      value: 
+      objectReference: {fileID: 1365723347}
     - target: {fileID: 8235958266926278831, guid: c4b668164499dc9488b60a3c43906275, type: 3}
       propertyPath: m_FlipX
       value: 1

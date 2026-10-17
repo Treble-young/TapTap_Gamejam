@@ -14,6 +14,8 @@ public class FlagRaisingPlatform : InteractableManager
     public Sprite withRopeNotRaisingFlagSprite;
     public Sprite withRopeRaisingFlagSprite;
 
+    public GameObject[] objsToSetFalse;
+
     public override void Interact(PlayerManager player)
     {
         if (!hasFlag)
@@ -61,6 +63,12 @@ public class FlagRaisingPlatform : InteractableManager
             isRaisingFlag = true;
             // 开始升旗的逻辑
             flagSpriteRenderer.sprite = withRopeRaisingFlagSprite; // 显示升起的旗帜
+
+            foreach (GameObject obj in objsToSetFalse)
+            {
+                if (obj != null)
+                    obj.SetActive(false);
+            }
         }
     }
 }

@@ -79,7 +79,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 1226872497
   m_SortingLayer: 1
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 9856d3ebfbd2ddb4da4e4a761a9836c8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 0}
@@ -170,7 +170,7 @@ SpriteRenderer:
   m_GlobalIlluminationMeshLod: 0
   m_SortingLayerID: 1226872497
   m_SortingLayer: 1
-  m_SortingOrder: 1
+  m_SortingOrder: 2
   m_MaskInteraction: 0
   m_Sprite: {fileID: 21300000, guid: 9856d3ebfbd2ddb4da4e4a761a9836c8, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -343,6 +343,7 @@ MonoBehaviour:
   withFlagWithoutRopeSprite: {fileID: 21300000, guid: 21febb250b2a5b44594bb1a7766f657c, type: 3}
   withRopeNotRaisingFlagSprite: {fileID: 21300000, guid: 9cc918d7b4fe37247bea7eb066213dc9, type: 3}
   withRopeRaisingFlagSprite: {fileID: 21300000, guid: 014213a01cc207d4ba6e0f0d7d0c738d, type: 3}
+  objsToSetFalse: []
 --- !u!60 &3966794505417443339
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -390,7 +391,7 @@ PolygonCollider2D:
   m_Points:
     m_Paths:
     - - {x: 0.012022218, y: 0.13198504}
-      - {x: -0.4725659, y: -0.10936138}
+      - {x: -0.5154448, y: -0.08297433}
       - {x: 0.013333499, y: -0.33533588}
-      - {x: 0.49160635, y: -0.0972929}
+      - {x: 0.5080986, y: -0.10059145}
   m_UseDelaunayMesh: 1
