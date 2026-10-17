@@ -30,12 +30,16 @@ public class LightFollow : MonoBehaviour
     public List<LightInfo> lightInfos = new List<LightInfo>();
 
     [Header("世界灯光")]
-    [Tooltip("开局时关闭场景里除跟随灯外的所有 Light2D，等手电筒打开时再开启")]
+    [Tooltip("白名单模式：开局时关闭场景里除跟随灯外的所有 Light2D，等手电筒打开时再开启")]
     [SerializeField] private bool worldLightsStartOff = true;
 
     [SerializeField] private LightFilterMode lightFilterMode = LightFilterMode.Whitelist;
 
-    [SerializeField] private List<Light2D> filterLights = new List<Light2D>();
+    [Tooltip("黑名单模式下，场景里除跟随灯外的所有 Light2D 默认关闭，等手电筒打开时再开启")]
+    [SerializeField] private List<Light2D> blacklistLights = new List<Light2D>();
+
+    [Tooltip("白名单里的 Light2D 不受全局开关控制，始终保持发光")]
+    [SerializeField] private List<Light2D> whitelistLights = new List<Light2D>();
 
     [Header("Level03")]
     public bool isLevel03 = false;
@@ -54,8 +58,8 @@ public class LightFollow : MonoBehaviour
 
     void Start()
     {
-        if (worldLightsStartOff && lightFilterMode != LightFilterMode.Blacklist)
-            SetBlackListLights(false);
+        if (worldLightsStartOff && lightFilterMode == LightFilterMode.Whitelist)
+            SetWorldLights(false);
     }
 
     void Update()
@@ -100,7 +104,25 @@ public class LightFollow : MonoBehaviour
         }
     }
 
-    /// <summary>开启/关闭场景里除跟随灯外的所有 Light2D。</summary>
+    /// <summary>白名单模式下，开启/关闭场景里除跟随灯和白名单灯外的所有 Light2D。</summary>
+    public void SetWorldLights(bool enabled)
+    {
+        if (lightFilterMode != LightFilterMode.Whitelist)
+            return;
+
+        Light2D[] allLights = FindObjectsByType<Light2D>(FindObjectsSortMode.None);
+        foreach (Light2D light in allLights)
+        {
+            if (light == null || light == light2D)
+                continue;
+
+            if (whitelistLights.Contains(light))
+                continue;
+
+            light.enabled = enabled;
+        }
+    }
+
     public void SetBlackListLights(bool enabled)
     {
         if (!isLevel03)
@@ -109,7 +131,10 @@ public class LightFollow : MonoBehaviour
         if (lightFilterMode != LightFilterMode.Blacklist)
             return;
 
-        foreach (Light2D light in filterLights)
+        if (LightStage > 0)
+            enabled = true;
+
+        foreach (Light2D light in blacklistLights)
         {
             // 跟随灯由 LightStage 控制，不要在这里开关
             if (light == null || light == light2D)

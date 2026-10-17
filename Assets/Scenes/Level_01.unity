@@ -5529,11 +5529,17 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 557707396038459371, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1689855881}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 8955197428277842961, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1610550896}
+    - targetCorrespondingSourceObject: {fileID: 8955197428277842961, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1610550903}
   m_SourcePrefab: {fileID: 100100000, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
 --- !u!1 &572040833
 GameObject:
@@ -7374,6 +7380,32 @@ MonoBehaviour:
   hideWhenPlayerNear: 0
   hideRadius: 3
   proximityTarget: {fileID: 0}
+--- !u!4 &1610550902 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 557707396038459371, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
+  m_PrefabInstance: {fileID: 522566932}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1610550903
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1076943459}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9346c396234be85409b0c951e0f9eb8a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::RecruitableStranger
+  interactionArea: {fileID: 1689855882}
+  canInteractWithTypes: 
+  interactOnce: 1
+  animator: {fileID: 0}
+  interactAnimationNames:
+    keys: 
+    values: []
+  outlineSpriteRenderer: {fileID: 0}
+  needEmergingOutline: 1
 --- !u!1 &1625924220
 GameObject:
   m_ObjectHideFlags: 0
@@ -7466,6 +7498,74 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3fc1fbfb97d9daf42b69109a836bd501, type: 3}
+--- !u!1 &1689855880
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1689855881}
+  - component: {fileID: 1689855882}
+  m_Layer: 7
+  m_Name: Interaction Area
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1689855881
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1689855880}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1610550902}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!58 &1689855882
+CircleCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1689855880}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 1
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0, y: 0.34125084}
+  m_Radius: 0.7254695
 --- !u!1 &1726585221
 GameObject:
   m_ObjectHideFlags: 0
@@ -8401,6 +8501,10 @@ PrefabInstance:
     - target: {fileID: 7227783211798809945, guid: 88b0370d75686df45b6e791ccbedb56c, type: 3}
       propertyPath: lightIntensity
       value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 7227783211798809945, guid: 88b0370d75686df45b6e791ccbedb56c, type: 3}
+      propertyPath: lightFilterMode
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7227783211798809945, guid: 88b0370d75686df45b6e791ccbedb56c, type: 3}
       propertyPath: lightInfos.Array.size

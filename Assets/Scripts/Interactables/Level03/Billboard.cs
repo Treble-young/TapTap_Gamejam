@@ -7,6 +7,8 @@ public class Billboard : InteractableManager
     public GameObject linePrefab;
     public Transform lineSpawnPoint;
 
+    public Collider2D blockerCollider;
+
     public override void Interact(PlayerManager player)
     {
         base.Interact(player);
@@ -19,6 +21,8 @@ public class Billboard : InteractableManager
         if (linePrefab != null && lineSpawnPoint != null)
         {
             line = Instantiate(linePrefab, lineSpawnPoint.position, lineSpawnPoint.rotation);
+
+            blockerCollider.enabled = false;
         }
 
         SpriteRenderer spriteRenderer = GetComponentInChildren<SpriteRenderer>();

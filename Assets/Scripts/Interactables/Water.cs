@@ -8,7 +8,7 @@ public class Water : InteractableManager
         {
             lantern.isWet = true;
             lantern.ToggleIcon(lantern.wetIcon);
-            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("The carpet is now wet and can be used to extinguish fires.");
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("地毯已被弄湿。");
 
             Carpet carpetItem = PlayerSelector.Instance.currentInventory.currentSelectedItem as Carpet;
             if (carpetItem != null)
@@ -19,7 +19,7 @@ public class Water : InteractableManager
         }
         else
         {
-            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("You need to select a carpet to use the water.");
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("我得先拿着地毯才能把它弄湿。");
         }
     }
 }

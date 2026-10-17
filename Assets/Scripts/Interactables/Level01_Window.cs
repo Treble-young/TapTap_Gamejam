@@ -11,7 +11,7 @@ public class Level01_Door : InteractableManager
         {
             if (isLocked)
             {
-                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("The door is locked. You need someone to unlock it.");
+                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("这扇窗户被锁住了。也许有人可以帮忙打开它。");
             }
             else
             {
@@ -28,14 +28,14 @@ public class Level01_Door : InteractableManager
                 }
                 else
                 {
-                    PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("The door is unlocked. You can proceed.");
+                    PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("终于打开了，我们可以继续前进了。");
                 }
             }
         }
         else if (player.playerType == PlayerType.Class01)
         {
             isLocked = false;
-            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("The door has been unlocked by Class01. Main player can now proceed.");
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("窗户解锁了，可以让主角打开它。");
         }
     }
 }

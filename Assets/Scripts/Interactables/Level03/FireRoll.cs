@@ -14,6 +14,11 @@ public class FireRoll : InteractableManager
 
     [Header("Hand Crank Settings")]
     public HandCrank handCrank; // Reference to the Hand Crank item
+    public GameObject handCrankPoint;
+    public SpriteRenderer handCrankPointSpriteRenderer;
+    public Sprite handCrankUpSprite;
+    public Sprite handCrankDownSprite;
+    public Sprite noHandCrankSprite;
 
     [Header("UI Settings")]
     public GameObject menu;
@@ -76,6 +81,7 @@ public class FireRoll : InteractableManager
         {
             handCrank = selectedHandCrank;
             PlayerSelector.Instance.currentInventory.RemoveItem(selectedHandCrank);
+            SetHandCrankSprite(true);
             UpdateMenu();
         }
     }
@@ -86,6 +92,7 @@ public class FireRoll : InteractableManager
         {
             PlayerSelector.Instance.currentInventory.TryAdd(handCrank);
             handCrank = null;
+            SetNoHandCrankSprite();
             UpdateMenu();
         }
     }
@@ -113,8 +120,32 @@ public class FireRoll : InteractableManager
                         hasOilPipelineSpawned = true;
                     }
                 }
+
+                SetHandCrankSprite(isOpen);
             }
         }
+    }
+
+    private void SetHandCrankSprite(bool pulledUp)
+    {
+        if (handCrankPointSpriteRenderer == null && handCrankPoint != null)
+            handCrankPointSpriteRenderer = handCrankPoint.GetComponent<SpriteRenderer>();
+
+        if (handCrankPointSpriteRenderer == null)
+            return;
+
+        handCrankPointSpriteRenderer.sprite = pulledUp ? handCrankUpSprite : handCrankDownSprite;
+    }
+
+    private void SetNoHandCrankSprite()
+    {
+        if (handCrankPointSpriteRenderer == null && handCrankPoint != null)
+            handCrankPointSpriteRenderer = handCrankPoint.GetComponent<SpriteRenderer>();
+
+        if (handCrankPointSpriteRenderer == null)
+            return;
+
+        handCrankPointSpriteRenderer.sprite = noHandCrankSprite;
     }
 
 }

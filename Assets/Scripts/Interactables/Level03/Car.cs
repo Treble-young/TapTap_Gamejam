@@ -44,6 +44,10 @@ public class Car : InteractableManager
     public Sprite carUpRightSprite;
     public Sprite carDownRightSprite;
 
+    [Header("Breakdown")]
+    [Tooltip("损坏时播放的粒子效果")]
+    public ParticleSystem breakParticleSystem;
+
     [Header("UI Settings")]
     public GameObject menu;
     public Button driveButton;
@@ -62,10 +66,10 @@ public class Car : InteractableManager
     public float turnSpeed = 180f;
     [Tooltip("右上/右下/左上/左下方向的前进向量，代码会自动归一化")]
     public Vector2 diagonalDriveVector = new Vector2(1.5625f, 0.875f);
-    [Tooltip("开局时的车头朝向")]
+    [Tooltip("开局时车头的正前方（8 个方向）")]
     public CarDirection startFacing = CarDirection.Right;
-    [Tooltip("开局时玩家默认已经坐在车上")]
-    public bool startDriving = true;
+    [Tooltip("为 true 时，开局自动开始驾驶")]
+    public bool startDriving = false;
 
     public static Car ActiveDrivingCar;
 
@@ -259,6 +263,17 @@ public class Car : InteractableManager
 
         if (carCollider != null)
             carCollider.enabled = true;
+    }
+
+    public void BreakDown()
+    {
+        StopDriving();
+
+        if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("坏了");
+
+        if (breakParticleSystem != null)
+            breakParticleSystem.Play();
     }
 
     private void HandleDrivingInput()
