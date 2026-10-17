@@ -5,7 +5,7 @@ public class PlayerInteractionManager : MonoBehaviour
 {
     PlayerManager player;
 
-    [SerializeField] private List<InteractableManager> currentInteractableActions;
+    public List<InteractableManager> currentInteractableActions;
 
     void Awake()
     {

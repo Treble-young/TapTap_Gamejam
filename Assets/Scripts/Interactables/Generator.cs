@@ -38,16 +38,16 @@ public class Generator : InteractableManager
             isConnectedWithFuel = true;
 
             if (car && car.isConeectedToCar)
-                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("油管接好了。我得把燃料送进发电机，先找个千斤顶把车抬起来。");
+                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("输油管已经连接到发电机和车子上了。现在我要想办法把燃料输送到发电机里了。得找个千斤顶把车子抬起来。");
             else
-                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("发电机这头接好了。");
+                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("输油管已经连接到发电机上了。");
 
             if (car)
                 car.ShowThePipeline();
         }
         else
         {
-            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("我得先拿条输油管，把发电机和车连起来。");
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("我需要一条输油管来连接发电机和车子。");
         }
     }
 
@@ -61,7 +61,7 @@ public class Generator : InteractableManager
             car.ShowThePipeline();
         }
 
-        PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("我把发电机这头的油管拔掉了。");
+        PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("输油管已经从发电机上断开。");
     }
 
     private bool PlayerHoldsOilPipeline()
@@ -77,24 +77,24 @@ public class Generator : InteractableManager
 
         if (!fullyConnected)
         {
-            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("油管还没完全接通，得把车和发电机都接上。");
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("输油管没有完全连接。要确保输油管连接到发电机和车子上。");
             return;
         }
 
         if (!isFueled)
         {
-            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("发电机没燃料，得先把燃料送进去。");
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("发电机没有燃料。要先确保发电机有燃料。");
             return;
         }
 
         if (isStarted)
         {
-            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("发电机已经在转了。");
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("发电机已经在运行了。");
             return;
         }
 
         isStarted = true;
         flagRaisingPlatform.isPowered = true;
-        PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("发电机启动了，旗台有电了。");
+        PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("发电机已经启动！旗台现在有电力了。");
     }
 }
