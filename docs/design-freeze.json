@@ -1,0 +1,23 @@
+{
+  "version": 2,
+  "status": "frozen",
+  "frozenAt": "2026-10-16",
+  "changeLog": [
+    "v2 (2026-10-16 21:2x)：用户确认取消 LVL-201「开场杂草走廊与限水平移动」需求，条目移除，工程侧同步清理（Level02GrassCorridor 停用为自清理桩，建场景脚本不再生成并按名清理残留）。"
+  ],
+  "project": "TapTap_Gamejam 第二关「荒地」（依据关卡流程图确认）",
+  "items": [
+    { "id": "MECH-201", "type": "mechanic", "name": "字牌通用机制：E 查看提示，选中字牌按 Q 修复附近匹配目标", "confirmed": true },
+    { "id": "MECH-202", "type": "mechanic", "name": "「路」字牌修复箭头路牌并开出砖石新路", "confirmed": true },
+    { "id": "MECH-203", "type": "mechanic", "name": "「水」字牌修复水井（井亭立起、字归位）", "confirmed": true },
+    { "id": "MECH-204", "type": "mechanic", "name": "「禁」字牌在芦苇丛立警示牌", "confirmed": true },
+    { "id": "LVL-202", "type": "level", "name": "彩蛋路牌「Breaking Down-Down」与靠近提示「应该放在这里吧」", "confirmed": true },
+    { "id": "LVL-203", "type": "level", "name": "NPC 生活区带电水池：电线杆垂线入水，NPC 周期性走到水边触电倒下", "confirmed": true },
+    { "id": "LVL-204", "type": "level", "name": "放置「禁」后 NPC 看到警示牌（头顶感叹号）改道走向地图外", "confirmed": true },
+    { "id": "LVL-205", "type": "level", "name": "水+禁双修复后视角拉高，展现医院/图书馆/车站区域", "confirmed": true },
+    { "id": "LVL-206", "type": "level", "name": "NPC 向水井聚集合并为单体，对话赠予破碎标识（医殳酉聿曰馬尺）", "confirmed": true },
+    { "id": "MECH-205", "type": "mechanic", "name": "部首拼字：医+殳+酉=醫（医院）、聿+曰=書（图书馆）、馬+尺=駅（车站）", "confirmed": true },
+    { "id": "LVL-207", "type": "level", "name": "三处建筑修复：医院/图书馆/车站各放对应拼合字", "confirmed": true },
+    { "id": "LVL-208", "type": "level", "name": "三处全修复后场所恢复正常、车站出车，主控上车离开关卡", "confirmed": true }
+  ]
+}

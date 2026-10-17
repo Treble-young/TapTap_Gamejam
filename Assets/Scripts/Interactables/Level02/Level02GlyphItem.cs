@@ -14,6 +14,13 @@ public class Level02GlyphItem : InventoryItemData
 
     public string Glyph => glyph;
 
+    /// <summary>运行时构造拼合好的字牌（供拼字系统创建 醫/書/駅）。</summary>
+    public void Configure(string g, string displayName)
+    {
+        glyph = g;
+        itemName = displayName;
+    }
+
     public override void Use(PlayerManager player)
     {
         if (player == null)
