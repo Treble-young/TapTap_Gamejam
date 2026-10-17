@@ -7,6 +7,10 @@ public class RollingDoor : InteractableManager
     [Header("Hand Crank Settings")]
     public GameObject handCrankPoint;
     public bool isControlledByHandCrank = false;
+    public SpriteRenderer handCrankPointSpriteRenderer;
+    public Sprite handCrankUpSprite;
+    public Sprite handCrankDownSprite;
+    public Sprite noHandCrankSprite;
 
     [Header("Door Settings")]
     public bool isBlockedByShoppingCart = false;
@@ -89,6 +93,7 @@ public class RollingDoor : InteractableManager
             isControlledByHandCrank = true;
             handCrank = PlayerSelector.Instance.currentInventory.currentSelectedItem as HandCrank;
             PlayerSelector.Instance.currentInventory.RemoveItem(PlayerSelector.Instance.currentInventory.currentSelectedItem);
+            SetHandCrankSprite(true);
             UpdateMenu();
         }
     }
@@ -100,6 +105,7 @@ public class RollingDoor : InteractableManager
             isControlledByHandCrank = false;
             PlayerSelector.Instance.currentInventory.TryAdd(handCrank);
             handCrank = null;
+            SetNoHandCrankSprite();
             UpdateMenu();
 
             if (doorCoroutine != null)
@@ -127,6 +133,7 @@ public class RollingDoor : InteractableManager
         isBlockedByShoppingCart = false;
         isDoorOpen = !isDoorOpen;
         bool opening = isDoorOpen;
+        SetHandCrankSprite(opening);
 
         if (!opening)
         {
@@ -157,6 +164,28 @@ public class RollingDoor : InteractableManager
             blockedCart.canMove = true;
             blockedCart = null;
         }
+    }
+
+    private void SetHandCrankSprite(bool pulledUp)
+    {
+        if (handCrankPointSpriteRenderer == null && handCrankPoint != null)
+            handCrankPointSpriteRenderer = handCrankPoint.GetComponent<SpriteRenderer>();
+
+        if (handCrankPointSpriteRenderer == null)
+            return;
+
+        handCrankPointSpriteRenderer.sprite = pulledUp ? handCrankUpSprite : handCrankDownSprite;
+    }
+
+    private void SetNoHandCrankSprite()
+    {
+        if (handCrankPointSpriteRenderer == null && handCrankPoint != null)
+            handCrankPointSpriteRenderer = handCrankPoint.GetComponent<SpriteRenderer>();
+
+        if (handCrankPointSpriteRenderer == null)
+            return;
+
+        handCrankPointSpriteRenderer.sprite = noHandCrankSprite;
     }
 
     private IEnumerator DropDoor()

@@ -12,12 +12,14 @@ public class Freshlight : InventoryItemData
             {
                 light.SetStage(1);
                 light.SetWorldLights(true);
+                light.SetBlackListLights(true);
                 ToggleIcon(usedIcon);
             }
             else if (light.LightStage == 1)
             {
                 light.SetStage(0);
                 light.SetWorldLights(false);
+                light.SetBlackListLights(false);
                 ToggleIcon(icon);
             }
         }

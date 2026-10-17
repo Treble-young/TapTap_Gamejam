@@ -14,6 +14,12 @@ public class Generator : InteractableManager
         if (player.playerType != PlayerType.Main)
             return;
 
+        if (isConnectedWithFuel && PlayerHoldsOilPipeline())
+        {
+            DisconnectFuelLine();
+            return;
+        }
+
         if (!isConnectedWithFuel)
         {
             ConnectFuelLine();
@@ -32,17 +38,36 @@ public class Generator : InteractableManager
             isConnectedWithFuel = true;
 
             if (car && car.isConeectedToCar)
-                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("Fuel line connected. Fill the generator with fuel first.");
+                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("输油管已经连接到发电机和车子上了。现在我要想办法把燃料输送到发电机里了。得找个千斤顶把车子抬起来。");
             else
-                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("Generator connected. Now connect the car with a fuel line.");
+                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("输油管已经连接到发电机上了。");
 
             if (car)
                 car.ShowThePipeline();
         }
         else
         {
-            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("You need to select a fuel line to connect the generator.");
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("我需要一条输油管来连接发电机和车子。");
         }
+    }
+
+    private void DisconnectFuelLine()
+    {
+        isConnectedWithFuel = false;
+
+        if (car != null)
+        {
+            car.isConeectedToCar = false;
+            car.ShowThePipeline();
+        }
+
+        PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("输油管已经从发电机上断开。");
+    }
+
+    private bool PlayerHoldsOilPipeline()
+    {
+        PlayerInventoryManager inventory = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentInventory : null;
+        return inventory != null && inventory.currentSelectedItem is OilPipeline;
     }
 
     /// <summary>Main：启动发电机。</summary>
@@ -52,24 +77,24 @@ public class Generator : InteractableManager
 
         if (!fullyConnected)
         {
-            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("Fuel line is not connected yet.");
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("输油管没有完全连接。要确保输油管连接到发电机和车子上。");
             return;
         }
 
         if (!isFueled)
         {
-            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("Fill the generator with fuel from the car first.");
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("发电机没有燃料。要先确保发电机有燃料。");
             return;
         }
 
         if (isStarted)
         {
-            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("Generator is already running.");
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("发电机已经在运行了。");
             return;
         }
 
         isStarted = true;
         flagRaisingPlatform.isPowered = true;
-        PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("Generator started!");
+        PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("发电机已经启动！旗台现在有电力了。");
     }
 }

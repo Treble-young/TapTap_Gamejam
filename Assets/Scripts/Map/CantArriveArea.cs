@@ -43,11 +43,22 @@ public class CantArriveArea : MonoBehaviour
         if (player == null || player.playerMovement == null)
             return;
 
+        if (player.playerType != PlayerType.Main)
+        {
+            return;
+        }
+
+        if (level03FunctionNeedsNPC && !HasRequiredNPCInArea())
+        {
+            Destroy(gameObject);
+            return;
+        }
+
         // LEVEL 03：需要旗帜平台且尚未获得旗帜时，进入就弹出提示
         if (level03FunctionNeedsFlagPlatform && !PlayerInventoryManager.HasLevel03Flag
             && PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
         {
-            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("You need the flag for people to make way for you.");
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("这里太多人了，我需要有旗帜他们才会让路。");
         }
 
         entryPositions[player] = other.attachedRigidbody != null
@@ -85,6 +96,7 @@ public class CantArriveArea : MonoBehaviour
         {
             pushCoroutines.Remove(player);
             entryPositions.Remove(player);
+            Destroy(gameObject);
             yield break;
         }
 

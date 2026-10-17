@@ -41,6 +41,9 @@ public class HotbarUI : MonoBehaviour, IPointerClickHandler
 
     private void HandleNumberKeys()
     {
+        if (PlayerInputManager.Instance != null && PlayerInputManager.Instance.IsPlayerInputLocked)
+            return;
+
         Keyboard keyboard = Keyboard.current;
         if (boundInventory == null || keyboard == null)
             return;

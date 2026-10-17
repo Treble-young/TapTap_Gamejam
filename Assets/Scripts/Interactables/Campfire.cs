@@ -65,7 +65,7 @@ public class Campfire : InteractableManager
             }
             else
             {
-                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("The carpet is not wet, cannot extinguish the fire.");
+                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("地毯是干的，好像无法扑灭火焰。");
             }
         }
     }

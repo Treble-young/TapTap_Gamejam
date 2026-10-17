@@ -195,7 +195,7 @@ public class PathfindingManager : MonoBehaviour
         return true;
     }
 
-    private bool IsWalkablePoint(Vector2 point)
+    public bool IsWalkablePoint(Vector2 point)
     {
         float radius = cellSize * 0.4f;
         Collider2D[] hits = Physics2D.OverlapCircleAll(point, radius, obstacleMask);

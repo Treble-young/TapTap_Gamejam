@@ -16,10 +16,45 @@ public class InteractableManager : MonoBehaviour
     public SpriteRenderer outlineSpriteRenderer;
     public bool needEmergingOutline = true;
     private Coroutine outlineCoroutine;
+    private SpriteRenderer targetSpriteRenderer;
 
     public virtual void Awake()
     {
         animator = GetComponentInChildren<Animator>();
+        targetSpriteRenderer = FindTargetSpriteRenderer();
+    }
+
+    private void LateUpdate()
+    {
+        if (outlineSpriteRenderer == null || targetSpriteRenderer == null)
+            return;
+
+        outlineSpriteRenderer.sprite = targetSpriteRenderer.sprite;
+        outlineSpriteRenderer.flipX = targetSpriteRenderer.flipX;
+        outlineSpriteRenderer.flipY = targetSpriteRenderer.flipY;
+    }
+
+    private SpriteRenderer FindTargetSpriteRenderer()
+    {
+        if (outlineSpriteRenderer == null)
+            return null;
+
+        Transform visual = transform.Find("Visual");
+        if (visual != null)
+        {
+            SpriteRenderer visualRenderer = visual.GetComponent<SpriteRenderer>();
+            if (visualRenderer != null && visualRenderer != outlineSpriteRenderer)
+                return visualRenderer;
+        }
+
+        SpriteRenderer[] renderers = GetComponentsInChildren<SpriteRenderer>();
+        foreach (SpriteRenderer renderer in renderers)
+        {
+            if (renderer != outlineSpriteRenderer)
+                return renderer;
+        }
+
+        return null;
     }
 
     protected virtual void OnTriggerEnter2D(Collider2D collision)
@@ -34,13 +69,6 @@ public class InteractableManager : MonoBehaviour
             if (interactionManager != null)
             {
                 interactionManager.AddInteractable(this);
-                if (needEmergingOutline && outlineSpriteRenderer != null)
-                {
-                    if (outlineCoroutine != null)
-                        StopCoroutine(outlineCoroutine);
-
-                    outlineCoroutine = StartCoroutine(spriteColorAlphaFlickerCoroutine(0.2f, 1f, 2f, 5f));
-                }
             }
         }
     }
@@ -57,19 +85,50 @@ public class InteractableManager : MonoBehaviour
             if (interactionManager != null)
             {
                 interactionManager.RemoveInteractable(this);
-
-                if (outlineCoroutine != null)
-                {
-                    StopCoroutine(outlineCoroutine);
-                    outlineCoroutine = null;
-                    if (outlineSpriteRenderer != null)
-                    {
-                        Color originalColor = outlineSpriteRenderer.color;
-                        outlineSpriteRenderer.color = new Color(originalColor.r, originalColor.g, originalColor.b, 0f);
-                    }
-                }
             }
         }
+    }
+
+    public bool CanInteractWith(PlayerManager player)
+    {
+        if (player == null || PlayerSelector.Instance == null || player != PlayerSelector.Instance.currentPlayer)
+            return false;
+
+        if (canInteractWithTypes.Length == 0)
+            return true;
+
+        foreach (PlayerType type in canInteractWithTypes)
+        {
+            if (player.playerType == type)
+                return true;
+        }
+
+        return false;
+    }
+
+    public void SetOutlineVisible(bool visible)
+    {
+        if (outlineSpriteRenderer == null)
+            return;
+
+        if (visible)
+        {
+            if (!needEmergingOutline || outlineCoroutine != null)
+                return;
+
+            outlineCoroutine = StartCoroutine(spriteColorAlphaFlickerCoroutine(0.2f, 1f, 2f, 5f));
+            return;
+        }
+
+        if (outlineCoroutine != null)
+        {
+            StopCoroutine(outlineCoroutine);
+            outlineCoroutine = null;
+        }
+
+        Color color = outlineSpriteRenderer.color;
+        color.a = 0f;
+        outlineSpriteRenderer.color = color;
     }
 
     private IEnumerator spriteColorAlphaFlickerCoroutine(float minAlpha, float maxAlpha, float cycleDuration, float totalDuration)
@@ -94,20 +153,7 @@ public class InteractableManager : MonoBehaviour
 
     public virtual void Interact(PlayerManager player)
     {
-        if (player != PlayerSelector.Instance.currentPlayer)
-            return;
-
-        bool canInteract = canInteractWithTypes.Length == 0;
-        foreach (PlayerType type in canInteractWithTypes)
-        {
-            if (player.playerType == type)
-            {
-                canInteract = true;
-                break;
-            }
-        }
-
-        if (!canInteract)
+        if (!CanInteractWith(player))
             return;
 
         //Debug.Log("Interacting with " + player.name);

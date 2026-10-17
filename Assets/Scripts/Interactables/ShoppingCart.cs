@@ -1,43 +1,48 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 public class ShoppingCart : InteractableManager
 {
-    [Header("Spawn Settings")]
-    public GameObject canPrefab;
-    public Transform spawnPoint;
-    public List<GameObject> spawnedCans = new List<GameObject>();
-
-    // 与 spawnedCans 一一对应，记录每个罐头放入时消耗的 Can 物品，取出时归还
-    private readonly List<Can> spawnedCanItems = new List<Can>();
+    [Header("Cart Visuals")]
+    public SpriteRenderer cartSpriteRenderer;
+    public Sprite cartUpperRightSprite;
+    public Sprite cartLowerLeftSprite;
+    public Sprite cartUpperRightFullSprite;
+    public Sprite cartLowerLeftFullSprite;
 
     [Header("UI Settings")]
     public GameObject menu;
     public Button spawnCanButton;
     public Button clearCanButton;
     public Button exitButton;
+    public TextMeshProUGUI canCountText;
 
-    [Header("Drive Settings")]
+    [Header("Track Settings")]
     public bool isDriving = false;
     public bool canMove = true;
     public List<Transform> drivePathPoints = new List<Transform>();
-    [Tooltip("驾驶移动速度")]
     public float driveSpeed = 3f;
-    [Tooltip("离路径点多近算到达，到达后停下")]
-    public float driveStopDistance = 0.1f;
+
+    public static ShoppingCart ActiveDrivingCart;
+    public bool IsLoaded => loadedCanItems.Count > 0;
+    public int LoadedCanCount => loadedCanItems.Count;
 
     private Rigidbody2D cartRb;
     private RigidbodyType2D originalBodyType;
 
-    private PlayerManager drivingPlayer;
-    private Rigidbody2D drivingPlayerRb;
-    private RigidbodyType2D drivingPlayerOriginalBodyType;
+    private Sprite cartEmptySprite;
+    private readonly List<Can> loadedCanItems = new List<Can>();
 
-    public static ShoppingCart ActiveDrivingCart;
-
-    private Transform currentTarget;
-    private Vector2 currentDirection;
+    private readonly List<Vector3> pathPoints = new List<Vector3>();
+    private readonly List<float> segmentLengths = new List<float>();
+    private float totalPathLength;
+    private float pathDistance;
+    private int moveDirection = 1;
+    private bool isReturning;
+    private Vector3 originPosition;
+    private float visualAngle;
 
     public override void Awake()
     {
@@ -46,6 +51,17 @@ public class ShoppingCart : InteractableManager
         cartRb = GetComponent<Rigidbody2D>();
         if (cartRb != null)
             originalBodyType = cartRb.bodyType;
+
+        originPosition = transform.position;
+
+        if (cartSpriteRenderer == null)
+        {
+            Transform visual = transform.Find("Visual");
+            cartSpriteRenderer = visual != null ? visual.GetComponent<SpriteRenderer>() : GetComponentInChildren<SpriteRenderer>();
+        }
+
+        if (cartSpriteRenderer != null)
+            cartEmptySprite = cartSpriteRenderer.sprite;
     }
 
     public override void Interact(PlayerManager player)
@@ -55,7 +71,6 @@ public class ShoppingCart : InteractableManager
         if (menu != null)
         {
             menu.SetActive(true);
-
             UpdateMenu();
         }
     }
@@ -66,106 +81,82 @@ public class ShoppingCart : InteractableManager
             return;
 
         PlayerInventoryManager inventory = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentInventory : null;
-        bool canSpawn = inventory != null && inventory.currentSelectedItem is Can selectedCan && selectedCan.itemCount > 0;
-        spawnCanButton.interactable = canSpawn;
+        bool canSpawn = inventory != null &&
+                        inventory.currentSelectedItem is Can selectedCan && selectedCan.itemCount > 0;
 
-        bool canClear = spawnedCans.Count > 0;
-        clearCanButton.interactable = canClear;
-    }
-
-    // ---- Drive：玩家操控购物车，沿 drivePathPoints 移动 ----
-
-    private void Update()
-    {
-        if (!isDriving)
-            return;
-
-        // 若当前操控角色已切换，结束驾驶（Esc 下车在 PlayerInputManager 中处理）
-        if (PlayerSelector.Instance != null && PlayerSelector.Instance.currentPlayer != drivingPlayer)
-        {
-            StopDriving();
-            return;
-        }
-
-        Vector2 input = PlayerInputManager.Instance != null ? PlayerInputManager.Instance.MovementInput : Vector2.zero;
-        Vector2 dir = input.sqrMagnitude > 0.001f ? GetCardinalDirection(input) : Vector2.zero;
-
-        // 按住才动：松开即停，按住持续更新方向；换方向时重新选目标
-        if (dir == Vector2.zero)
-        {
-            currentDirection = Vector2.zero;
-            currentTarget = null;
-        }
-        else if (dir != currentDirection)
-        {
-            currentDirection = dir;
-            currentTarget = null;
-        }
+        if (spawnCanButton != null)
+            spawnCanButton.interactable = canSpawn;
+        if (clearCanButton != null)
+            clearCanButton.interactable = IsLoaded;
+        if (canCountText != null)
+            canCountText.text = "当前购物车内罐头数量： " + LoadedCanCount.ToString();
     }
 
     private void FixedUpdate()
     {
-        if (!isDriving || !canMove || cartRb == null || currentDirection == Vector2.zero)
+        if (!isDriving || cartRb == null)
             return;
 
-        // 按住方向键时持续选目标并移动；没有可去的点就停下
-        if (currentTarget == null)
-            currentTarget = GetDriveTarget(currentDirection);
-        if (currentTarget == null)
-            return;
-
-        Vector2 target = currentTarget.position;
-        Vector2 myPos = cartRb.position;
-        Vector2 delta = target - myPos;
-
-        Vector2 newPos;
-        if (delta.magnitude <= driveStopDistance)
+        // Only RollingDoor requests a return by setting canMove=false. Player contact does not.
+        if (!isReturning && moveDirection > 0 && !canMove)
         {
-            newPos = target;
-            currentTarget = null; // 到达后立刻选下一个点，按住可连续移动
-        }
-        else
-        {
-            newPos = myPos + delta.normalized * driveSpeed * Time.fixedDeltaTime;
+            isReturning = true;
+            moveDirection = -1;
         }
 
-        Vector2 moveDelta = newPos - myPos;
-        cartRb.MovePosition(newPos);
+        Vector3 oldPosition = cartRb.position;
+        float newDistance = Mathf.Clamp(
+            pathDistance + moveDirection * driveSpeed * Time.fixedDeltaTime,
+            0f,
+            totalPathLength);
 
-        // 玩家跟着购物车一起移动（不改父子关系，避免受购物车 1.45 缩放影响）
-        if (drivingPlayerRb != null)
-            drivingPlayerRb.MovePosition(drivingPlayerRb.position + moveDelta);
+        Vector3 newPosition = GetPointAtDistance(newDistance);
+        cartRb.MovePosition(newPosition);
+        pathDistance = newDistance;
+
+        Vector2 move = newPosition - oldPosition;
+        if (move.sqrMagnitude > 0.000001f)
+            SetVisualAngle(Mathf.Atan2(move.y, move.x) * Mathf.Rad2Deg);
+
+        if (newDistance <= 0f || newDistance >= totalPathLength)
+        {
+            moveDirection = newDistance <= 0f ? 1 : -1;
+            isDriving = false;
+            isReturning = false;
+
+            if (cartRb != null)
+            {
+                cartRb.linearVelocity = Vector2.zero;
+                cartRb.angularVelocity = 0f;
+                cartRb.bodyType = originalBodyType;
+            }
+        }
     }
 
     public void Drive()
     {
-        PlayerManager player = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentPlayer : null;
-        if (player == null)
+        if (drivePathPoints.Count == 0)
             return;
-
-        drivingPlayer = player;
-        isDriving = true;
-        ActiveDrivingCart = this;
-        currentDirection = Vector2.zero;
-        currentTarget = null;
 
         if (menu != null)
             menu.SetActive(false);
 
-        // 玩家停止自身移动，随购物车一起动
-        if (player.playerMovement != null)
-            player.playerMovement.enabled = false;
-
-        drivingPlayerRb = player.GetComponent<Rigidbody2D>();
-        if (drivingPlayerRb != null)
+        if (!isDriving)
         {
-            drivingPlayerOriginalBodyType = drivingPlayerRb.bodyType;
-            drivingPlayerRb.bodyType = RigidbodyType2D.Kinematic;
-        }
+            RebuildPath();
+            if (totalPathLength <= 0f)
+                return;
 
-        // 购物车切换为运动学刚体，便于用 MovePosition 精确控制
-        if (cartRb != null)
-            cartRb.bodyType = RigidbodyType2D.Kinematic;
+            isDriving = true;
+            isReturning = false;
+
+            if (cartRb != null)
+                cartRb.bodyType = RigidbodyType2D.Kinematic;
+        }
+        else if (!isReturning)
+        {
+            moveDirection = -moveDirection;
+        }
     }
 
     public void StopDriving()
@@ -174,74 +165,63 @@ public class ShoppingCart : InteractableManager
             return;
 
         isDriving = false;
+        isReturning = false;
+
         if (ActiveDrivingCart == this)
             ActiveDrivingCart = null;
-        currentTarget = null;
-        currentDirection = Vector2.zero;
-
-        if (drivingPlayer != null)
-        {
-            if (drivingPlayerRb != null)
-                drivingPlayerRb.bodyType = drivingPlayerOriginalBodyType;
-            if (drivingPlayer.playerMovement != null)
-                drivingPlayer.playerMovement.enabled = true;
-            drivingPlayer = null;
-            drivingPlayerRb = null;
-        }
 
         if (cartRb != null)
+        {
+            cartRb.linearVelocity = Vector2.zero;
+            cartRb.angularVelocity = 0f;
             cartRb.bodyType = originalBodyType;
+        }
     }
 
-    // 把斜向输入（如 WASD 对角）归一到最近的主方向
-    private static Vector2 GetCardinalDirection(Vector2 input)
+    private void RebuildPath()
     {
-        if (Mathf.Abs(input.x) > Mathf.Abs(input.y))
-            return new Vector2(Mathf.Sign(input.x), 0f);
-        return new Vector2(0f, Mathf.Sign(input.y));
+        pathPoints.Clear();
+        segmentLengths.Clear();
+        totalPathLength = 0f;
+
+        pathPoints.Add(originPosition);
+        foreach (Transform point in drivePathPoints)
+        {
+            if (point != null)
+                pathPoints.Add(point.position);
+        }
+
+        for (int i = 1; i < pathPoints.Count; i++)
+        {
+            float length = Vector3.Distance(pathPoints[i - 1], pathPoints[i]);
+            segmentLengths.Add(length);
+            totalPathLength += length;
+        }
     }
 
-    // 取 dot 前二的路径点，选其中更近的那个作为目标（比只取最对齐的一个点更宽松）
-    private Transform GetDriveTarget(Vector2 direction)
+    private Vector3 GetPointAtDistance(float distance)
     {
-        Vector2 myPos = cartRb.position;
-        Transform b1 = null, b2 = null;
-        float dot1 = float.NegativeInfinity, dot2 = float.NegativeInfinity;
+        if (pathPoints.Count == 0)
+            return transform.position;
+        if (distance <= 0f)
+            return pathPoints[0];
+        if (distance >= totalPathLength)
+            return pathPoints[pathPoints.Count - 1];
 
-        foreach (Transform p in drivePathPoints)
+        float remaining = distance;
+        for (int i = 0; i < segmentLengths.Count; i++)
         {
-            if (p == null)
-                continue;
-
-            Vector2 to = (Vector2)p.position - myPos;
-            float dist = to.magnitude;
-            if (dist < 0.01f)
-                continue; // 已经在点上
-
-            float dot = Vector2.Dot(to / dist, direction);
-            if (dot > dot1)
+            float segment = segmentLengths[i];
+            if (remaining <= segment)
             {
-                dot2 = dot1; b2 = b1;
-                dot1 = dot; b1 = p;
+                float t = segment > 0f ? remaining / segment : 1f;
+                return Vector3.Lerp(pathPoints[i], pathPoints[i + 1], t);
             }
-            else if (dot > dot2)
-            {
-                dot2 = dot; b2 = p;
-            }
+
+            remaining -= segment;
         }
 
-        if (b1 == null || dot1 <= 0f)
-            return null;
-
-        // 前二都在该方向一侧时，选更近的
-        if (b2 != null && dot2 > 0f)
-        {
-            float d1 = ((Vector2)b1.position - myPos).sqrMagnitude;
-            float d2 = ((Vector2)b2.position - myPos).sqrMagnitude;
-            return d1 <= d2 ? b1 : b2;
-        }
-
-        return b1;
+        return pathPoints[pathPoints.Count - 1];
     }
 
     public void SpawnCan()
@@ -253,69 +233,101 @@ public class ShoppingCart : InteractableManager
             return;
         }
 
-        // 只有物品栏选中罐头 Can 时才能放入
         if (!(inventory.currentSelectedItem is Can selectedCan) || selectedCan.itemCount <= 0)
         {
             UpdateMenu();
             return;
         }
 
-        if (canPrefab == null || spawnPoint == null)
-        {
-            UpdateMenu();
-            return;
-        }
-
-        Vector3 randomOffset = new Vector3(Random.Range(-0.2f, 0.2f), Random.Range(-0.2f, 0.2f), 0);
-        GameObject newCan = Instantiate(canPrefab, spawnPoint.position + randomOffset, Quaternion.identity);
-        newCan.transform.SetParent(transform);
-        spawnedCans.Add(newCan);
-
-        // 消耗物品栏中的该罐头，并记录其物品数据，取出时归还
         inventory.RemoveItem(selectedCan);
-        spawnedCanItems.Add(selectedCan);
+        loadedCanItems.Add(selectedCan);
 
+        UpdateCartVisual(visualAngle);
         UpdateMenu();
     }
 
     public void ClearOneOfTheCans()
     {
-        // 只有购物车中有 Can 时才能取出，取出不需要物品栏选中
-        if (spawnedCans.Count <= 0)
+        if (loadedCanItems.Count == 0)
         {
             UpdateMenu();
             return;
         }
 
-        GameObject canToRemove = spawnedCans[0];
-        spawnedCans.RemoveAt(0);
-        Destroy(canToRemove);
-
-        if (spawnedCanItems.Count > 0)
+        PlayerInventoryManager inventory = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentInventory : null;
+        if (inventory == null)
         {
-            Can canItem = spawnedCanItems[0];
-            spawnedCanItems.RemoveAt(0);
+            UpdateMenu();
+            return;
+        }
 
-            PlayerInventoryManager inventory = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentInventory : null;
-            if (inventory != null && canItem != null)
+        Can canItem = loadedCanItems[0];
+        if (canItem != null)
+        {
+            if (canItem.itemCount <= 0)
+                canItem.itemCount = 1;
+
+            if (!inventory.TryAdd(canItem))
             {
-                // 放入时消耗可能已把 itemCount 归零，取出时至少恢复为 1
-                if (canItem.itemCount <= 0)
-                    canItem.itemCount = 1;
-                inventory.TryAdd(canItem);
+                UpdateMenu();
+                return;
             }
         }
 
+        loadedCanItems.RemoveAt(0);
+
+        UpdateCartVisual(visualAngle);
         UpdateMenu();
     }
 
     public void Exit()
     {
         if (menu != null)
-        {
             menu.SetActive(false);
-        }
 
         UpdateMenu();
+    }
+
+    private void SetVisualAngle(float angle)
+    {
+        visualAngle = angle;
+        UpdateCartVisual(angle);
+    }
+
+    private void UpdateCartVisual(float angle)
+    {
+        if (cartSpriteRenderer == null)
+            return;
+
+        float normalizedAngle = NormalizeAngle(angle);
+        bool upper = normalizedAngle < 180f;
+        bool leftSide = normalizedAngle > 90f && normalizedAngle < 270f;
+        bool flipX = upper ? leftSide : !leftSide;
+
+        Sprite sprite = IsLoaded
+            ? (upper ? cartUpperRightFullSprite : cartLowerLeftFullSprite)
+            : (upper ? cartUpperRightSprite : cartLowerLeftSprite);
+
+        if (sprite == null)
+            sprite = cartEmptySprite;
+
+        if (sprite != null)
+        {
+            cartSpriteRenderer.sprite = sprite;
+            cartSpriteRenderer.flipX = flipX;
+            if (outlineSpriteRenderer != null)
+            {
+                outlineSpriteRenderer.sprite = sprite;
+                outlineSpriteRenderer.flipX = flipX;
+            }
+        }
+    }
+
+    private static float NormalizeAngle(float angle)
+    {
+        angle %= 360f;
+        if (angle < 0f)
+            angle += 360f;
+        return angle;
     }
 }

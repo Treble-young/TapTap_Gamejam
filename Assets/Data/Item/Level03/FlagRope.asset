@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: FlagRope
   m_EditorClassIdentifier: Assembly-CSharp::InventoryItemData
   itemName: FlagRope
-  icon: {fileID: 21300000, guid: 08d26f2799c9d524abedf72c4d0a09dd, type: 3}
+  icon: {fileID: 21300000, guid: b08086840e5d84946a6289b8e5043ab2, type: 3}
   itemCount: 1
   maxItemCount: 99
+  usedIcon: {fileID: 0}

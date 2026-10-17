@@ -36,6 +36,18 @@ public class RecruitableStranger : InteractableManager
         }
     }
 
+    private void Update()
+    {
+        if (recruit == null || recruit.playerState != PlayerState.Stranger)
+            return;
+
+        PlayerManager player = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentPlayer : null;
+        if (player == null || player.playerType != PlayerType.Main || !player.isUsingLighter)
+            return;
+
+        Recruit(player);
+    }
+
     public override void Interact(PlayerManager player)
     {
         if (recruit == null || recruit.playerState != PlayerState.Stranger ||
@@ -47,10 +59,15 @@ public class RecruitableStranger : InteractableManager
         if (!player.isUsingLighter)
         {
             if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
-                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("They are afraid of the dark. Light your lighter first.");
+                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("我得先举着打火机才能和他交谈。");
             return;
         }
 
+        Recruit(player);
+    }
+
+    private void Recruit(PlayerManager player)
+    {
         recruit.playerState = PlayerState.AutoMoving;
         interactionArea.enabled = false;
 

@@ -8,6 +8,7 @@ public class PlayerInputManager : MonoBehaviour
     public PlayerUIManuManager manuManager;
 
     PlayerControls playerInput;
+    private int inputLockCount;
     public CinemachineCamera followCamera;
 
     [Header("Switch")]
@@ -25,6 +26,8 @@ public class PlayerInputManager : MonoBehaviour
 
     [Header("UI")]
     public bool openMenu;
+
+    public bool IsPlayerInputLocked => inputLockCount > 0;
 
     void Awake()
     {
@@ -70,12 +73,54 @@ public class PlayerInputManager : MonoBehaviour
             playerInput.UI.Menu.performed += ctx => openMenu = true;
         }
 
-        playerInput.Enable();
+        ApplyInputState();
     }
 
     void OnDisable()
     {
-        playerInput.Disable();
+        if (playerInput != null)
+            playerInput.Disable();
+    }
+
+    public void LockPlayerInput()
+    {
+        inputLockCount++;
+        ApplyInputState();
+    }
+
+    public void UnlockPlayerInput()
+    {
+        if (inputLockCount == 0)
+            return;
+
+        inputLockCount--;
+        ApplyInputState();
+    }
+
+    private void ApplyInputState()
+    {
+        if (playerInput == null)
+            return;
+
+        if (IsPlayerInputLocked)
+        {
+            playerInput.Disable();
+            ClearPlayerInputFlags();
+        }
+        else
+        {
+            playerInput.Enable();
+        }
+    }
+
+    private void ClearPlayerInputFlags()
+    {
+        MovementInput = Vector2.zero;
+        interact = false;
+        use_item = false;
+        switch_prev_player = false;
+        switch_next_player = false;
+        openMenu = false;
     }
 
     public void HandleInteractInput()
