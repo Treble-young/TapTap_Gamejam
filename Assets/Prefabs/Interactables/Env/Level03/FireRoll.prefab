@@ -186,7 +186,7 @@ Transform:
   m_GameObject: {fileID: 2435230675434041701}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.15, y: 1.23, z: 0}
+  m_LocalPosition: {x: 0.673, y: 1.086, z: 0}
   m_LocalScale: {x: 2.1314, y: 2.1314, z: 2.1314}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -376,6 +376,9 @@ MonoBehaviour:
   removeHandCrankButton: {fileID: 498144085897217464}
   operateDoorButton: {fileID: 8229707090257376435}
   exitButton: {fileID: 5091420425428886584}
+  needDebug: 1
+  _sprite: {fileID: 6512639650834363185}
+  emptySprite: {fileID: 21300000, guid: 1fde8eaabeb1ce5438d2bc570e07c782, type: 3}
 --- !u!1 &2982990979162525507
 GameObject:
   m_ObjectHideFlags: 0
@@ -723,7 +726,7 @@ SpriteRenderer:
   m_SortingLayer: 1
   m_SortingOrder: 2
   m_MaskInteraction: 0
-  m_Sprite: {fileID: 21300000, guid: c372cf91d55b6b442a895217c54e132d, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 3c141dbd21024c349ae7373f58520f87, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 1
   m_FlipY: 0

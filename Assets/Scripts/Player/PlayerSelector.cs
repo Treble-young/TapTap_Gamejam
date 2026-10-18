@@ -22,6 +22,9 @@ public class PlayerSelector : MonoBehaviour
 
     public List<PlayerManager> playerManagers = new List<PlayerManager>();
 
+    [Header("NPC Sprite Random Selector")]
+    public NPCSprites npcSprites;
+
     void Awake()
     {
         if (Instance == null)

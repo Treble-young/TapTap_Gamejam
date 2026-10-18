@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "NewItem", menuName = "Scriptable Objects/Item/Inventory Item")]
 public class InventoryItemData : ScriptableObject
 {
+    [Header("Item Properties")]
     [SerializeField] protected string itemName;
     [SerializeField] protected Sprite icon;
     public int itemCount = 1;
@@ -13,12 +14,13 @@ public class InventoryItemData : ScriptableObject
     private bool isUsed;
 
     public string ItemName => itemName;
-    public Sprite Icon => isUsed && usedIcon != null ? usedIcon : icon;
+
+    [Header("Runtime State")]
+    public virtual Sprite Icon => isUsed && usedIcon != null ? usedIcon : icon;
 
     public virtual void Use(PlayerManager player)
     {
-        Debug.Log($"Using item: {itemName}");
-
+        //Debug.Log($"Using item: {itemName}");
     }
 
     public virtual void SetIcon(Sprite newIcon)

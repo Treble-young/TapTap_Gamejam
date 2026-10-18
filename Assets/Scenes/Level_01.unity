@@ -5509,15 +5509,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Color.b
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8955197428277842961, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Name
@@ -6534,15 +6534,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Color.b
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8955197428277842961, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Name
@@ -7017,6 +7017,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 753115190861184349, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
+      propertyPath: EnableThisSelector
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Sprite
       value: 
@@ -7210,15 +7214,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Color.b
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8955197428277842961, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Name
@@ -7274,11 +7278,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 557707396038459371, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.23
+      value: 1.643
       objectReference: {fileID: 0}
     - target: {fileID: 557707396038459371, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.1
+      value: 0.031
       objectReference: {fileID: 0}
     - target: {fileID: 557707396038459371, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_LocalPosition.z
@@ -7322,15 +7326,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Color.b
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Color.g
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Color.r
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8955197428277842961, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Name

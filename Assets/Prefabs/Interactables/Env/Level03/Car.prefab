@@ -1112,6 +1112,7 @@ Transform:
   - {fileID: 4441262388829718275}
   - {fileID: 6709522537097862112}
   - {fileID: 394358051262685677}
+  - {fileID: 7864218099710444717}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &6284543464189396705
@@ -1179,12 +1180,16 @@ MonoBehaviour:
   carRightSprite: {fileID: 21300000, guid: eba2c5ca7773b954bb64d77db8b9cc15, type: 3}
   carUpRightSprite: {fileID: 21300000, guid: 46b266dc45f67b84bb9b1c2bc7c5685f, type: 3}
   carDownRightSprite: {fileID: 21300000, guid: 6e59a7b4d22656e47b310bc8c0f230cf, type: 3}
+  breakParticleSystem: {fileID: 0}
   menu: {fileID: 5437917064025637807}
   driveButton: {fileID: 2109806200377574335}
   connectButton: {fileID: 6176061164109294620}
   jackButton: {fileID: 707299600038729753}
   fillFuelButton: {fileID: 6209794266226092376}
   exitButton: {fileID: 5324356964839639023}
+  interactThenSpawnAfterBreakdown:
+  - {fileID: 512884243258647028, guid: 0fcab4592262b64469d70abd9246357b, type: 3}
+  spawnPointAfterBreakdown: {fileID: 7864218099710444717}
   isDriving: 0
   driveOffset: {x: 0, y: -0.75}
   driveSpeed: 4
@@ -1626,6 +1631,37 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.124, y: 0.628, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2735546578673318113}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &7750479033587910588
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7864218099710444717}
+  m_Layer: 12
+  m_Name: Spawned Point
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7864218099710444717
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7750479033587910588}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.897, y: 0.253, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

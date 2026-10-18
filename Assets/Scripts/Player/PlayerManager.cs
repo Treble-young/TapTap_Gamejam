@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerManager : MonoBehaviour
+public class PlayerManager : NPCSpriteRandomSelector
 {
     [HideInInspector] public PlayerInputManager playerInput = PlayerInputManager.Instance;
     [HideInInspector] public PlayerMovementManager playerMovement;
@@ -18,18 +18,15 @@ public class PlayerManager : MonoBehaviour
 
     void Awake()
     {
+        if (playerSpriteRenderer == null)
+            playerSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
+        _sprite = playerSpriteRenderer;
+
         playerMovement = GetComponent<PlayerMovementManager>();
         playerInteraction = GetComponent<PlayerInteractionManager>();
         playerInventory = GetComponent<PlayerInventoryManager>();
         if (playerInventory == null)
             playerInventory = gameObject.AddComponent<PlayerInventoryManager>();
-
-        playerSpriteRenderer = GetComponentInChildren<SpriteRenderer>();
-    }
-
-    void Start()
-    {
-
     }
 
     public void SetOrderInLayer(int order)

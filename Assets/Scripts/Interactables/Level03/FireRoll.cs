@@ -27,10 +27,34 @@ public class FireRoll : InteractableManager
     public Button operateDoorButton;
     public Button exitButton;
 
+    public bool needDebug = true;
+
+    [Header("Door Sprite Settings")]
+    public SpriteRenderer _sprite;
+    public Sprite emptySprite;
+
+    public override void Awake()
+    {
+        base.Awake();
+        if (_sprite == null)
+            _sprite = GetComponentInChildren<SpriteRenderer>();
+    }
+
     public override void Interact(PlayerManager player)
     {
+        if (needDebug && (player.playerInventory.currentSelectedItem == null || player.playerInventory.currentSelectedItem is not HandCrank))
+        {
+            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("也许我可以用刚刚控制卷帘门的手摇柄来操作这个装置。");
+            return;
+        }
+
         if (menu != null)
         {
+            if (player.playerInventory.currentSelectedItem is HandCrank || needDebug)
+            {
+                needDebug = false;
+            }
+
             menu.SetActive(true);
 
             UpdateMenu();
@@ -118,6 +142,11 @@ public class FireRoll : InteractableManager
                     {
                         Instantiate(oilPipelinePrefab, oilPipelineSpawnPoint.position, oilPipelineSpawnPoint.rotation);
                         hasOilPipelineSpawned = true;
+
+                        if (_sprite != null && emptySprite != null)
+                        {
+                            _sprite.sprite = emptySprite;
+                        }
                     }
                 }
 

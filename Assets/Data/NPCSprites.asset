@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: NPCSprites
+  m_EditorClassIdentifier: Assembly-CSharp::NPCSprites
+  possibleSprites:
+  - {fileID: 21300000, guid: d51632af8ed804a4d847c4633d051767, type: 3}
+  - {fileID: 21300000, guid: 04f4443cc6ec3cb4e8bba105aa0387a0, type: 3}
+  - {fileID: 21300000, guid: a6bb4ad6888a94d44b1fe80b1c769314, type: 3}
+  - {fileID: 21300000, guid: 6cab7114c843bf24cbc7fe51140cabb3, type: 3}
+  - {fileID: 21300000, guid: 90d2ac21e25eace42ae26b0f40026ebf, type: 3}
+  - {fileID: 21300000, guid: 7d6537bae36fcda49b1f3db2ea0f173a, type: 3}
+  - {fileID: 21300000, guid: 529674a7ffaa1384e8c9181ad590fe97, type: 3}
+  - {fileID: 21300000, guid: c83f4e8aed302684b9de544f17271aec, type: 3}
+  - {fileID: 21300000, guid: b10b5a464dc55744f877be4011d411e6, type: 3}
+  - {fileID: 21300000, guid: 7cf9be5477e79ed4583dbb9b4e552531, type: 3}

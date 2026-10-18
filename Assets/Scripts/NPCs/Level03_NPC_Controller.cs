@@ -12,7 +12,7 @@ public enum NPCType
 }
 
 [RequireComponent(typeof(Rigidbody2D))]
-public class Level03_NPC_Controller : MonoBehaviour
+public class Level03_NPC_Controller : NPCSpriteRandomSelector
 {
     public NPCType npcType = NPCType.None;
 
@@ -58,8 +58,10 @@ public class Level03_NPC_Controller : MonoBehaviour
     // Road NPC 全局统计（用于判断是否全部到达）
     private static readonly List<Level03_NPC_Controller> roadNPCs = new List<Level03_NPC_Controller>();
 
-    private void Awake()
+    void Awake()
     {
+        _sprite = GetComponentInChildren<SpriteRenderer>();
+
         guardPoint = transform.position;
 
         rb = GetComponent<Rigidbody2D>();
