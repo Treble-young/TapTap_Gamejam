@@ -7,6 +7,7 @@ public class lumberjack : InteractableManager
         if (player.playerInventory.currentSelectedItem != null && player.playerInventory.currentSelectedItem is Drawing drawing && drawing.drawingStage == 2)
         {
             // 得到完整的图纸，触发游戏胜利
+            PlayerUIManager.Instance.endGameUI.SetActive(true);
         }
         else
         {

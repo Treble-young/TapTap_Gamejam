@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
 using UnityEngine.UI;
@@ -87,6 +88,24 @@ public class Car : InteractableManager
     private InventoryItemData usedJackItem;
     private bool isBrokenDown = false;
     private bool hasSpawnedAfterBreakdown = false;
+
+    /// <summary>开车时被临时藏起来的跟随角色，记录原始状态以便下车还原。</summary>
+    private class HiddenFollower
+    {
+        public PlayerManager player;
+        public Rigidbody2D body;
+        public PlayerMovementManager movement;
+        public bool movementEnabled;
+        public SpriteRenderer[] renderers;
+        public bool[] rendererStates;
+        public Collider2D[] colliders;
+        public bool[] colliderStates;
+    }
+
+    private readonly List<HiddenFollower> hiddenFollowers = new List<HiddenFollower>();
+
+    // 下车时跟随角色围绕车辆散开的半径，避免几个角色叠在同一个点上
+    private const float followerRestoreRadius = 0.6f;
 
     public override void Awake()
     {
@@ -221,6 +240,9 @@ public class Car : InteractableManager
         if (player.playerSpriteRenderer != null)
             player.playerSpriteRenderer.enabled = false;
 
+        // 跟随队列里的其他角色也一起藏起来，别让他们顶着车身在后面跑
+        HideFollowers();
+
         drivingPlayerRb = player.GetComponent<Rigidbody2D>();
         if (drivingPlayerRb != null)
             drivingPlayerRb.linearVelocity = Vector2.zero;
@@ -271,6 +293,8 @@ public class Car : InteractableManager
         drivingPlayer = null;
         drivingPlayerRb = null;
         drivingPlayerCollider = null;
+
+        ShowFollowers();
 
         if (carRb != null)
         {
@@ -355,6 +379,125 @@ public class Car : InteractableManager
             drivingPlayerRb.MovePosition(carRb.position - driveOffset);
         else if (drivingPlayer != null)
             drivingPlayer.transform.position = (Vector3)(carRb.position - driveOffset);
+
+        // 被藏起来的跟随角色一起随车移动，下车时就在车旁出现
+        KeepFollowersWithCar();
+    }
+
+    /// <summary>开车时把跟随队列里的其他角色一起藏起来，并暂停他们的移动与碰撞。</summary>
+    private void HideFollowers()
+    {
+        // 保险：先还原上一次可能残留的状态
+        ShowFollowers();
+
+        if (PlayerSelector.Instance == null)
+            return;
+
+        foreach (PlayerManager teammate in PlayerSelector.Instance.playerManagers)
+        {
+            // 只处理队列里的角色：未招募的陌生人留在原地，驾驶者已在 Drive() 里隐藏
+            if (teammate == null || teammate == drivingPlayer || teammate.playerState == PlayerState.Stranger)
+                continue;
+
+            // 本来就不可见的角色（未激活 / 已隐藏）不参与，免得下车后被错误地显示出来
+            if (!teammate.gameObject.activeInHierarchy)
+                continue;
+
+            HiddenFollower follower = new HiddenFollower();
+            follower.player = teammate;
+
+            follower.renderers = teammate.GetComponentsInChildren<SpriteRenderer>(true);
+            follower.rendererStates = new bool[follower.renderers.Length];
+            for (int i = 0; i < follower.renderers.Length; i++)
+            {
+                follower.rendererStates[i] = follower.renderers[i].enabled;
+                follower.renderers[i].enabled = false;
+            }
+
+            follower.colliders = teammate.GetComponents<Collider2D>();
+            follower.colliderStates = new bool[follower.colliders.Length];
+            for (int i = 0; i < follower.colliders.Length; i++)
+            {
+                follower.colliderStates[i] = follower.colliders[i].enabled;
+                follower.colliders[i].enabled = false;
+            }
+
+            follower.movement = teammate.playerMovement;
+            if (follower.movement != null)
+            {
+                follower.movementEnabled = follower.movement.enabled;
+                follower.movement.enabled = false;
+            }
+
+            follower.body = teammate.GetComponent<Rigidbody2D>();
+            if (follower.body != null)
+                follower.body.linearVelocity = Vector2.zero;
+
+            teammate.isMoving = false;
+
+            hiddenFollowers.Add(follower);
+        }
+    }
+
+    /// <summary>还原被藏起来的跟随角色。</summary>
+    private void ShowFollowers()
+    {
+        if (hiddenFollowers.Count == 0)
+            return;
+
+        foreach (HiddenFollower follower in hiddenFollowers)
+        {
+            if (follower.player == null)
+                continue;
+
+            for (int i = 0; i < follower.renderers.Length; i++)
+            {
+                if (follower.renderers[i] != null)
+                    follower.renderers[i].enabled = follower.rendererStates[i];
+            }
+
+            for (int i = 0; i < follower.colliders.Length; i++)
+            {
+                if (follower.colliders[i] != null)
+                    follower.colliders[i].enabled = follower.colliderStates[i];
+            }
+
+            if (follower.body != null)
+                follower.body.linearVelocity = Vector2.zero;
+
+            if (follower.movement != null)
+                follower.movement.enabled = follower.movementEnabled;
+        }
+
+        hiddenFollowers.Clear();
+    }
+
+    /// <summary>开车期间把藏起来的跟随角色贴在车上，避免下车后队伍被落在原地。</summary>
+    private void KeepFollowersWithCar()
+    {
+        if (hiddenFollowers.Count == 0 || carRb == null)
+            return;
+
+        Vector2 anchor = carRb.position - driveOffset;
+        int count = hiddenFollowers.Count;
+
+        for (int i = 0; i < count; i++)
+        {
+            HiddenFollower follower = hiddenFollowers[i];
+            if (follower.player == null)
+                continue;
+
+            // 沿车辆周围散开摆放，下车时几个角色不会叠在同一个点上
+            float angle = (i / (float)count) * Mathf.PI * 2f;
+            Vector2 target = count > 1
+                ? anchor + new Vector2(Mathf.Cos(angle), Mathf.Sin(angle)) * followerRestoreRadius
+                : anchor;
+
+            if (follower.body != null)
+                follower.body.MovePosition(target);
+            else
+                follower.player.transform.position = target;
+        }
     }
 
     private void UpdateCarSprite()

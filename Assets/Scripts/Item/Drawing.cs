@@ -19,7 +19,6 @@ public class Drawing : InventoryItemData
 
     public override void Use(PlayerManager player)
     {
-        base.Use(player);
-
+        PlayerUIManager.Instance.drawingInUI.ShowDrawingUI();
     }
 }

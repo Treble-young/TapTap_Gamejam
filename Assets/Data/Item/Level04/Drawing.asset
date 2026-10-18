@@ -1,0 +1,23 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e40c65a8ed86be49953db5dfe751b3d, type: 3}
+  m_Name: Drawing
+  m_EditorClassIdentifier: Assembly-CSharp::Drawing
+  itemName: Drawing
+  icon: {fileID: 21300000, guid: f1cfcf20aa8bb5b4681a904dfcedf30d, type: 3}
+  itemCount: 1
+  maxItemCount: 99
+  usedIcon: {fileID: 0}
+  drawingStage: 0
+  emptyDrawingSprite: {fileID: 21300000, guid: f1cfcf20aa8bb5b4681a904dfcedf30d, type: 3}
+  partialDrawingSprite: {fileID: 21300000, guid: 90ad4ee5495ff804da4295f7cb4423c4, type: 3}
+  completeDrawingSprite: {fileID: 21300000, guid: da262c4ee4addfa4b92cf8706f2a145b, type: 3}

@@ -21,12 +21,15 @@ public class PlayerUIManager : MonoBehaviour
     [HideInInspector] public PlayerUIPopUpManager popUpManager;
     [HideInInspector] public PlayerUIManuManager menuManager;
     [HideInInspector] public HotbarUI inventoryManager;
+    [HideInInspector] public DrawingInUI drawingInUI;
+
+    public GameObject endGameUI;
 
     private void Start()
     {
         popUpManager = GetComponent<PlayerUIPopUpManager>();
         menuManager = GetComponent<PlayerUIManuManager>();
         inventoryManager = GetComponentInChildren<HotbarUI>();
-
+        drawingInUI = GetComponentInChildren<DrawingInUI>();
     }
 }
