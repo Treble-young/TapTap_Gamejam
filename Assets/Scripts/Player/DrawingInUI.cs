@@ -256,6 +256,7 @@ public class DrawingInUI : MonoBehaviour
     /// <summary>给 UI 按钮的 onClick 直接挂这个（ThrowStone 有返回值，挂不到按钮上）。</summary>
     public void OnThrowStoneButton()
     {
+        PlayerUIManager.Instance.PlayClickSound();
         ThrowStone();
     }
 
@@ -369,6 +370,8 @@ public class DrawingInUI : MonoBehaviour
 
     public void ShowDrawingUI()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (drawingUIPanel != null)
         {
             drawingUIPanel.SetActive(true);
@@ -378,6 +381,8 @@ public class DrawingInUI : MonoBehaviour
 
     public void Exit()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         ShowInventory();
         if (drawingUIPanel != null)
             drawingUIPanel.SetActive(false);

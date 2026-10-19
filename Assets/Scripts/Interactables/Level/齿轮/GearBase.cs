@@ -77,6 +77,8 @@ public class GearBase : InteractableManager
 
     public void Exit()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (gameUI != null)
             gameUI.SetActive(false);
 

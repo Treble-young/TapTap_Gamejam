@@ -87,6 +87,7 @@ public class GearPuzzleController : MonoBehaviour
     public void ResetPuzzle()
     {
         if(isSolved) return;
+        PlayerUIManager.Instance.PlayClickSound();
         CancelDrag();
         foreach(var piece in pieces)
         {

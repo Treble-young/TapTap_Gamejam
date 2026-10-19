@@ -136,6 +136,8 @@ public class HotbarUI : MonoBehaviour, IPointerClickHandler
         if (boundInventory == null)
             return;
 
+        PlayerUIManager.Instance.PlayClickSound();
+
         // 从被点中的物体一路向上找，看它属于哪个格子
         GameObject hit = eventData.pointerPressRaycast.gameObject;
         while (hit != null)

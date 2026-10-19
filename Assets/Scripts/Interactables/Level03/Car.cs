@@ -131,7 +131,7 @@ public class Car : InteractableManager
     private void Start()
     {
         if (startDriving)
-            Drive();
+            DriveInternal(false);
     }
 
     public override void Interact(PlayerManager player)
@@ -218,6 +218,11 @@ public class Car : InteractableManager
 
     public void Drive()
     {
+        DriveInternal(true);
+    }
+
+    private void DriveInternal(bool playClickSound)
+    {
         PlayerManager player = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentPlayer : null;
         if (player == null)
             return;
@@ -225,12 +230,18 @@ public class Car : InteractableManager
         // 被千斤顶顶起、连着油管（发电机/油泵）、或没油时不能开车
         if (isJackedUp || isConeectedToCar || isConnectedToPump || isOutOfFuel)
         {
-            CloseMenu();
+            if (playClickSound)
+                CloseMenu();
+            else
+                CloseMenuInternal();
 
             if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
                 PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("没油了，需要油泵，好像有人会使用加油机");
             return;
         }
+
+        if (playClickSound)
+            PlayerUIManager.Instance.PlayClickSound();
 
         drivingPlayer = player;
         isDriving = true;
@@ -320,7 +331,7 @@ public class Car : InteractableManager
         if (carRb != null)
             carRb.linearVelocity = Vector2.zero;
 
-        CloseMenu();
+        CloseMenuInternal();
 
         // 先抖动，抖完再弹出角色
         StartCoroutine(BreakDownRoutine());
@@ -689,6 +700,8 @@ public class Car : InteractableManager
 
     public void Jack()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         PlayerInventoryManager inventory = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentInventory : null;
 
         if (!isJackedUp)
@@ -742,6 +755,13 @@ public class Car : InteractableManager
     }
 
     public void CloseMenu()
+    {
+        PlayerUIManager.Instance.PlayClickSound();
+
+        CloseMenuInternal();
+    }
+
+    private void CloseMenuInternal()
     {
         if (menu != null)
             menu.SetActive(false);

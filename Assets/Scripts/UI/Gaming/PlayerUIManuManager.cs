@@ -23,12 +23,16 @@ public class PlayerUIManuManager : MonoBehaviour
 
     public void BackToMainMenu()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         Time.timeScale = 1f;
         LoadingManager.Instance.LoadTargetScene(0);
     }
 
     public void ExitGame()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         Application.Quit();
     }
 }

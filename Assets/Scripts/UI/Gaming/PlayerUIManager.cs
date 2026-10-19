@@ -6,6 +6,16 @@ public class PlayerUIManager : MonoBehaviour
 
     public bool isUIActive = false;
 
+    public AudioClip clickSound;
+
+    public void PlayClickSound()
+    {
+        if (clickSound != null && WorldAudioManager.Instance != null)
+        {
+            WorldAudioManager.Instance.PlaySFX(clickSound);
+        }
+    }
+
     private void Awake()
     {
         if (Instance != null && Instance != this)

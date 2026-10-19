@@ -80,6 +80,8 @@ public class RollingDoor : InteractableManager
 
     public void Exit()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (menu != null)
         {
             menu.SetActive(false);
@@ -88,6 +90,8 @@ public class RollingDoor : InteractableManager
 
     public void InstallHandCrank()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (handCrank == null && !isControlledByHandCrank && PlayerSelector.Instance.currentInventory.currentSelectedItem is HandCrank)
         {
             isControlledByHandCrank = true;
@@ -100,6 +104,8 @@ public class RollingDoor : InteractableManager
 
     public void RemoveHandCrank()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (handCrank != null && isControlledByHandCrank)
         {
             isControlledByHandCrank = false;
@@ -118,6 +124,8 @@ public class RollingDoor : InteractableManager
 
     public void OperateDoor()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (isControlledByHandCrank && handCrank != null)
         {
             if (doorCoroutine != null)
