@@ -14,6 +14,12 @@ public class Generator : InteractableManager
         if (player.playerType != PlayerType.Main)
             return;
 
+        if (isFueled)
+        {
+            TryStart();
+            return;
+        }
+
         if (isConnectedWithFuel && PlayerHoldsOilPipeline())
         {
             DisconnectFuelLine();
@@ -36,6 +42,8 @@ public class Generator : InteractableManager
             PlayerSelector.Instance.currentInventory.currentSelectedItem is OilPipeline)
         {
             isConnectedWithFuel = true;
+            if (car != null)
+                car.DisconnectPumpLine();
 
             if (car && car.isConeectedToCar)
                 PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("输油管已经连接到发电机和车子上了。现在我要想办法把燃料输送到发电机里了。得找个千斤顶把车子抬起来。");
@@ -57,8 +65,7 @@ public class Generator : InteractableManager
 
         if (car != null)
         {
-            car.isConeectedToCar = false;
-            car.ShowThePipeline();
+            car.DisconnectGeneratorLine();
         }
 
         PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("输油管已经从发电机上断开。");
@@ -73,14 +80,6 @@ public class Generator : InteractableManager
     /// <summary>Main：启动发电机。</summary>
     private void TryStart()
     {
-        bool fullyConnected = isConnectedWithFuel && car != null && car.isConeectedToCar;
-
-        if (!fullyConnected)
-        {
-            PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("输油管没有完全连接。要确保输油管连接到发电机和车子上。");
-            return;
-        }
-
         if (!isFueled)
         {
             PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("发电机没有燃料。要先确保发电机有燃料。");

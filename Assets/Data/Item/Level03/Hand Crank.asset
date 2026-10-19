@@ -13,6 +13,7 @@ MonoBehaviour:
   m_Name: Hand Crank
   m_EditorClassIdentifier: Assembly-CSharp::HandCrank
   itemName: Hand Crank
-  icon: {fileID: 21300000, guid: e4a05284ff97e60419331430a50cb219, type: 3}
+  icon: {fileID: 21300000, guid: ae147f2cdd2ee8d40b8f3c7c6b7f2148, type: 3}
   itemCount: 1
   maxItemCount: 99
+  usedIcon: {fileID: 0}

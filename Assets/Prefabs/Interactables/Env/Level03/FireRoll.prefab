@@ -360,7 +360,7 @@ MonoBehaviour:
   interactAnimationNames:
     keys: 
     values: []
-  outlineSpriteRenderer: {fileID: 4850516536192599788}
+  outlineSpriteRenderer: {fileID: 0}
   needEmergingOutline: 1
   isOpen: 0
   oilPipelinePrefab: {fileID: 5818581320162295616, guid: a63802a9ac8094c4c847748f8781c70c, type: 3}
@@ -1497,7 +1497,7 @@ Transform:
   m_GameObject: {fileID: 8661520393141032356}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.57, y: -0.442, z: 0}
+  m_LocalPosition: {x: 0.638, y: -0.551, z: 0}
   m_LocalScale: {x: 0.33, y: 0.33, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

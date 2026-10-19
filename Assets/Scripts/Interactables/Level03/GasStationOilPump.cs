@@ -40,9 +40,13 @@ public class GasStationOilPump : InteractableManager
                 // 连接：用 OilPipeline 连接油泵和车（复用 Car 的输油管）
                 if (PlayerHoldsOilPipeline())
                 {
-                    car.isConnectedToPump = true;
+                    bool hadGeneratorLine = car.isConeectedToCar;
+                    car.oilPump = this;
+                    car.ConnectPumpLine();
                     car.ShowThePipeline();
-                    PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("油泵这头接好了。");
+                    PlayerUIManager.Instance.popUpManager.ShowPopUpWindow(hadGeneratorLine
+                        ? "我把发电机那头的油管拔了，油泵这头接好了。"
+                        : "油泵这头接好了。");
                 }
                 else
                 {
@@ -52,7 +56,7 @@ public class GasStationOilPump : InteractableManager
             else
             {
                 // 再次点击断开
-                car.isConnectedToPump = false;
+                car.DisconnectPumpLine();
                 car.ShowThePipeline();
                 PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("我把油泵这头的油管拔了。");
             }
@@ -71,7 +75,7 @@ public class GasStationOilPump : InteractableManager
             if (car.isOutOfFuel)
             {
                 car.Refuel();
-                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("车加满油了。");
+                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("车加满油了，油管已经拔下来了。");
             }
             else
             {

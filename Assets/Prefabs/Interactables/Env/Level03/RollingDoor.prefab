@@ -1977,7 +1977,7 @@ MonoBehaviour:
   interactAnimationNames:
     keys: 
     values: []
-  outlineSpriteRenderer: {fileID: 7428178295837832232}
+  outlineSpriteRenderer: {fileID: 0}
   needEmergingOutline: 1
   handCrankPoint: {fileID: 6962630510175472732}
   isControlledByHandCrank: 0

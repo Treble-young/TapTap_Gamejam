@@ -165,7 +165,7 @@ public class Car : InteractableManager
 
         // 加油按钮：只有千斤顶顶起、油管两端接好且发电机还没加满油时显示
         if (fillFuelButton != null)
-            fillFuelButton.gameObject.SetActive(isJackedUp && isConeectedToCar && generator != null &&
+            fillFuelButton.gameObject.SetActive(isJackedUp && !isOutOfFuel && isConeectedToCar && generator != null &&
                                                  generator.isConnectedWithFuel && !generator.isFueled);
 
         // 连接按钮：始终可按，用于连接 / 断开切换
@@ -236,7 +236,19 @@ public class Car : InteractableManager
                 CloseMenuInternal();
 
             if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
-                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("没油了，需要油泵，好像有人会使用加油机");
+            {
+                string blockedMessage;
+                if (isOutOfFuel)
+                    blockedMessage = "车没油了，得先去加油机加油。";
+                else if (isJackedUp)
+                    blockedMessage = "车还被千斤顶顶着，先把千斤顶取下来。";
+                else if (isConeectedToCar)
+                    blockedMessage = "油管还连着发电机，先把油管拆掉。";
+                else
+                    blockedMessage = "油管还连着加油机，先把油管拔掉。";
+
+                PlayerUIManager.Instance.popUpManager.ShowPopUpWindow(blockedMessage);
+            }
             return;
         }
 
@@ -652,7 +664,7 @@ public class Car : InteractableManager
 
         if (isConnectedToPump)
         {
-            isConnectedToPump = false;
+            DisconnectPumpLine();
             PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("我把车这头的油管拆了。");
             CloseMenu();
             ShowThePipeline();
@@ -663,9 +675,7 @@ public class Car : InteractableManager
         // 再次按下断开连接
         if (isConeectedToCar)
         {
-            isConeectedToCar = false;
-            if (generator != null)
-                generator.isConnectedWithFuel = false;
+            DisconnectGeneratorLine();
             CloseMenu();
             ShowThePipeline();
             UpdateMenu();
@@ -675,7 +685,7 @@ public class Car : InteractableManager
         if (PlayerSelector.Instance.currentInventory &&
             PlayerSelector.Instance.currentInventory.currentSelectedItem is OilPipeline)
         {
-            isConeectedToCar = true;
+            ConnectGeneratorLine();
 
             if (generator && generator.isConnectedWithFuel)
             {
@@ -735,13 +745,15 @@ public class Car : InteractableManager
     public void FillFuel()
     {
         // 只有千斤顶顶起、油管两端接好、且发电机还没加满油时才能加油
-        if (!isJackedUp || generator == null || !isConeectedToCar || !generator.isConnectedWithFuel || generator.isFueled)
+        if (!isJackedUp || isOutOfFuel || generator == null || !isConeectedToCar ||
+            !generator.isConnectedWithFuel || generator.isFueled)
             return;
 
         generator.isFueled = true;
+        DisconnectGeneratorLine();
         isOutOfFuel = true; // 油输给发电机后，车没油了
 
-        PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("燃料送进发电机了，去启动它。");
+        PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("燃料送进发电机了，油管已经拔下来了。去启动它。");
 
         // 显示弹窗时关闭菜单
         CloseMenu();
@@ -752,6 +764,39 @@ public class Car : InteractableManager
     public void Refuel()
     {
         isOutOfFuel = false;
+        DisconnectPumpLine();
+    }
+
+    public void ConnectPumpLine()
+    {
+        isConeectedToCar = false;
+        if (generator != null)
+            generator.isConnectedWithFuel = false;
+
+        isConnectedToPump = true;
+        ShowThePipeline();
+    }
+
+    public void DisconnectPumpLine()
+    {
+        isConnectedToPump = false;
+        ShowThePipeline();
+    }
+
+    public void ConnectGeneratorLine()
+    {
+        isConnectedToPump = false;
+        isConeectedToCar = true;
+        ShowThePipeline();
+    }
+
+    public void DisconnectGeneratorLine()
+    {
+        isConeectedToCar = false;
+        if (generator != null)
+            generator.isConnectedWithFuel = false;
+
+        ShowThePipeline();
     }
 
     public void CloseMenu()
