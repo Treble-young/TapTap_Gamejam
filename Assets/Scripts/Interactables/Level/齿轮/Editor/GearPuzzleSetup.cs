@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using TMPro;
@@ -13,6 +14,17 @@ public static class GearPuzzleSetup
 {
     private const string Art = "Assets/Art/GearPuzzle";
     private const string ScenePath = "Assets/Scenes/GameTest1.unity";
+    private const string PixelFont = "Assets/Art/PixelUIFree/Font/fusion-pixel-font-12px-monospaced-otf-v2026.09.01/fusion-pixel-12px-monospaced-zh_hans.asset";
+    private const string WoodDir = "Assets/Art/PixelUIFree/Sprites/themes/wood";
+
+    // Loads the pixel wood assets (shared with the Level02 popup style) onto an installed puzzle.
+    private static void LoadWoodStyle(GearPuzzleController puzzle)
+    {
+        puzzle.font=AssetDatabase.LoadAssetAtPath<TMP_FontAsset>(PixelFont);
+        puzzle.woodWindow=AssetDatabase.LoadAssetAtPath<Sprite>(WoodDir+"/window.png");
+        puzzle.woodInset=AssetDatabase.LoadAssetAtPath<Sprite>(WoodDir+"/panel_inset.png");
+        puzzle.woodButton=AssetDatabase.LoadAssetAtPath<Sprite>(WoodDir+"/button_normal.png");
+    }
 
     [MenuItem("Tools/Gear Puzzle/Install in GameTest1")]
     public static void Install()
@@ -33,7 +45,7 @@ public static class GearPuzzleSetup
         if(background!=null) {Undo.RecordObject(background.gameObject,"Hide legacy gear placeholder");background.gameObject.SetActive(false);}
         var puzzle=Undo.AddComponent<GearPuzzleController>(ui);
         puzzle.entrance=entrance;
-        puzzle.font=AssetDatabase.LoadAssetAtPath<TMP_FontAsset>("Assets/Fonts/NotoSansCJKtc-Regular(1) SDF.asset");
+        LoadWoodStyle(puzzle);
         puzzle.smallGear=ImportSprite("GearSmall.png");
         puzzle.mediumGear=ImportSprite("GearMedium.png");
         puzzle.largeGear=ImportSprite("GearLarge.png");
@@ -93,9 +105,48 @@ public static class GearPuzzleSetup
         Check(!GearPuzzleRules.CanPlace(4,2,overlap,r),"large gear overlap rejected");
         slots[3]=-1;v=GearPuzzleRules.Speeds(slots,r,out jam);
         Check(v[6]==0 && v[4]==0,"removing middle disconnects downstream");
-        slots[3]=7;v=GearPuzzleRules.Speeds(slots,r,out jam);
-        Check(v[6]==0,"decoy axle does not solve puzzle");
-        Debug.Log("GEAR_RULE_TESTS_OK: initial, solution, partial, occupied, fixed, overlap, disconnection, decoy, direction, speed ratio.");
+        foreach(int decoy in new[]{7,8,9})
+        {
+            slots[3]=decoy;v=GearPuzzleRules.Speeds(slots,r,out jam);
+            Check(v[6]==0,"decoy axle "+decoy+" does not solve puzzle");
+        }
+        // Jam traps: r60 on decoy 7 beside the 3-4 link, and on decoy 8 beside the 1-2 link.
+        slots=new[]{0,1,2,3,4,7,6};v=GearPuzzleRules.Speeds(slots,r,out jam);
+        Check(jam && v[6]==0,"decoy 7 jams the 3-4 link");
+        slots=new[]{0,1,2,-1,-1,8,6};v=GearPuzzleRules.Speeds(slots,r,out jam);
+        Check(jam && v[6]==0,"decoy 8 jams the 1-2 link");
+        // Dead-end branch: decoy 9 spins off gear 4 but never reaches 6, and blocks axle 5.
+        slots=new[]{0,1,2,3,4,9,6};v=GearPuzzleRules.Speeds(slots,r,out jam);
+        Check(!jam && v[6]==0,"decoy 9 is a dead end");
+        Check(!GearPuzzleRules.CanPlace(1,5,slots,r),"decoy 9 blocks axle 5");
+        // Brute force every placement combo; same-radius pieces are interchangeable,
+        // so solutions are keyed by axle:radius geometry. Exactly one must exist.
+        var solutions=new HashSet<string>();
+        int[] assignment={0,-1,-1,-1,-1,-1,6};
+        void Search(int piece)
+        {
+            if(piece==6)
+            {
+                var v2=GearPuzzleRules.Speeds(assignment,r,out bool j2);
+                if(!j2 && Mathf.Abs(v2[6])>.01f)
+                {
+                    var placed=new List<string>();
+                    for(int i=0;i<7;i++) if(assignment[i]>0) placed.Add(assignment[i]+":"+r[i]);
+                    placed.Sort(); solutions.Add(string.Join(",",placed));
+                }
+                return;
+            }
+            assignment[piece]=-1; Search(piece+1);
+            for(int a=1;a<GearPuzzleRules.Axles.Length;a++)
+            {
+                if(!GearPuzzleRules.CanPlace(piece,a,assignment,r)) continue;
+                assignment[piece]=a; Search(piece+1);
+            }
+            assignment[piece]=-1;
+        }
+        Search(1);
+        Check(solutions.Count==1,"unique solution expected, found "+solutions.Count);
+        Debug.Log("GEAR_RULE_TESTS_OK: initial, solution, partial, occupied, fixed, overlap, disconnection, decoys, jam traps, dead end, uniqueness, direction, speed ratio.");
     }
 
     // Opens GameTest1 only for play, leaving all loaded/dirty editing scenes intact.
@@ -121,6 +172,47 @@ public static class GearPuzzleSetup
         string path=SessionState.GetString("GearPuzzle.PreviousStartScene","");
         EditorSceneManager.playModeStartScene=string.IsNullOrEmpty(path)?null:AssetDatabase.LoadAssetAtPath<SceneAsset>(path);
         SessionState.SetBool("GearPuzzle.Testing",false);
+    }
+    // Rebuilds the serialized panel view from code (wood restyle). Tears down the old
+    // GearPuzzlePanel and regenerates it, preserving the puzzle's serialized references.
+    [MenuItem("Tools/Gear Puzzle/Rebuild View")]
+    public static void RebuildView()
+    {
+        if(EditorApplication.isPlaying) throw new InvalidOperationException("Exit Play mode first.");
+        Scene scene=SceneManager.GetSceneByPath(ScenePath);
+        if(!scene.IsValid() || !scene.isLoaded) scene=EditorSceneManager.OpenScene(ScenePath,OpenSceneMode.Additive);
+        var puzzle=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<GearPuzzleController>(true)).FirstOrDefault();
+        if(puzzle==null) throw new Exception("GEAR_REBUILD_FAILED: GearPuzzleController not found in GameTest1. Run Install first.");
+        Undo.RegisterFullObjectHierarchyUndo(puzzle.gameObject,"Rebuild gear puzzle view");
+        LoadWoodStyle(puzzle);
+        puzzle.DestroyView();
+        puzzle.BuildView();
+        EditorUtility.SetDirty(puzzle);
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log("GEAR_REBUILD_OK: wood-styled view regenerated.");
+    }
+
+    // Restyles the serialized axle hubs (AxleRing*/Axle*) and repairs missing CanvasRenderers
+    // on every GearPuzzleDisc (they silently never render without one). Touches nothing else.
+    [MenuItem("Tools/Gear Puzzle/Refresh Axle Visuals")]
+    public static void RefreshAxleVisuals()
+    {
+        if(EditorApplication.isPlaying) throw new InvalidOperationException("Exit Play mode first.");
+        Scene scene=SceneManager.GetSceneByPath(ScenePath);
+        if(!scene.IsValid() || !scene.isLoaded) scene=EditorSceneManager.OpenScene(ScenePath,OpenSceneMode.Additive);
+        var puzzle=scene.GetRootGameObjects().SelectMany(r=>r.GetComponentsInChildren<GearPuzzleController>(true)).FirstOrDefault();
+        if(puzzle==null) throw new Exception("GEAR_REFRESH_FAILED: GearPuzzleController not found in GameTest1. Run Install first.");
+        var discs=puzzle.GetComponentsInChildren<GearPuzzleDisc>(true).Where(d=>d.name.StartsWith("Axle")).ToArray();
+        Undo.RecordObjects(discs.Cast<UnityEngine.Object>().Concat(discs.Select(d=>(UnityEngine.Object)d.rectTransform)).ToArray(),"Refresh gear axle visuals");
+        puzzle.RefreshAxleHubs();
+        int repaired=0;
+        foreach(var d in puzzle.GetComponentsInChildren<GearPuzzleDisc>(true))
+            if(d.GetComponent<CanvasRenderer>()==null) {Undo.AddComponent<CanvasRenderer>(d.gameObject);repaired++;}
+        foreach(var d in discs) EditorUtility.SetDirty(d);
+        EditorSceneManager.MarkSceneDirty(scene);
+        EditorSceneManager.SaveScene(scene);
+        Debug.Log("GEAR_AXLE_REFRESH_OK: "+discs.Length+" axle visuals restyled, "+repaired+" missing CanvasRenderer repaired.");
     }
     private static GearPuzzleController RuntimePuzzle()
     {

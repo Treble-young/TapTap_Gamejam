@@ -12,6 +12,8 @@ public class GearPuzzleController : MonoBehaviour
     public GearBase entrance;
     public Sprite smallGear, mediumGear, largeGear;
     public TMP_FontAsset font;
+    [Header("像素木质风资源（PixelUIFree wood 主题）")]
+    public Sprite woodWindow, woodInset, woodButton;
     [Header("第一次通关时触发，可连接场景机关")]
     public UnityEvent onSolved = new UnityEvent();
     [SerializeField] private bool isSolved;
@@ -32,13 +34,28 @@ public class GearPuzzleController : MonoBehaviour
     private static readonly Color Gold = new Color(.96f,.73f,.28f);
     private static readonly Color Silver = new Color(.74f,.80f,.82f);
     private static readonly Color Green = new Color(.48f,.88f,.70f);
+    private static readonly Color Cream = new Color(.93f,.87f,.72f);
+    private static readonly Color DarkBrown = new Color(.24f,.16f,.09f);
+    // Axle hub visuals: bright brass ring + steel bolt, shared by BuildView and the editor refresh tool.
+    public static readonly Color AxleRingColor = new Color(.98f,.78f,.34f);
+    public static readonly Color AxleBoltColor = new Color(.88f,.91f,.89f);
+    public const float AxleRingSize = 44f;
+    public const float AxleRingInner = .72f;
+    public const float AxleBoltSize = 15f;
     public IReadOnlyList<GearPuzzlePiece> Pieces => pieces;
 
     private void Awake() { if(panel==null) BuildView(); }
     private void OnEnable()
     {
         if(panel==null) BuildView();
+        EnsureDiscRenderers();
         Fit(); RefreshNetwork(false);
+    }
+    // Older serialized scenes may lack CanvasRenderer on the custom discs (nothing renders without it).
+    public void EnsureDiscRenderers()
+    {
+        foreach(var d in GetComponentsInChildren<GearPuzzleDisc>(true))
+            if(d.GetComponent<CanvasRenderer>()==null) {d.gameObject.AddComponent<CanvasRenderer>();d.SetAllDirty();}
     }
     private void OnDisable()
     {
@@ -169,16 +186,17 @@ public class GearPuzzleController : MonoBehaviour
             success.SetActive(true); success.transform.SetAsLastSibling(); resetButton.interactable=false;
             if(!eventSent) {eventSent=true; onSolved.Invoke();}
         }
-        if(counter!=null) counter.text=$"传动  {PoweredCount} / 7";
+        if(counter!=null) counter.text=$"传动  {PoweredCount} / 7"; // legacy counter; hidden in the wood restyle
         if(jam) Message("齿轮互相卡住了，尝试移走一枚。");
         else SetStatus();
     }
     private void SetStatus()
     {
-        if(status!=null) status.text=isSolved?"动力已传至终点。":"拖动右侧齿轮到轴心，让动力从左上方传到右下方。";
+        if(status!=null) status.text=isSolved?"动力已传至终点。":"";
     }
     private void Message(string text)
     {
+        if(status==null) return;
         status.text=text; messageUntil=Time.unscaledTime+3f;
     }
 
@@ -192,27 +210,20 @@ public class GearPuzzleController : MonoBehaviour
         if(scaler!=null) {scaler.uiScaleMode=CanvasScaler.ScaleMode.ScaleWithScreenSize;scaler.referenceResolution=new Vector2(1280,800);scaler.matchWidthOrHeight=.5f;}
         var backdrop=Rect("GearPuzzleBackdrop",transform,Vector2.zero,Vector2.zero);
         backdrop.anchorMin=Vector2.zero;backdrop.anchorMax=Vector2.one;backdrop.sizeDelta=Vector2.zero;
-        var shade=backdrop.gameObject.AddComponent<Image>();shade.color=new Color(.025f,.035f,.045f,.98f);
+        var shade=backdrop.gameObject.AddComponent<Image>();shade.color=new Color(.09f,.06f,.04f,.88f);
         panel=Rect("GearPuzzlePanel",transform,Vector2.zero,new Vector2(1280,800));
-        Text("Title","齿 轮 传 动",panel,new Vector2(-390,340),new Vector2(400,56),34,Gold,TextAlignmentOptions.MidlineLeft);
-        Text("Subtitle","让停滞的机械重新运转",panel,new Vector2(-390,298),new Vector2(400,28),16,new Color(.62f,.66f,.67f),TextAlignmentOptions.MidlineLeft);
+        // Pixel wood style, matching the Level02 popup (wood window sprite + fusion pixel font).
+        Wood("MainWindow",Vector2.zero,new Vector2(1240,760),woodWindow,new Color(.42f,.30f,.19f));
         ButtonAt("Close","返回  ×",new Vector2(515,330),new Vector2(150,48),Close);
-        Box("BoardFrame",panel,new Vector2(-160,-5),new Vector2(858,568),new Color(.37f,.33f,.24f));
-        Box("Board",panel,new Vector2(-160,-5),new Vector2(850,560),new Color(.12f,.15f,.16f));
-        // Subtle engineering grid, decorative only.
-        for(int x=-540;x<=220;x+=40) Box("GridV",panel,new Vector2(x,-5),new Vector2(1,540),new Color(.18f,.21f,.21f,.45f));
-        for(int y=-245;y<=235;y+=40) Box("GridH",panel,new Vector2(-160,y),new Vector2(830,1),new Color(.18f,.21f,.21f,.45f));
-        Box("Tray",panel,new Vector2(450,-5),new Vector2(290,560),new Color(.085f,.105f,.115f));
-        Text("TrayTitle","备 用 齿 轮",panel,new Vector2(450,240),new Vector2(250,35),22,Gold);
-        Text("TrayHint","拖动安装 · 右键收回",panel,new Vector2(450,207),new Vector2(260,26),15,new Color(.62f,.66f,.67f));
+        Wood("Board",new Vector2(-160,-5),new Vector2(858,568),woodInset,new Color(.24f,.17f,.11f));
+        Wood("Tray",new Vector2(450,-5),new Vector2(290,560),woodInset,new Color(.24f,.17f,.11f));
+        Text("TrayHint","拖动安装 · 右键收回",panel,new Vector2(450,232),new Vector2(260,26),15,Cream);
         for(int i=0;i<GearPuzzleRules.Axles.Length;i++)
         {
             Vector2 p=GearPuzzleRules.BoardOffset+GearPuzzleRules.Axles[i];
-            Disc("AxleRing"+i,p,28,new Color(.46f,.49f,.46f),.77f);
-            Disc("Axle"+i,p,10,new Color(.055f,.065f,.07f),0);
+            Disc("AxleRing"+i,p,AxleRingSize,AxleRingColor,AxleRingInner);
+            Disc("Axle"+i,p,AxleBoltSize,AxleBoltColor,0);
         }
-        Text("Source","动力源",panel,new Vector2(-460,263),new Vector2(120,24),16,Gold);
-        Text("Destination","输出端",panel,new Vector2(136,-239),new Vector2(120,24),16,Gold);
         preview=Disc("SnapPreview",Vector2.zero,100,Green,.96f);preview.gameObject.SetActive(false);
         var homes=new[]{Vector2.zero,new Vector2(375,120),new Vector2(380,-5),new Vector2(520,-5),new Vector2(450,-165),new Vector2(525,120),Vector2.zero};
         for(int i=0;i<7;i++)
@@ -229,15 +240,50 @@ public class GearPuzzleController : MonoBehaviour
             art.sprite=r==40?smallGear:r==100?largeGear:mediumGear;art.preserveAspect=true;art.raycastTarget=false;
             piece.rotor=rotor;piece.artwork=art;pieces.Add(piece);PlaceVisual(piece);
         }
-        counter=Text("PowerCount","",panel,new Vector2(-455,-324),new Vector2(220,40),22,Gold,TextAlignmentOptions.MidlineLeft);
         resetButton=ButtonAt("Reset","重新摆放",new Vector2(450,-324),new Vector2(240,44),ResetPuzzle);
-        status=Text("Status","",panel,new Vector2(-85,-367),new Vector2(1010,32),17,new Color(.78f,.81f,.80f));
-        success=Rect("Success",panel,new Vector2(-160,0),new Vector2(530,160)).gameObject;
-        var successBg=success.AddComponent<Image>();successBg.color=new Color(.06f,.12f,.10f,.97f);
-        Text("SuccessTitle","传 动 已 恢 复",success.transform,new Vector2(0,35),new Vector2(490,48),30,Gold);
-        Text("SuccessHint","所有齿轮已连通，点击右上角「返回」继续。",success.transform,new Vector2(0,-30),new Vector2(490,45),18,Green);
+        status=Text("Status","",panel,new Vector2(-85,-367),new Vector2(1010,32),17,Cream);
+        success=Wood("Success",new Vector2(-160,0),new Vector2(530,160),woodWindow,new Color(.42f,.30f,.19f)).gameObject;
+        Text("SuccessTitle","传 动 已 恢 复",success.transform,new Vector2(0,35),new Vector2(490,48),30,DarkBrown);
+        Text("SuccessHint","所有齿轮已连通，点击右上角「返回」继续。",success.transform,new Vector2(0,-30),new Vector2(490,45),18,new Color(.40f,.28f,.16f));
         success.SetActive(isSolved);
         Fit();RefreshNetwork(false);
+    }
+    // Tears down the serialized view so BuildView can regenerate it (used by the editor rebuild tool).
+    public void DestroyView()
+    {
+        if(panel!=null)
+        {
+            if(Application.isPlaying) Destroy(panel.gameObject);
+            else DestroyImmediate(panel.gameObject);
+        }
+        panel=null;pieces.Clear();status=null;counter=null;success=null;resetButton=null;preview=null;
+    }
+    // Restyle or rebuild the 8 axle hubs in place. Idempotent: safe to run on scenes
+    // whose view was serialized by an older BuildView. Only touches AxleRing*/Axle* objects.
+    public void RefreshAxleHubs()
+    {
+        if(panel==null) BuildView();
+        for(int i=0;i<GearPuzzleRules.Axles.Length;i++)
+        {
+            Vector2 p=GearPuzzleRules.BoardOffset+GearPuzzleRules.Axles[i];
+            var ring=panel.Find("AxleRing"+i)?.GetComponent<GearPuzzleDisc>();
+            var bolt=panel.Find("Axle"+i)?.GetComponent<GearPuzzleDisc>();
+            if(ring==null) ring=Disc("AxleRing"+i,p,AxleRingSize,AxleRingColor,AxleRingInner);
+            if(bolt==null) bolt=Disc("Axle"+i,p,AxleBoltSize,AxleBoltColor,0);
+            // Axles may have moved in GearPuzzleRules since the scene was serialized.
+            ring.rectTransform.anchoredPosition=p; bolt.rectTransform.anchoredPosition=p;
+            // Recreated hubs would land on top of gears; keep them beneath Gear_0 like BuildView does.
+            int gearIndex=panel.Find("Gear_0")?.GetSiblingIndex()??panel.childCount;
+            if(ring.transform.GetSiblingIndex()>gearIndex) ring.transform.SetSiblingIndex(gearIndex);
+            if(bolt.transform.GetSiblingIndex()>gearIndex) bolt.transform.SetSiblingIndex(gearIndex);
+            StyleAxleHub(ring,bolt);
+        }
+    }
+    private static void StyleAxleHub(GearPuzzleDisc ring,GearPuzzleDisc bolt)
+    {
+        ring.rectTransform.sizeDelta=Vector2.one*AxleRingSize;ring.color=AxleRingColor;ring.innerRatio=AxleRingInner;
+        bolt.rectTransform.sizeDelta=Vector2.one*AxleBoltSize;bolt.color=AxleBoltColor;bolt.innerRatio=0f;
+        ring.SetAllDirty();bolt.SetAllDirty();
     }
     private static RectTransform Rect(string name,Transform parent,Vector2 pos,Vector2 size)
     {
@@ -245,13 +291,20 @@ public class GearPuzzleController : MonoBehaviour
         var r=(RectTransform)go.transform;r.SetParent(parent,false);r.anchorMin=r.anchorMax=r.pivot=new Vector2(.5f,.5f);
         r.anchoredPosition=pos;r.sizeDelta=size;return r;
     }
-    private static Image Box(string name,Transform parent,Vector2 pos,Vector2 size,Color color)
+    // Nine-sliced wood sprite panel; falls back to a flat color when the sprite is not assigned.
+    private Image Wood(string name,Vector2 pos,Vector2 size,Sprite sprite,Color fallback)
     {
-        var image=Rect(name,parent,pos,size).gameObject.AddComponent<Image>();image.color=color;image.raycastTarget=false;return image;
+        var image=Rect(name,panel,pos,size).gameObject.AddComponent<Image>();
+        if(sprite!=null){image.sprite=sprite;image.type=Image.Type.Sliced;image.color=Color.white;}
+        else image.color=fallback;
+        image.raycastTarget=false;return image;
     }
     private GearPuzzleDisc Disc(string name,Vector2 pos,float size,Color color,float inner)
     {
-        var disc=Rect(name,panel,pos,Vector2.one*size).gameObject.AddComponent<GearPuzzleDisc>();
+        // RequireComponent does not reliably add CanvasRenderer from editor scripts; add it explicitly.
+        var go=Rect(name,panel,pos,Vector2.one*size).gameObject;
+        if(go.GetComponent<CanvasRenderer>()==null) go.AddComponent<CanvasRenderer>();
+        var disc=go.AddComponent<GearPuzzleDisc>();
         disc.color=color;disc.innerRatio=inner;disc.raycastTarget=false;return disc;
     }
     private TMP_Text Text(string name,string value,Transform parent,Vector2 pos,Vector2 size,float fs,Color color,TextAlignmentOptions align=TextAlignmentOptions.Center)
@@ -263,10 +316,10 @@ public class GearPuzzleController : MonoBehaviour
     }
     private Button ButtonAt(string name,string label,Vector2 pos,Vector2 size,UnityAction action)
     {
-        var image=Box(name,panel,pos,size,new Color(.23f,.27f,.27f));image.raycastTarget=true;
+        var image=Wood(name,pos,size,woodButton,new Color(.55f,.40f,.26f));image.raycastTarget=true;
         var b=image.gameObject.AddComponent<Button>();b.targetGraphic=image;b.onClick.AddListener(action);
-        var colors=b.colors;colors.highlightedColor=new Color(1,.90f,.65f);colors.pressedColor=new Color(.70f,.63f,.44f);b.colors=colors;
-        Text("Label",label,image.transform,Vector2.zero,size,19,new Color(.95f,.91f,.79f));
+        var colors=b.colors;colors.highlightedColor=new Color(1f,.95f,.85f);colors.pressedColor=new Color(.78f,.68f,.52f);b.colors=colors;
+        Text("Label",label,image.transform,Vector2.zero,size,19,DarkBrown);
         return b;
     }
     // Runtime listeners are not serialized by editor-generated views.
