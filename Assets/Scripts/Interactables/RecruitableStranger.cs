@@ -75,6 +75,8 @@ public class RecruitableStranger : InteractableManager
         if (indicator != null)
             indicator.Hide();
 
+        PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("当其他角色加入队伍后，按住 Z/X 键可以切换操控角色。他们交互的内容也许会不同。", 999f);
+
         // 其他角色的交互列表里也可能保存了这个幸存者。
         foreach (PlayerManager teammate in PlayerSelector.Instance.playerManagers)
         {

@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: RoadGlyph
   m_EditorClassIdentifier: Assembly-CSharp::Level02RoadGlyphItem
   itemName: "\u8DEF"
-  icon: {fileID: 21300000, guid: f0acf21644efeff46aca7a1bf54c2c65, type: 3}
-  glyph: "路"
+  icon: {fileID: -4905211050528008448, guid: 65befd849d2bde04dad092365b12290c, type: 3}
+  itemCount: 1
+  maxItemCount: 99
+  usedIcon: {fileID: 0}
+  glyph: "\u8DEF"
   restoreRadius: 2.5

@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebc758c46f7d4dea89eec3c2bc1f1178, type: 3}
   m_Name: ForbiddenGlyph
   m_EditorClassIdentifier: Assembly-CSharp::Level02GlyphItem
-  itemName: "禁"
-  icon: {fileID: 21300000, guid: f0acf21644efeff46aca7a1bf54c2c65, type: 3}
-  glyph: "禁"
+  itemName: "\u7981"
+  icon: {fileID: -531884594466693315, guid: 5381a3dadd28a3d42a2f9436db77dbce, type: 3}
+  itemCount: 1
+  maxItemCount: 99
+  usedIcon: {fileID: 0}
+  glyph: "\u7981"
   restoreRadius: 2.5

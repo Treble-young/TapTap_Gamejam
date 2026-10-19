@@ -23,7 +23,65 @@ public class PlayerInventoryManager : MonoBehaviour
     void Awake()
     {
         playerOwnedTheInventory = GetComponent<PlayerManager>();
-        inventory = new List<InventoryItemData>();
+
+        // 以前这里无条件 new 一个空列表，会把预制体 / Inspector 里预置的初始物品直接抹掉。
+        // 现在保留预置内容，只清理序列化残留的空引用（背包是紧凑列表，不允许有空洞）。
+        if (inventory == null)
+        {
+            inventory = new List<InventoryItemData>();
+        }
+        else
+        {
+            inventory.RemoveAll(item => item == null);
+
+            // 预置物品是「共享资产」：itemCount / isUsed / usedIcon 这些运行时状态写在 ScriptableObject 上，
+            // 两个玩家拖同一个资产就会互相串（数量一起减、图标一起变）。所以每个玩家各复制一份。
+            DuplicatePresetItems();
+        }
+    }
+
+    /// <summary>把预置的物品复制成运行时实例，让每个玩家持有独立的运行时状态。</summary>
+    private void DuplicatePresetItems()
+    {
+        for (int i = 0; i < inventory.Count; i++)
+        {
+            InventoryItemData original = inventory[i];
+            if (original == null)
+                continue;
+
+            InventoryItemData copy = Instantiate(original);
+            copy.name = original.name;
+            inventory[i] = copy;
+        }
+    }
+
+    void Start()
+    {
+        // 关卡一开始背包就有东西时，先把「选中项」对齐到实际内容，
+        // 否则 currentSelectedItem 是 null：按 Q 用不了，快捷栏也没有选中标记。
+        SyncSelection();
+    }
+
+    /// <summary>
+    /// 让 currentSelectedItem / selectedIndex 与背包实际内容保持一致。
+    /// 任何绕过 TryAdd 批量写入背包的地方，写完都应该调一次。
+    /// </summary>
+    public void SyncSelection()
+    {
+        if (inventory == null)
+            inventory = new List<InventoryItemData>();
+
+        if (inventory.Count == 0)
+        {
+            currentSelectedItem = null;
+            Changed?.Invoke();
+            return;
+        }
+
+        selectedIndex = Mathf.Clamp(selectedIndex, 0, inventory.Count - 1);
+        currentSelectedItem = inventory[selectedIndex];
+
+        Changed?.Invoke();
     }
 
     public InventoryItemData GetItem(int index)

@@ -68034,7 +68034,7 @@ Tilemap:
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.8490566, g: 0.8490566, b: 0.8490566, a: 1}
   m_Origin: {x: -52, y: -158, z: 0}
   m_Size: {x: 112, y: 189, z: 1}
   m_TileAnchor: {x: 0, y: 0, z: 0}
@@ -150637,7 +150637,7 @@ Tilemap:
     m_Data: {r: 1, g: 1, b: 1, a: 1}
   m_TileObjectToInstantiateArray: []
   m_AnimationFrameRate: 1
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 1}
   m_Origin: {x: -52, y: -158, z: 0}
   m_Size: {x: 112, y: 187, z: 1}
   m_TileAnchor: {x: 0, y: 0, z: 0}
@@ -150826,6 +150826,14 @@ PrefabInstance:
       propertyPath: EnableThisSelector
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5166047278847714029, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
+      propertyPath: inventory.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5166047278847714029, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
+      propertyPath: 'inventory.Array.data[0]'
+      value: 
+      objectReference: {fileID: 11400000, guid: f8160cbc44ff1b34a9c3e4bd2d559b83, type: 2}
     - target: {fileID: 8796679846777651427, guid: 84515fe4552895d438216cd23ed34a5c, type: 3}
       propertyPath: m_Sprite
       value: 

@@ -34,6 +34,6 @@ public class NextLevel : MonoBehaviour
     private void LoadNextScene()
     {
         if (!string.IsNullOrEmpty(nextSceneName))
-            SceneManager.LoadScene(nextSceneName);
+            LoadingManager.Instance.LoadNextLevel();
     }
 }
