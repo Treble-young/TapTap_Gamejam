@@ -32,11 +32,6 @@ public class PlayerMovementManager : MonoBehaviour
     private Vector2 avoidPosition;
     private StrangerState strangerState = StrangerState.Idle;
 
-    // 外部推回状态（如 CantArriveArea 把角色挤回原地），期间覆盖输入移动
-    private Vector2 pushTarget;
-    private float pushSpeed;
-    private bool isBeingPushed;
-
     void Awake()
     {
         if (rb == null) rb = GetComponent<Rigidbody2D>();
@@ -92,13 +87,6 @@ public class PlayerMovementManager : MonoBehaviour
 
     private void Movement()
     {
-        // 外部推回优先于一切常规移动
-        if (isBeingPushed)
-        {
-            ExternalPushMovement();
-            return;
-        }
-
         if (playerManager.playerState == PlayerState.Stranger)
             StrangerMovement();
         else if (playerManager.playerState == PlayerState.InputControlling)
@@ -109,30 +97,6 @@ public class PlayerMovementManager : MonoBehaviour
             rb.linearVelocity = Vector2.zero;
     }
 
-    /// <summary>由外部（如 CantArriveArea）请求把角色平滑推回目标点，期间覆盖输入移动。</summary>
-    public void PushTo(Vector2 target, float speed)
-    {
-        pushTarget = target;
-        pushSpeed = speed;
-        isBeingPushed = true;
-    }
-
-    private void ExternalPushMovement()
-    {
-        Vector2 dir = pushTarget - rb.position;
-        if (dir.magnitude <= PlayerSettings.StrangerReturnStopDistance)
-        {
-            rb.linearVelocity = Vector2.zero;
-            isBeingPushed = false;
-            playerManager.isMoving = false;
-            return;
-        }
-
-        Vector2 targetVelocity = dir.normalized * pushSpeed;
-        rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, PlayerSettings.Acceleration * Time.fixedDeltaTime);
-        playerManager.isMoving = true;
-    }
-
     private void InputMovement()
     {
         Vector2 targetVelocity = moveDirection * PlayerSettings.MoveSpeed * moveSpeedMultiplier;
@@ -140,7 +104,6 @@ public class PlayerMovementManager : MonoBehaviour
         float rate = moveDirection.sqrMagnitude > 0.001f ? PlayerSettings.Acceleration : PlayerSettings.Deceleration;
         rb.linearVelocity = Vector2.MoveTowards(rb.linearVelocity, targetVelocity, rate * Time.fixedDeltaTime);
     }
-
 
     // ---- Stranger：玩家靠近时让开一小步，玩家离开后回到原处 ----
 

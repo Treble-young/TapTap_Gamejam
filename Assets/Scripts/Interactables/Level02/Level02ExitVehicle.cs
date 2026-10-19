@@ -43,6 +43,6 @@ public class Level02ExitVehicle : InteractableManager
         yield return new WaitForSeconds(departDelay);
 
         if (!string.IsNullOrEmpty(nextSceneName))
-            SceneManager.LoadScene(nextSceneName);
+            LoadingManager.Instance.LoadNextLevel();
     }
 }

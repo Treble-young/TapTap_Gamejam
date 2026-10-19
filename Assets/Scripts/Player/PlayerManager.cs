@@ -6,6 +6,7 @@ public class PlayerManager : NPCSpriteRandomSelector
     [HideInInspector] public PlayerMovementManager playerMovement;
     [HideInInspector] public PlayerInteractionManager playerInteraction;
     [HideInInspector] public PlayerInventoryManager playerInventory;
+    [HideInInspector] public PlayerAnimator playerAnimator;
 
     [Header("Flags")]
     public PlayerType playerType = PlayerType.Main;
@@ -27,6 +28,8 @@ public class PlayerManager : NPCSpriteRandomSelector
         playerInventory = GetComponent<PlayerInventoryManager>();
         if (playerInventory == null)
             playerInventory = gameObject.AddComponent<PlayerInventoryManager>();
+
+        playerAnimator = GetComponentInChildren<PlayerAnimator>();
     }
 
     public void SetOrderInLayer(int order)

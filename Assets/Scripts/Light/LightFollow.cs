@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using UnityEditor.Build;
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
 
@@ -35,7 +33,7 @@ public class LightFollow : MonoBehaviour
 
     [SerializeField] private LightFilterMode lightFilterMode = LightFilterMode.Whitelist;
 
-    [Tooltip("黑名单模式下，场景里除跟随灯外的所有 Light2D 默认关闭，等手电筒打开时再开启")]
+    [Tooltip("黑名单模式下由 SetBlackListLights 单独开关的灯光，不受手电筒（Freshlight）影响")]
     [SerializeField] private List<Light2D> blacklistLights = new List<Light2D>();
 
     [Tooltip("白名单里的 Light2D 不受全局开关控制，始终保持发光")]
@@ -123,6 +121,9 @@ public class LightFollow : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// 黑名单灯光的开关：只由外部代码（Portal 等）调用，完全不受手电筒（Freshlight）和 LightStage 影响。
+    /// </summary>
     public void SetBlackListLights(bool enabled)
     {
         if (!isLevel03)
@@ -131,16 +132,12 @@ public class LightFollow : MonoBehaviour
         if (lightFilterMode != LightFilterMode.Blacklist)
             return;
 
-        if (LightStage > 0)
-            enabled = true;
-
         foreach (Light2D light in blacklistLights)
         {
             // 跟随灯由 LightStage 控制，不要在这里开关
             if (light == null || light == light2D)
                 continue;
 
-            // 白名单里的灯不受全局开关控制
             light.enabled = enabled;
         }
     }
