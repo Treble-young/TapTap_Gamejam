@@ -64,6 +64,41 @@ public class LoadingManager : MonoBehaviour
         loadScreen.SetActive(false);
     }
 
+    public void LoadTargetScene(int idx)
+    {
+        StartCoroutine(LoadLevelAsync(idx));
+    }
+
+    private IEnumerator LoadLevelAsync(int idx)
+    {
+        loadScreen.SetActive(true);
+        AsyncOperation operation = SceneManager.LoadSceneAsync(idx);
+
+        operation.allowSceneActivation = false;
+
+        bool activationRequested = false;
+
+        while (!operation.isDone)
+        {
+            float progress = Mathf.Clamp01(operation.progress / 0.9f);
+
+            slider.value = progress;
+            progressText.text = (progress * 100f).ToString("F0") + "%";
+
+            if (!activationRequested && operation.progress >= 0.9f)
+            {
+                activationRequested = true;
+
+                yield return new WaitForSeconds(0.2f);
+
+                operation.allowSceneActivation = true;
+            }
+
+            yield return null;
+        }
+        loadScreen.SetActive(false);
+    }
+
     public void FakeLoad()
     {
         StartCoroutine(FakeLoadCoroutine());

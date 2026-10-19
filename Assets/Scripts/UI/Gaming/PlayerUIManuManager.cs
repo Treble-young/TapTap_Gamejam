@@ -24,7 +24,7 @@ public class PlayerUIManuManager : MonoBehaviour
     public void BackToMainMenu()
     {
         Time.timeScale = 1f;
-        SceneManager.LoadScene("MainMenu");
+        LoadingManager.Instance.LoadTargetScene(0);
     }
 
     public void ExitGame()

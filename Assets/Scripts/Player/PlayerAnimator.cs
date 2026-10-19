@@ -32,6 +32,7 @@ public class PlayerAnimator : MonoBehaviour
     private Facing facing = Facing.Down;
     private int currentStateHash;
     private bool stateApplied;
+    private PlayerManager playerManager;
 
     private void Awake()
     {
@@ -82,19 +83,45 @@ public class PlayerAnimator : MonoBehaviour
         Vector2 velocity = body != null ? body.linearVelocity : Vector2.zero;
         bool moving = velocity.sqrMagnitude > moveThreshold * moveThreshold;
 
-        if (moving)
-            facing = GetFacing(velocity);
+        // 朝向单独判：按住方向键时即使被墙挡住没速度，也会立刻转向那个方向
+        Vector2 direction = GetFacingSource(velocity);
+        if (direction.sqrMagnitude > moveThreshold * moveThreshold)
+            facing = GetFacing(direction);
 
         ApplyState(moving ? "walk_" : "idle_");
     }
 
-    /// <summary>按速度的主轴判定朝向：斜向移动时取分量更大的那一边。</summary>
-    private static Facing GetFacing(Vector2 velocity)
+    /// <summary>
+    /// 朝向的参考方向：
+    /// 操控中优先用「输入方向」——这样按住上/下时哪怕贴墙没速度也仍然朝上/下；
+    /// 自动跟随、陌生人让路这类非操控状态用实际速度。
+    /// </summary>
+    private Vector2 GetFacingSource(Vector2 velocity)
     {
-        if (Mathf.Abs(velocity.x) >= Mathf.Abs(velocity.y))
-            return velocity.x >= 0f ? Facing.Right : Facing.Left;
+        if (playerManager == null)
+            playerManager = GetComponent<PlayerManager>();
 
-        return velocity.y >= 0f ? Facing.Up : Facing.Down;
+        if (playerManager != null && playerManager.playerState == PlayerState.InputControlling
+            && PlayerInputManager.Instance != null)
+        {
+            Vector2 input = PlayerInputManager.Instance.MovementInput;
+            if (input.sqrMagnitude > 0.0001f)
+                return input;
+        }
+
+        return velocity;
+    }
+
+    /// <summary>
+    /// 上下优先：只要垂直分量不是几乎为 0（或远小于水平分量），就播上/下；
+    /// 完全没有上下方向时才播左/右。
+    /// </summary>
+    private static Facing GetFacing(Vector2 direction)
+    {
+        if (Mathf.Abs(direction.y) > Mathf.Abs(direction.x) * 0.25f)
+            return direction.y >= 0f ? Facing.Up : Facing.Down;
+
+        return direction.x >= 0f ? Facing.Right : Facing.Left;
     }
 
     private void ApplyState(string prefix)

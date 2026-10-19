@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e833ccc63edcf3944901a91b74a5d948, type: 3}
   m_Name: Screw
   m_EditorClassIdentifier: Assembly-CSharp::InventoryItemData
-  itemName: 
+  itemName: Screw
   icon: {fileID: 21300000, guid: 14577ec3062ac90458ff0828763c7511, type: 3}
   itemCount: 1
   maxItemCount: 99

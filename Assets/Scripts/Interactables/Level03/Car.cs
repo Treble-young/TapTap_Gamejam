@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
@@ -87,6 +88,7 @@ public class Car : InteractableManager
     private Collider2D drivingPlayerCollider;
     private InventoryItemData usedJackItem;
     private bool isBrokenDown = false;
+    private bool isBreakingDown = false;
     private bool hasSpawnedAfterBreakdown = false;
 
     /// <summary>开车时被临时藏起来的跟随角色，记录原始状态以便下车还原。</summary>
@@ -186,7 +188,7 @@ public class Car : InteractableManager
 
     private void Update()
     {
-        if (!isDriving)
+        if (!isDriving || isBreakingDown)
             return;
 
         // 切换了操控角色则自动下车
@@ -201,7 +203,8 @@ public class Car : InteractableManager
 
     private void FixedUpdate()
     {
-        if (!isDriving || drivingPlayer == null || carRb == null)
+        // 损坏抖动期间不再响应驾驶输入，角色也先留在车里
+        if (!isDriving || isBreakingDown || drivingPlayer == null || carRb == null)
             return;
 
         UpdateDrivingVelocity();
@@ -312,8 +315,27 @@ public class Car : InteractableManager
             return;
 
         isBrokenDown = true;
-        StopDriving();
+
+        // 先把车停住，别让抖动期间还带着惯性滑走
+        if (carRb != null)
+            carRb.linearVelocity = Vector2.zero;
+
         CloseMenu();
+
+        // 先抖动，抖完再弹出角色
+        StartCoroutine(BreakDownRoutine());
+    }
+
+    private IEnumerator BreakDownRoutine()
+    {
+        isBreakingDown = true;
+
+        yield return ShakeCoroutine();
+
+        isBreakingDown = false;
+
+        // 抖动结束，把驾驶者从车里弹出来
+        StopDriving();
 
         if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
             PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("这辆车貌似坏了，不能开了。看下能不能拆下什么零件。");
@@ -796,5 +818,36 @@ public class Car : InteractableManager
         // 强制重建网格
         lineRendererShapeController.RefreshSpriteShape();
         lineRendererShapeController.BakeMesh();
+    }
+
+    [Header("损坏抖动")]
+    [Tooltip("抖动时长（秒），抖完才把角色弹出车外")]
+    [SerializeField] private float shakeDuration = 0.2f;
+    [Tooltip("左右抖动幅度")]
+    [SerializeField] private float shakeMagnitude = 0.05f;
+
+    private bool isShaking;
+
+    private IEnumerator ShakeCoroutine()
+    {
+        // 已经在抖了就不要叠第二份
+        if (isShaking)
+            yield break;
+
+        isShaking = true;
+
+        Vector3 originalPos = transform.localPosition;
+        float elapsed = 0.0f;
+
+        while (elapsed < shakeDuration)
+        {
+            float xOffset = Random.Range(-1f, 1f) * shakeMagnitude;
+            transform.localPosition = originalPos + new Vector3(xOffset, 0, 0);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localPosition = originalPos;
+        isShaking = false;
     }
 }

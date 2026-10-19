@@ -29,7 +29,7 @@ public class Bridge : InteractableManager
 
         // 2) 图纸还没更新到「半张」：先去找工程师问尺寸
         Drawing drawing = drawingInUI.HeldDrawing;
-        if (drawing == null || drawing.drawingStage < requiredDrawingStage)
+        if (drawing == null || drawingInUI.hasToldWidth == false)
         {
             ShowPopUp("图纸还没更新，我得先弄清楚这座桥的尺寸。");
             return;
@@ -54,6 +54,7 @@ public class Bridge : InteractableManager
             return;
 
         ShowPopUp("扔过去了，现在可以算出桥的长度了。");
+        drawing.drawingStage = 1; // 让图纸 UI 的图变成「半张」状态
     }
 
     private static void ShowPopUp(string message)
