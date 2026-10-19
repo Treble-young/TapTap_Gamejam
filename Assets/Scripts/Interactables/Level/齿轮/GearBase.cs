@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[RequireComponent(typeof(PlayerInputLock))]
+// PlayerInputLock belongs on gameUI, not on the always-active world object.
 public class GearBase : InteractableManager
 {
     public GameObject gameUI;
