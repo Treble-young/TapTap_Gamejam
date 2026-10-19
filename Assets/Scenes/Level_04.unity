@@ -119,6 +119,71 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1001 &94643842
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 6423073292068766662, guid: 38ef6cd7e8565014da346d95cbe3abad, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7603684540593008900, guid: 38ef6cd7e8565014da346d95cbe3abad, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433987959860405061, guid: 38ef6cd7e8565014da346d95cbe3abad, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 3.15
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433987959860405061, guid: 38ef6cd7e8565014da346d95cbe3abad, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.43
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433987959860405061, guid: 38ef6cd7e8565014da346d95cbe3abad, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433987959860405061, guid: 38ef6cd7e8565014da346d95cbe3abad, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433987959860405061, guid: 38ef6cd7e8565014da346d95cbe3abad, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433987959860405061, guid: 38ef6cd7e8565014da346d95cbe3abad, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433987959860405061, guid: 38ef6cd7e8565014da346d95cbe3abad, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433987959860405061, guid: 38ef6cd7e8565014da346d95cbe3abad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433987959860405061, guid: 38ef6cd7e8565014da346d95cbe3abad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8433987959860405061, guid: 38ef6cd7e8565014da346d95cbe3abad, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8929425911701906629, guid: 38ef6cd7e8565014da346d95cbe3abad, type: 3}
+      propertyPath: m_Name
+      value: KongMingMinigame
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 38ef6cd7e8565014da346d95cbe3abad, type: 3}
 --- !u!1 &182158401
 GameObject:
   m_ObjectHideFlags: 0
@@ -151871,63 +151936,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 4a3438b8f16ad2041bfd4c77176aa588, type: 3}
---- !u!1001 &6363555455597253188
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 5008409199568688871, guid: 0380ef433dcf5e743b35cb1e4cc445e3, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 3.01
-      objectReference: {fileID: 0}
-    - target: {fileID: 5008409199568688871, guid: 0380ef433dcf5e743b35cb1e4cc445e3, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: -1.1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5008409199568688871, guid: 0380ef433dcf5e743b35cb1e4cc445e3, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5008409199568688871, guid: 0380ef433dcf5e743b35cb1e4cc445e3, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5008409199568688871, guid: 0380ef433dcf5e743b35cb1e4cc445e3, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5008409199568688871, guid: 0380ef433dcf5e743b35cb1e4cc445e3, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5008409199568688871, guid: 0380ef433dcf5e743b35cb1e4cc445e3, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5008409199568688871, guid: 0380ef433dcf5e743b35cb1e4cc445e3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5008409199568688871, guid: 0380ef433dcf5e743b35cb1e4cc445e3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5008409199568688871, guid: 0380ef433dcf5e743b35cb1e4cc445e3, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6414219625259998756, guid: 0380ef433dcf5e743b35cb1e4cc445e3, type: 3}
-      propertyPath: m_Name
-      value: WorldPickUpItem_Rope
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 0380ef433dcf5e743b35cb1e4cc445e3, type: 3}
 --- !u!1001 &6681615291648539029
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -152060,6 +152068,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5046446274548375006, guid: bed277aa7524a9244819ad086e98a78b, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7924220742933927456, guid: bed277aa7524a9244819ad086e98a78b, type: 3}
+      propertyPath: m_SortingOrder
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -152141,7 +152157,6 @@ SceneRoots:
   - {fileID: 507990588}
   - {fileID: 1906399989}
   - {fileID: 727339290}
-  - {fileID: 6363555455597253188}
   - {fileID: 7096287698950862572}
   - {fileID: 1688997346}
   - {fileID: 6681615291648539029}
@@ -152151,4 +152166,5 @@ SceneRoots:
   - {fileID: 5271183563087316540}
   - {fileID: 1472220303}
   - {fileID: 2120157046546438327}
+  - {fileID: 94643842}
   - {fileID: 8569756274613512304}

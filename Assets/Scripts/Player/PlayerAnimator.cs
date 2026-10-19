@@ -1,8 +1,9 @@
 using UnityEngine;
 
 /// <summary>
-/// 玩家四方向行走 / 站立动画驱动。
-/// 直接按状态名 <c>Animator.Play</c> 切状态（walk_up/down/left/right、idle_up/down/left/right），
+/// 玩家六方向行走 / 站立动画驱动。
+/// 直接按状态名 <c>Animator.Play</c> 切状态（walk_down_left/down_right/up_left/up_right/left/right、
+/// idle_down_left/down_right/up_left/up_right/left/right），
 /// 所以不需要在 Animator 里加参数和过渡线。
 ///
 /// hasAnimator = true  → 由本脚本驱动 Animator，同时关掉 NPCSpriteRandomSelector 的随机贴图；
@@ -10,7 +11,7 @@ using UnityEngine;
 /// </summary>
 public class PlayerAnimator : MonoBehaviour
 {
-    [Tooltip("勾上=用四方向动画；取消=用 NPCSpriteRandomSelector 的随机贴图")]
+    [Tooltip("勾上=用六方向动画；取消=用 NPCSpriteRandomSelector 的随机贴图")]
     public bool hasAnimator = false;
 
     [Header("引用（留空会自动查找）")]
@@ -23,13 +24,15 @@ public class PlayerAnimator : MonoBehaviour
 
     private enum Facing
     {
-        Down,
-        Up,
+        DownLeft,
+        DownRight,
+        UpLeft,
+        UpRight,
         Left,
         Right
     }
 
-    private Facing facing = Facing.Down;
+    private Facing facing = Facing.DownLeft;
     private int currentStateHash;
     private bool stateApplied;
     private PlayerManager playerManager;
@@ -86,14 +89,14 @@ public class PlayerAnimator : MonoBehaviour
         // 朝向单独判：按住方向键时即使被墙挡住没速度，也会立刻转向那个方向
         Vector2 direction = GetFacingSource(velocity);
         if (direction.sqrMagnitude > moveThreshold * moveThreshold)
-            facing = GetFacing(direction);
+            facing = GetFacing(direction, facing);
 
         ApplyState(moving ? "walk_" : "idle_");
     }
 
     /// <summary>
     /// 朝向的参考方向：
-    /// 操控中优先用「输入方向」——这样按住上/下时哪怕贴墙没速度也仍然朝上/下；
+    /// 操控中优先用「输入方向」——这样按住方向键时哪怕贴墙没速度也仍然会转向；
     /// 自动跟随、陌生人让路这类非操控状态用实际速度。
     /// </summary>
     private Vector2 GetFacingSource(Vector2 velocity)
@@ -113,15 +116,39 @@ public class PlayerAnimator : MonoBehaviour
     }
 
     /// <summary>
-    /// 上下优先：只要垂直分量不是几乎为 0（或远小于水平分量），就播上/下；
-    /// 完全没有上下方向时才播左/右。
+    /// 水平左右占 ±30°，其余角度按上下与左右组合成四个斜向；
+    /// 纯竖直输入保持当前左右侧，避免在两个斜向之间来回跳。
     /// </summary>
-    private static Facing GetFacing(Vector2 direction)
+    private static Facing GetFacing(Vector2 direction, Facing current)
     {
-        if (Mathf.Abs(direction.y) > Mathf.Abs(direction.x) * 0.25f)
-            return direction.y >= 0f ? Facing.Up : Facing.Down;
+        float horizontal = Mathf.Abs(direction.x);
+        float vertical = Mathf.Abs(direction.y);
 
-        return direction.x >= 0f ? Facing.Right : Facing.Left;
+        // There are no straight up/down clips. Keep the current side for a
+        // purely vertical input so the diagonal facing does not flicker.
+        if (horizontal <= vertical * 0.001f)
+        {
+            bool keepRight = current == Facing.Right
+                || current == Facing.UpRight
+                || current == Facing.DownRight;
+
+            if (direction.y >= 0f)
+                return keepRight ? Facing.UpRight : Facing.UpLeft;
+
+            return keepRight ? Facing.DownRight : Facing.DownLeft;
+        }
+
+        bool right = direction.x >= 0f;
+
+        // Six sectors: right/left occupy +/-30 degrees, and the remaining
+        // angles use the matching up/down diagonal.
+        if (vertical <= horizontal * 0.5773503f)
+            return right ? Facing.Right : Facing.Left;
+
+        if (direction.y >= 0f)
+            return right ? Facing.UpRight : Facing.UpLeft;
+
+        return right ? Facing.DownRight : Facing.DownLeft;
     }
 
     private void ApplyState(string prefix)
@@ -142,14 +169,20 @@ public class PlayerAnimator : MonoBehaviour
     {
         switch (value)
         {
-            case Facing.Up:
-                return "up";
+            case Facing.UpLeft:
+                return "up_left";
+            case Facing.UpRight:
+                return "up_right";
+            case Facing.DownLeft:
+                return "down_left";
+            case Facing.DownRight:
+                return "down_right";
             case Facing.Left:
                 return "left";
             case Facing.Right:
                 return "right";
             default:
-                return "down";
+                return "down_left";
         }
     }
 }

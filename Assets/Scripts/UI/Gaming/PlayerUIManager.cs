@@ -58,4 +58,9 @@ public class PlayerUIManager : MonoBehaviour
         if (inventoryManager != null)
             inventoryManager.ApplyVisibility();
     }
+
+    public void EndGame()
+    {
+        LoadingManager.Instance.LoadTargetScene(0);
+    }
 }

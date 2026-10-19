@@ -77,6 +77,19 @@ public class KongMingMinigameUI : MonoBehaviour
         Canvas canvas = GetComponent<Canvas>();
         CanvasScaler scaler = GetComponent<CanvasScaler>();
         MinigameTheme.ConfigureCanvas(canvas, scaler);
+
+        if (TryBindAuthoredLayout())
+        {
+            ResetBoard();
+            return;
+        }
+
+        BuildLayout();
+        ResetBoard();
+    }
+
+    private void BuildLayout()
+    {
         MinigameTheme.ClearChildren(transform);
 
         MinigameTheme.CreateStretchedImage(transform, "Background", null, BackgroundColor, true);
@@ -101,8 +114,96 @@ public class KongMingMinigameUI : MonoBehaviour
         BuildSidePanel();
         BuildFooter();
         BuildSuccessLayer();
+    }
 
-        ResetBoard();
+#if UNITY_EDITOR
+    /// <summary>Builds the editable hierarchy without starting game state. Used by the prefab baker.</summary>
+    public void BuildEditableLayout()
+    {
+        built = true;
+        font = MinigameTheme.ResolveFont(transform);
+
+        Canvas canvas = GetComponent<Canvas>();
+        CanvasScaler scaler = GetComponent<CanvasScaler>();
+        MinigameTheme.ConfigureCanvas(canvas, scaler);
+        BuildLayout();
+    }
+#endif
+
+    private bool TryBindAuthoredLayout()
+    {
+        boardArea = transform.Find("BoardArea") as RectTransform;
+        Transform successTransform = transform.Find("SuccessLayer");
+        if (boardArea == null || successTransform == null)
+            return false;
+
+        successLayer = successTransform.gameObject;
+        successLayer.SetActive(false);
+        successBody = FindText(successTransform, "SuccessBody");
+        statusText = FindText(transform, "Status");
+        progressText = FindText(transform, "Progress");
+        knotImage = FindImage(transform, "KnotIcon");
+        knotStatus = FindText(transform, "KnotStatus");
+        knotHint = FindText(transform, "KnotHint");
+
+        dotViews.Clear();
+        for (int index = 0; index < ValidCells.Length; index++)
+        {
+            if (!ValidCells[index])
+                continue;
+
+            Transform tile = boardArea.Find("Tile_" + index);
+            Image dot = tile != null ? FindImage(tile, "Dot") : null;
+            if (dot != null)
+                dotViews[index] = dot;
+        }
+
+        hoverBorder = FindImage(boardArea, "HoverBorder");
+        if (hoverBorder != null)
+            hoverBorder.enabled = false;
+
+        Image boardInputImage = FindImage(boardArea, "BoardInput");
+        if (boardInputImage == null)
+        {
+            boardInputImage = MinigameTheme.CreateImage(boardArea, "BoardInput", MinigameTheme.Panel(),
+                new Color(0f, 0f, 0f, 0.001f), new Vector2(920f, 920f), Vector2.zero, false, true);
+        }
+
+        KongMingBoardInput boardInput = boardInputImage.GetComponent<KongMingBoardInput>();
+        if (boardInput == null)
+            boardInput = boardInputImage.gameObject.AddComponent<KongMingBoardInput>();
+        boardInput.owner = this;
+        boardInput.boardRect = boardArea;
+
+        BindButton(transform, "UndoButton", UndoClicked);
+        BindButton(transform, "RestartButton", ResetClicked);
+        BindButton(transform, "ExitButton", ExitClicked);
+        BindButton(successTransform, "SuccessButton", CompleteClicked);
+
+        return true;
+    }
+
+    private static TextMeshProUGUI FindText(Transform parent, string name)
+    {
+        Transform child = parent.Find(name);
+        return child != null ? child.GetComponent<TextMeshProUGUI>() : null;
+    }
+
+    private static Image FindImage(Transform parent, string name)
+    {
+        Transform child = parent.Find(name);
+        return child != null ? child.GetComponent<Image>() : null;
+    }
+
+    private void BindButton(Transform parent, string name, UnityEngine.Events.UnityAction action)
+    {
+        Transform child = parent.Find(name);
+        Button button = child != null ? child.GetComponent<Button>() : null;
+        if (button == null)
+            return;
+
+        button.onClick.RemoveAllListeners();
+        button.onClick.AddListener(action);
     }
 
     private void BuildTiles()
@@ -209,7 +310,7 @@ public class KongMingMinigameUI : MonoBehaviour
         }
 
         if (knotHint != null)
-            knotHint.text = untied ? "获得两条带绳结的绳子" : "完成解绳后松开";
+            knotHint.text = untied ? "获得一条带绳结的绳子" : "完成解绳后松开";
     }
 
     private void BuildFooter()
@@ -243,15 +344,13 @@ public class KongMingMinigameUI : MonoBehaviour
             new Vector2(600f, 56f), new Vector2(0f, 120f), font);
 
         successBody = MinigameTheme.CreateText(successLayer.transform, "SuccessBody",
-            "最后一枚棋子落在了中心金框。\n你解下两条带绳结的绳子。", 22f, TextMain,
+            "最后一枚棋子落在了中心金框。\n你解下一条带绳结的绳子。", 22f, TextMain,
             new Vector2(600f, 80f), new Vector2(0f, 58f), font);
 
-        MinigameTheme.CreateImage(successLayer.transform, "RewardRopeA", MinigameTheme.Knot(82), Color.white,
-            new Vector2(82f, 82f), new Vector2(-65f, -32f)).preserveAspect = true;
-        MinigameTheme.CreateImage(successLayer.transform, "RewardRopeB", MinigameTheme.Knot(82), Color.white,
-            new Vector2(82f, 82f), new Vector2(65f, -32f)).preserveAspect = true;
+        MinigameTheme.CreateImage(successLayer.transform, "RewardRope", MinigameTheme.Knot(82), Color.white,
+            new Vector2(82f, 82f), new Vector2(0f, -32f)).preserveAspect = true;
 
-        MinigameTheme.CreateText(successLayer.transform, "RewardLabel", "带绳结的绳子 ×2", 20f, TextMuted,
+        MinigameTheme.CreateText(successLayer.transform, "RewardLabel", "带绳结的绳子 ×1", 20f, TextMuted,
             new Vector2(360f, 28f), new Vector2(0f, -92f), font);
 
         MinigameTheme.CreateButton(successLayer.transform, "SuccessButton", "收下绳子", new Vector2(200f, 52f),
@@ -526,7 +625,7 @@ public class KongMingMinigameUI : MonoBehaviour
         yield return new WaitForSecondsRealtime(0.55f);
 
         if (successBody != null)
-            successBody.text = "最后一枚棋子落在了中心金框。\n你解下两条带绳结的绳子。";
+            successBody.text = "最后一枚棋子落在了中心金框。\n你解下一条带绳结的绳子。";
 
         if (successLayer != null)
         {

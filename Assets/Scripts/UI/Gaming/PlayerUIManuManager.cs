@@ -20,6 +20,24 @@ public class PlayerUIManuManager : MonoBehaviour
         Time.timeScale = 1f;         // 恢复游戏时间
     }
 
+    public void SetMasterVolume(float value)
+    {
+        if (WorldAudioManager.Instance != null)
+            WorldAudioManager.Instance.SetMasterVolume(value);
+    }
+
+    public void SetBGMVolume(float value)
+    {
+        if (WorldAudioManager.Instance != null)
+            WorldAudioManager.Instance.SetBGMVolume(value);
+    }
+
+    public void SetSFXVolume(float value)
+    {
+        if (WorldAudioManager.Instance != null)
+            WorldAudioManager.Instance.SetSFXVolume(value);
+    }
+
 
     public void BackToMainMenu()
     {

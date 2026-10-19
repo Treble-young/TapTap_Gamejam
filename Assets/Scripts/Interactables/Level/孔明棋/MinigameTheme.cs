@@ -42,7 +42,8 @@ public static class MinigameTheme
             canvas.overrideSorting = true;
             canvas.sortingOrder = 200;
             canvas.pixelPerfect = false;
-            canvas.transform.localScale = Vector3.one;
+            canvas.transform.SetPositionAndRotation(Vector3.zero, Quaternion.identity);
+            canvas.transform.localScale = GetOverlayLocalScale(canvas.transform);
         }
 
         if (scaler != null)
@@ -62,6 +63,24 @@ public static class MinigameTheme
                 canvas.scaleFactor = Mathf.Max(0.1f, screenScale);
             }
         }
+    }
+
+    private static Vector3 GetOverlayLocalScale(Transform canvasTransform)
+    {
+        Transform parent = canvasTransform.parent;
+        if (parent == null)
+            return Vector3.one;
+
+        Vector3 parentScale = parent.lossyScale;
+        return new Vector3(
+            SafeInverse(parentScale.x),
+            SafeInverse(parentScale.y),
+            SafeInverse(parentScale.z));
+    }
+
+    private static float SafeInverse(float value)
+    {
+        return Mathf.Abs(value) > 0.0001f ? 1f / value : 1f;
     }
 
     public static void EnsureEventSystem()
