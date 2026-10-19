@@ -138,6 +138,8 @@ public class ShoppingCart : InteractableManager
         if (drivePathPoints.Count == 0)
             return;
 
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (menu != null)
             menu.SetActive(false);
 
@@ -226,6 +228,8 @@ public class ShoppingCart : InteractableManager
 
     public void SpawnCan()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         PlayerInventoryManager inventory = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentInventory : null;
         if (inventory == null)
         {
@@ -248,6 +252,8 @@ public class ShoppingCart : InteractableManager
 
     public void ClearOneOfTheCans()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (loadedCanItems.Count == 0)
         {
             UpdateMenu();
@@ -282,6 +288,8 @@ public class ShoppingCart : InteractableManager
 
     public void Exit()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (menu != null)
             menu.SetActive(false);
 

@@ -12,7 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebc758c46f7d4dea89eec3c2bc1f1178, type: 3}
   m_Name: WaterGlyph
   m_EditorClassIdentifier: Assembly-CSharp::Level02GlyphItem
-  itemName: "水"
-  icon: {fileID: 21300000, guid: f0acf21644efeff46aca7a1bf54c2c65, type: 3}
-  glyph: "水"
+  itemName: "\u6C34"
+  icon: {fileID: -6820745987359068363, guid: bcc3cdc690bff4a4bbb002e2dae045f1, type: 3}
+  itemCount: 1
+  maxItemCount: 99
+  usedIcon: {fileID: 0}
+  glyph: "\u6C34"
   restoreRadius: 2.5

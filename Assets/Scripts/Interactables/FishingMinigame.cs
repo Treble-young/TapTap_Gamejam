@@ -119,6 +119,8 @@ public class FishingMinigame : MonoBehaviour
         if (isFishing || !HasReferences())
             return;
 
+        PlayerUIManager.Instance.PlayClickSound();
+
         isFishing = true;
         progress = 0.5f;
         elapsed = 0f;
@@ -149,6 +151,8 @@ public class FishingMinigame : MonoBehaviour
 
     public void Cancel()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         isFishing = false;
 
         if (gameRoot != null)
@@ -244,6 +248,8 @@ public class FishingMinigame : MonoBehaviour
 
     private void SetDifficulty(FishingDifficulty newDifficulty)
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         difficulty = newDifficulty;
         SyncDifficultyToggles();
     }

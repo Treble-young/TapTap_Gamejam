@@ -22,11 +22,22 @@ public class HotbarUI : MonoBehaviour, IPointerClickHandler
     private PlayerInventoryManager boundInventory;
     private Image marker;
 
+    // 外部（解谜 UI、画图 UI 等）要求的显示状态。
+    // 实际是否激活 = requestedVisible && 加载画面不可见，两者分开存，避免互相覆盖。
+    private bool requestedVisible = true;
+
+    private void Awake()
+    {
+        requestedVisible = gameObject.activeSelf;
+    }
+
     private void Start()
     {
         EnsureEventSystem();
         CreateMarker();
         Bind(CurrentInventory());
+        // 注意：这里不调用 ApplyVisibility()，可见性由 PlayerUIManager 在它自己的 Start 里统一初始化，
+        // 否则两个 Start 的执行顺序会让 CaptureInitialState 读到「因为加载画面而被隐藏」的错误初始值。
     }
 
     private void Update()
@@ -75,13 +86,57 @@ public class HotbarUI : MonoBehaviour, IPointerClickHandler
         if (boundInventory != null)
             boundInventory.Changed -= Refresh;
     }
-    public void ShowInventoryWindow() => gameObject.SetActive(true);
-    public void HideInventoryWindow() => gameObject.SetActive(false);
+    /// <summary>外部要求显示快捷栏（例如关闭解谜/画图 UI 时）。加载画面仍可见时会先记下，等它消失后自动显示。</summary>
+    public void ShowInventoryWindow() => SetRequestedVisible(true);
+
+    /// <summary>外部要求隐藏快捷栏（例如打开解谜/画图 UI 时）。</summary>
+    public void HideInventoryWindow() => SetRequestedVisible(false);
+
+    private void SetRequestedVisible(bool visible)
+    {
+        requestedVisible = visible;
+        ApplyVisibility();
+    }
+
+    /// <summary>
+    /// 场景刚加载时用物体在场景里的真实状态作为初始「请求状态」。
+    /// 如果美术/关卡把快捷栏默认关掉了，Awake 不会执行，这里补一次，避免被 PlayerUIManager 强制打开。
+    /// </summary>
+    public void CaptureInitialState()
+    {
+        requestedVisible = gameObject.activeSelf;
+    }
+
+    /// <summary>
+    /// 把「外部请求的状态」和「加载画面是否可见」合成最终结果。
+    /// 本物体被隐藏时自身 Update 不会再执行，所以必须由始终保持激活的 PlayerUIManager 每帧调用一次，
+    /// 否则加载画面消失后快捷栏再也回不来。
+    /// </summary>
+    public void ApplyVisibility()
+    {
+        bool shouldShow = requestedVisible && !IsLoadingScreenVisible();
+
+        if (gameObject.activeSelf != shouldShow)
+            gameObject.SetActive(shouldShow);
+    }
+
+    /// <summary>加载画面（LoadingManager.loadScreen）当前是否挡在最上层。</summary>
+    public static bool IsLoadingScreenVisible()
+    {
+        LoadingManager manager = LoadingManager.Instance;
+
+        // Instance 可能是已随场景销毁的“假 null”，Unity 重载的 == 会正确处理
+        return manager != null
+               && manager.loadScreen != null
+               && manager.loadScreen.activeSelf;
+    }
 
     public void OnPointerClick(PointerEventData eventData)
     {
         if (boundInventory == null)
             return;
+
+        PlayerUIManager.Instance.PlayClickSound();
 
         // 从被点中的物体一路向上找，看它属于哪个格子
         GameObject hit = eventData.pointerPressRaycast.gameObject;

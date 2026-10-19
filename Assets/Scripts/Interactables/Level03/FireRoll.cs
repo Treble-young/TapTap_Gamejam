@@ -93,6 +93,8 @@ public class FireRoll : InteractableManager
 
     public void Exit()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (menu != null)
         {
             menu.SetActive(false);
@@ -101,6 +103,8 @@ public class FireRoll : InteractableManager
 
     public void InstallHandCrank()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (handCrank == null && PlayerSelector.Instance.currentInventory.currentSelectedItem is HandCrank selectedHandCrank)
         {
             handCrank = selectedHandCrank;
@@ -112,6 +116,8 @@ public class FireRoll : InteractableManager
 
     public void RemoveHandCrank()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (handCrank != null)
         {
             PlayerSelector.Instance.currentInventory.TryAdd(handCrank);
@@ -123,6 +129,8 @@ public class FireRoll : InteractableManager
 
     public void OperateDoor()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (handCrank != null)
         {
             // Implement the logic to operate the door using the hand crank

@@ -124,6 +124,8 @@ public class KongMingBase : InteractableManager
 
     public void CloseMinigame()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (gameUI != null)
             gameUI.SetActive(false);
 

@@ -12,7 +12,7 @@ using UnityEngine;
 /// 随后改变路径走向安全的方向，直至走出地图消失。
 /// </summary>
 [RequireComponent(typeof(SpriteRenderer))]
-public class Level02PoolNPC : MonoBehaviour
+public class Level02PoolNPC : NPCSpriteRandomSelector
 {
     private enum State { Idle, ToPool, Shocked, Sinking, Waiting, ToSign, Reacting, Exiting, Gone, Gathering }
 

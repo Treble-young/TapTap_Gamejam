@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.U2D;
@@ -87,6 +88,7 @@ public class Car : InteractableManager
     private Collider2D drivingPlayerCollider;
     private InventoryItemData usedJackItem;
     private bool isBrokenDown = false;
+    private bool isBreakingDown = false;
     private bool hasSpawnedAfterBreakdown = false;
 
     /// <summary>开车时被临时藏起来的跟随角色，记录原始状态以便下车还原。</summary>
@@ -129,7 +131,7 @@ public class Car : InteractableManager
     private void Start()
     {
         if (startDriving)
-            Drive();
+            DriveInternal(false);
     }
 
     public override void Interact(PlayerManager player)
@@ -186,7 +188,7 @@ public class Car : InteractableManager
 
     private void Update()
     {
-        if (!isDriving)
+        if (!isDriving || isBreakingDown)
             return;
 
         // 切换了操控角色则自动下车
@@ -201,7 +203,8 @@ public class Car : InteractableManager
 
     private void FixedUpdate()
     {
-        if (!isDriving || drivingPlayer == null || carRb == null)
+        // 损坏抖动期间不再响应驾驶输入，角色也先留在车里
+        if (!isDriving || isBreakingDown || drivingPlayer == null || carRb == null)
             return;
 
         UpdateDrivingVelocity();
@@ -215,6 +218,11 @@ public class Car : InteractableManager
 
     public void Drive()
     {
+        DriveInternal(true);
+    }
+
+    private void DriveInternal(bool playClickSound)
+    {
         PlayerManager player = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentPlayer : null;
         if (player == null)
             return;
@@ -222,12 +230,18 @@ public class Car : InteractableManager
         // 被千斤顶顶起、连着油管（发电机/油泵）、或没油时不能开车
         if (isJackedUp || isConeectedToCar || isConnectedToPump || isOutOfFuel)
         {
-            CloseMenu();
+            if (playClickSound)
+                CloseMenu();
+            else
+                CloseMenuInternal();
 
             if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
                 PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("没油了，需要油泵，好像有人会使用加油机");
             return;
         }
+
+        if (playClickSound)
+            PlayerUIManager.Instance.PlayClickSound();
 
         drivingPlayer = player;
         isDriving = true;
@@ -312,8 +326,27 @@ public class Car : InteractableManager
             return;
 
         isBrokenDown = true;
+
+        // 先把车停住，别让抖动期间还带着惯性滑走
+        if (carRb != null)
+            carRb.linearVelocity = Vector2.zero;
+
+        CloseMenuInternal();
+
+        // 先抖动，抖完再弹出角色
+        StartCoroutine(BreakDownRoutine());
+    }
+
+    private IEnumerator BreakDownRoutine()
+    {
+        isBreakingDown = true;
+
+        yield return ShakeCoroutine();
+
+        isBreakingDown = false;
+
+        // 抖动结束，把驾驶者从车里弹出来
         StopDriving();
-        CloseMenu();
 
         if (PlayerUIManager.Instance != null && PlayerUIManager.Instance.popUpManager != null)
             PlayerUIManager.Instance.popUpManager.ShowPopUpWindow("这辆车貌似坏了，不能开了。看下能不能拆下什么零件。");
@@ -667,6 +700,8 @@ public class Car : InteractableManager
 
     public void Jack()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         PlayerInventoryManager inventory = PlayerSelector.Instance != null ? PlayerSelector.Instance.currentInventory : null;
 
         if (!isJackedUp)
@@ -720,6 +755,13 @@ public class Car : InteractableManager
     }
 
     public void CloseMenu()
+    {
+        PlayerUIManager.Instance.PlayClickSound();
+
+        CloseMenuInternal();
+    }
+
+    private void CloseMenuInternal()
     {
         if (menu != null)
             menu.SetActive(false);
@@ -796,5 +838,36 @@ public class Car : InteractableManager
         // 强制重建网格
         lineRendererShapeController.RefreshSpriteShape();
         lineRendererShapeController.BakeMesh();
+    }
+
+    [Header("损坏抖动")]
+    [Tooltip("抖动时长（秒），抖完才把角色弹出车外")]
+    [SerializeField] private float shakeDuration = 0.2f;
+    [Tooltip("左右抖动幅度")]
+    [SerializeField] private float shakeMagnitude = 0.05f;
+
+    private bool isShaking;
+
+    private IEnumerator ShakeCoroutine()
+    {
+        // 已经在抖了就不要叠第二份
+        if (isShaking)
+            yield break;
+
+        isShaking = true;
+
+        Vector3 originalPos = transform.localPosition;
+        float elapsed = 0.0f;
+
+        while (elapsed < shakeDuration)
+        {
+            float xOffset = Random.Range(-1f, 1f) * shakeMagnitude;
+            transform.localPosition = originalPos + new Vector3(xOffset, 0, 0);
+            elapsed += Time.deltaTime;
+            yield return null;
+        }
+
+        transform.localPosition = originalPos;
+        isShaking = false;
     }
 }

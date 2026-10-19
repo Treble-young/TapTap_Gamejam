@@ -141,14 +141,14 @@ public class DrawingInUI : MonoBehaviour
         }
     }
 
-    /// <summary>图纸到「半张」（stage 1）时把 ON 打开，其他阶段关掉。</summary>
+    /// <summary>图纸到「半张」（stage 1）并且已经扔过石头量过之后，才把 ON 打开；其他情况关掉。</summary>
     private void RefreshOnIndicator()
     {
         if (ON == null)
             return;
 
         Drawing drawing = HeldDrawing;
-        bool shouldShow = drawing != null && drawing.drawingStage == 1;
+        bool shouldShow = hasThrewStone && drawing != null && drawing.drawingStage == 1;
 
         if (ON.activeSelf != shouldShow)
             ON.SetActive(shouldShow);
@@ -256,6 +256,7 @@ public class DrawingInUI : MonoBehaviour
     /// <summary>给 UI 按钮的 onClick 直接挂这个（ThrowStone 有返回值，挂不到按钮上）。</summary>
     public void OnThrowStoneButton()
     {
+        PlayerUIManager.Instance.PlayClickSound();
         ThrowStone();
     }
 
@@ -369,6 +370,8 @@ public class DrawingInUI : MonoBehaviour
 
     public void ShowDrawingUI()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         if (drawingUIPanel != null)
         {
             drawingUIPanel.SetActive(true);
@@ -378,6 +381,8 @@ public class DrawingInUI : MonoBehaviour
 
     public void Exit()
     {
+        PlayerUIManager.Instance.PlayClickSound();
+
         ShowInventory();
         if (drawingUIPanel != null)
             drawingUIPanel.SetActive(false);

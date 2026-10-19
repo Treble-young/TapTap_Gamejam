@@ -11,6 +11,8 @@ public class Portal : InteractableManager
 
     public override void Interact(PlayerManager player)
     {
+        LoadingManager.Instance.FakeLoad();
+
         player.transform.position = targetPosition.position;
         player.SetOrderInLayer(targetOrderInLayer);
         player.gameObject.layer = LayerMaskToLayer(targetLayerMask);

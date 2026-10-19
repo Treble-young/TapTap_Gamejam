@@ -14,7 +14,7 @@ public class Level02CameraReveal : MonoBehaviour
 
     [Header("拉高参数")]
     [Tooltip("拉高后的 Orthographic Size（留白，按最终区域大小调整）")]
-    [SerializeField] private float targetOrthoSize = 10f;
+    [SerializeField] private float targetOrthoSize = 7f;
     [SerializeField] private float duration = 2.5f;
 
     [TextArea(1, 3)]

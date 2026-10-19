@@ -24,7 +24,7 @@ public class Level01_Door : InteractableManager
                 if (SceneManager.GetActiveScene().name == "Level_01")
                 {
                     LevelInventoryTransfer.CaptureFromLevel01();
-                    SceneManager.LoadScene("Level_02");
+                    LoadingManager.Instance.LoadNextLevel();
                 }
                 else
                 {

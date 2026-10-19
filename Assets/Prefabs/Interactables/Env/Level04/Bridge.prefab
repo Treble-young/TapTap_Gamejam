@@ -140,6 +140,10 @@ MonoBehaviour:
     values: []
   outlineSpriteRenderer: {fileID: 6913315525700478199}
   needEmergingOutline: 1
+  requiredDrawingStage: 1
+  _fixed: 0
+  _sprite: {fileID: 2886379781046095457}
+  fixedBridgeSprite: {fileID: 21300000, guid: fc11081c61c1cb649b61018a049c64b5, type: 3}
 --- !u!1 &3798124034599368360
 GameObject:
   m_ObjectHideFlags: 0

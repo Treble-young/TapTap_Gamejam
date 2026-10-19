@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6098931168588540985}
   - component: {fileID: 8796679846777651427}
+  - component: {fileID: 2172827582234204108}
   m_Layer: 0
   m_Name: Visual
   m_TagString: Untagged
@@ -91,6 +92,28 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_SpriteSortPoint: 1
+--- !u!95 &2172827582234204108
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7422239708193427416}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 63dd7f7983667894abdcb63dcf4067a1, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &8955197428277842961
 GameObject:
   m_ObjectHideFlags: 0
@@ -106,6 +129,7 @@ GameObject:
   - component: {fileID: 2155734683662811754}
   - component: {fileID: 1809497233094280630}
   - component: {fileID: 5166047278847714029}
+  - component: {fileID: 5373984867792438197}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -205,6 +229,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9743343ada5f5e24faeaa745507ccd66, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerManager
+  EnableThisSelector: 1
+  possibleSprites: []
+  _sprite: {fileID: 0}
   playerInput: {fileID: 0}
   playerMovement: {fileID: 0}
   playerInteraction: {fileID: 0}
@@ -263,3 +290,17 @@ MonoBehaviour:
   inventory: []
   selectedIndex: 0
   currentSelectedItem: {fileID: 0}
+--- !u!114 &5373984867792438197
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8955197428277842961}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5b6771fefc5acc41b3dc0ddb7a2e98a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerAnimator
+  hasAnimator: 1
+  animator: {fileID: 2172827582234204108}

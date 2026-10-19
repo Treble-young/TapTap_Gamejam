@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: "Fragment_\u9149"
   m_EditorClassIdentifier: Assembly-CSharp::Level02FragmentItem
   itemName: "\u90E8\u9996\u300C\u9149\u300D"
-  icon: {fileID: 0}
+  icon: {fileID: 6687960414449113692, guid: 6f9331c3703ee1442b52a77f1281a7df, type: 3}
   itemCount: 1
   maxItemCount: 99
   usedIcon: {fileID: 0}
