@@ -14,6 +14,8 @@ public class Bridge : InteractableManager
     public SpriteRenderer _sprite;
     public Sprite fixedBridgeSprite;
 
+    public GameObject bridgeFixedEffect;
+
     public override void Interact(PlayerManager player)
     {
         if (!_fixed)
