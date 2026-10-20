@@ -19,7 +19,7 @@ public class Level02PoolNPC : NPCSpriteRandomSelector
     [Header("角色设定")]
     [Tooltip("勾选：参与触电循环的受害者；不勾选：定居者，原地等待聚集")]
     [SerializeField] private bool poolVictim = true;
-    [Tooltip("是否显示占位圆点（美术未到位前默认隐藏，靠行为与感叹号标识）")]
+    [Tooltip("是否显示占位圆点（仅影响自动生成的占位圆点，不影响正式人物图片）")]
     [SerializeField] private bool showPlaceholder = false;
 
     [Header("关键点位（留空取自身出生点为居所）")]
@@ -42,6 +42,7 @@ public class Level02PoolNPC : NPCSpriteRandomSelector
     [SerializeField] private Color shockColor = new Color(1f, 0.95f, 0.4f);
 
     private SpriteRenderer sr;
+    private Sprite fallbackSprite;
     private HeadIndicator headIndicator;
     private Vector3 homePoint;
     private State state = State.ToPool;
@@ -54,9 +55,10 @@ public class Level02PoolNPC : NPCSpriteRandomSelector
 
     private void Awake()
     {
-        sr = GetComponent<SpriteRenderer>();
+        sr = _sprite != null ? _sprite : GetComponent<SpriteRenderer>();
+        _sprite = sr;
         if (sr.sprite == null)
-            sr.sprite = PlaceholderSprite.CreateCircle(new Color(0.85f, 0.75f, 0.6f));
+            sr.sprite = fallbackSprite = PlaceholderSprite.CreateCircle(new Color(0.85f, 0.75f, 0.6f));
         homePoint = transform.position;
 
         headIndicator = GetComponent<HeadIndicator>();
@@ -66,7 +68,18 @@ public class Level02PoolNPC : NPCSpriteRandomSelector
         if (!poolVictim)
             state = State.Idle;
 
-        sr.enabled = showPlaceholder; // 占位圆点默认隐藏
+        RefreshVisibility();
+    }
+
+    protected override void Start()
+    {
+        base.Start(); // 随机人物图在基类 Start 中才会赋值。
+        RefreshVisibility();
+    }
+
+    private void RefreshVisibility()
+    {
+        sr.enabled = sr.sprite != null && (sr.sprite != fallbackSprite || showPlaceholder);
     }
 
     private void Update()
@@ -76,7 +89,7 @@ public class Level02PoolNPC : NPCSpriteRandomSelector
             && state != State.Gone && state != State.Gathering)
         {
             safeModeSwitched = true;
-            if (showPlaceholder) sr.enabled = true;
+            RefreshVisibility();
             SetAlpha(1f);
             transform.rotation = Quaternion.identity;
             ChangeState(State.ToSign);
@@ -114,7 +127,7 @@ public class Level02PoolNPC : NPCSpriteRandomSelector
                     transform.rotation = Quaternion.identity;
                     sr.color = Color.white;
                     SetAlpha(1f);
-                    if (showPlaceholder) sr.enabled = true;
+                    RefreshVisibility();
                     ChangeState(State.ToPool);
                 }
                 break;
@@ -166,7 +179,7 @@ public class Level02PoolNPC : NPCSpriteRandomSelector
         }
         sr.color = Color.white;
         SetAlpha(1f);
-        if (showPlaceholder) sr.enabled = true;
+        RefreshVisibility();
         transform.rotation = Quaternion.identity;
         headIndicator.Hide();
         gatherTarget = point;
